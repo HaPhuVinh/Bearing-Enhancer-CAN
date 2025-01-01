@@ -22,7 +22,7 @@ namespace Bearing_Enhancer_CAN
         {
             string PJN = textBox_PJNum.Text;
             Bearing_Enhancer brgblock = new Bearing_Enhancer();
-            dataGridView_Truss.DataSource = brgblock.Get_Lumber_Inv(PJN);
+            dataGridView_Truss.DataSource = brgblock.Get_BE_Info(PJN);
            
         }
 

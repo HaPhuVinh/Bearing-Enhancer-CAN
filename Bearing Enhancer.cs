@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -103,16 +105,48 @@ namespace Bearing_Enhancer_CAN
             BlockOption = blockOption;
         }
 
-        public void Get_TrussInfo()
+        public List<string> Get_BE_Info(string PJN)
         {
+            string projectNumber = PJN;
+            string path = @"";
+            string fileName = @"";
+            string extName = @"";
+            List<string> subListName = new List<string>();
+            List<string> mainListName = new List<string>();
+            List<Bearing_Enhancer> bearingEnhancers = new List<Bearing_Enhancer>();
+            path = "C:\\SST-EA\\Client\\Projects\\" + projectNumber+"\\Trusses";
+            mainListName = Directory.GetFiles(path).ToList();
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlNode rootNode, elementNode;
+            foreach (string Item in mainListName)
+            { 
+                extName = Path.GetExtension(Item);
+                if (extName == ".tdlTruss")
+                {
+                    fileName = Path.GetFileNameWithoutExtension(Item);
+                    subListName.Add(fileName);
 
+                    
+                    xmlDoc.Load(Item);
+                    rootNode = xmlDoc.DocumentElement;
+                    elementNode = rootNode.SelectSingleNode("//Script");
+                    string scpt = elementNode.InnerText.Trim();
+                    string[] arr_scpt = scpt.Split('\n');
+                    //foreach (XmlNode searchNode in searchNodes)
+                    //{
+                        
+                    //}
+                }
+            }
+            
+            return subListName;
         }
 
-        public List<LumberInventory> Get_Lumber_Inv(string projectnumber)
+        public List<LumberInventory> Get_Lumber_Inv(string PJN)
         {
             List<LumberInventory> lumber_inv = new List<LumberInventory>();
 
-            string projectNumber = projectnumber;
+            string projectNumber = PJN;
             string path = "C:\\SST-EA\\Client\\Projects\\" + projectNumber + "\\Presets\\TrussStudio\\LumberInventory.xml";
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
