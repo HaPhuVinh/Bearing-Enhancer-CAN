@@ -8,5 +8,8 @@ namespace Bearing_Enhancer_CAN
 {
     internal class Fastener_Info
     {
+        public double NumberFast { get; set; }
+        public string FastType { get; set; }
+        public int NumberRow { get; set; }
     }
 }

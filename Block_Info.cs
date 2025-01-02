@@ -8,5 +8,8 @@ namespace Bearing_Enhancer_CAN
 {
     internal class Block_Info
     {
+        public bool Horizontal { get; set; }
+        public string BlockSize { get; set; }
+        public int BlockLength { get; set; }
     }
 }
