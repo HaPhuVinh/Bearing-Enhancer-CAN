@@ -21,8 +21,8 @@ namespace Bearing_Enhancer_CAN
         private void button1_Click(object sender, EventArgs e)
         {
             string PJN = textBox_PJNum.Text;
-            Bearing_Enhancer brgblock = new Bearing_Enhancer();
-            dataGridView_Truss.DataSource = brgblock.Get_BE_Info(PJN);
+            Top_Plate_Info TOP = new Top_Plate_Info();
+            TOP.Get_TOP_Info(PJN);
            
         }
 

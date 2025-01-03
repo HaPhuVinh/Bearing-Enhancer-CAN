@@ -14,17 +14,18 @@ namespace Bearing_Enhancer_CAN
     {
         public string TrussName { get; set; }
         public int Ply { get; set; }
-        public string TOPSpecie { get; set; }
         public double DOL { get; set; }
         public string LumSpecie { get; set; }
         public string LumSize { get; set; }
+
+
 
         public Bearing_Enhancer()
         {
             
         }
 
-        public List<string> Get_BE_Info(string PJN)
+        void Get_BE_Info(string PJN)
         {
             string projectNumber = PJN;
             string path = @"";
@@ -62,12 +63,13 @@ namespace Bearing_Enhancer_CAN
                             S = I.Split(':');
                             bE.Ply = int.Parse(S[1]);
                         }
+
                         break;
                     }
+
                 }
             }
             
-            return subListName;
         }
 
         public List<LumberInventory> Get_Lumber_Inv(string PJN)
