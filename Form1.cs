@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,24 +22,25 @@ namespace Bearing_Enhancer_CAN
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string PJN = textBox_PJNum.Text;
-            string path = String.Concat("C:\\SST-EA\\Client\\Projects\\",PJN,"\\Temp");
-            string[] txtFiles = Directory.GetFiles(path,"*.txt");
-            bool exist = txtFiles.Count() > 0;
+            string projectPath = textBox_PJNum.Text;
+            string[] arrPath = projectPath.Split('\\');
+            string projectID = arrPath[arrPath.Length-1];
+            string[] txtPath = Directory.GetFiles(projectPath, "*.txt");
+            bool existFile = txtPath.Count() == 1;
+            if (existFile)
+            {
+                string txtName = Path.GetFileNameWithoutExtension(txtPath[0]);
 
-            //if (existFile)
-            //{
+                Top_Plate_Info TOP = new Top_Plate_Info();
+                TOP.Get_TOP_Info(txtPath[0], "A");
+            }
+            else
+            {
+                MessageBox.Show($"You need to choose the Open All icon in CS Engineer and export a .txt file via Bluebeam!");
+            }
 
-            //    Top_Plate_Info TOP = new Top_Plate_Info();
-            //    TOP.Get_TOP_Info(PJN, "A");
-            //}
-            //else
-            //{
-            //    MessageBox.Show($"Please create {PJN}.txt file!");
-            //}
-            
-            
-           
+
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
