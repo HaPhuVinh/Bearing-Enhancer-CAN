@@ -22,15 +22,20 @@ namespace Bearing_Enhancer_CAN
         private void button1_Click(object sender, EventArgs e)
         {
             string PJN = textBox_PJNum.Text;
-            if (File.Exists(@"C:\SST-EA\Client\Projects\" + PJN + @"\Temp\" + PJN + ".txt"))
-            {
-                Top_Plate_Info TOP = new Top_Plate_Info();
-                TOP.Get_TOP_Info(PJN, "A");
-            }
-            else
-            {
-                MessageBox.Show($"Please create {PJN}.txt file!");
-            }
+            string path = String.Concat("C:\\SST-EA\\Client\\Projects\\",PJN,"\\Temp");
+            string[] txtFiles = Directory.GetFiles(path,"*.txt");
+            bool exist = txtFiles.Count() > 0;
+
+            //if (existFile)
+            //{
+
+            //    Top_Plate_Info TOP = new Top_Plate_Info();
+            //    TOP.Get_TOP_Info(PJN, "A");
+            //}
+            //else
+            //{
+            //    MessageBox.Show($"Please create {PJN}.txt file!");
+            //}
             
             
            
