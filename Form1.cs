@@ -23,16 +23,21 @@ namespace Bearing_Enhancer_CAN
         private void button1_Click(object sender, EventArgs e)
         {
             string projectPath = textBox_PJNum.Text;
+            string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
+            string tempPath = $"{projectPath}\\Temp";
             string[] arrPath = projectPath.Split('\\');
             string projectID = arrPath[arrPath.Length-1];
-            string[] txtPath = Directory.GetFiles(projectPath, "*.txt");
-            bool existFile = txtPath.Count() == 1;
+            string[] txtPathes = Directory.GetFiles(tempPath, "*.txt");
+            bool existFile = txtPathes.Count() == 1;
             if (existFile)
             {
-                string txtName = Path.GetFileNameWithoutExtension(txtPath[0]);
+                string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
 
-                Top_Plate_Info TOP = new Top_Plate_Info();
-                TOP.Get_TOP_Info(txtPath[0], "A");
+                Bearing_Enhancer BE = new Bearing_Enhancer();
+                BE.Get_Bearing_Info(txtPathes[0]);
+
+                //Top_Plate_Info TOP = new Top_Plate_Info();
+                //TOP.Get_TOP_Info(txtPath[0], "A");
             }
             else
             {
@@ -44,6 +49,11 @@ namespace Bearing_Enhancer_CAN
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

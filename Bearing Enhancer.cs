@@ -14,10 +14,9 @@ namespace Bearing_Enhancer_CAN
     {
         public string TrussName { get; set; }
         public int Ply { get; set; }
-        public double DOL { get; set; }
         public string LumSpecie { get; set; }
         public string LumSize { get; set; }
-
+        Top_Plate_Info TopPlateInfo { get; set; }
 
 
         public Bearing_Enhancer()
@@ -25,89 +24,81 @@ namespace Bearing_Enhancer_CAN
             
         }
 
-        void Get_BE_Info(string PJN)
+        public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath)
         {
-            string projectNumber = PJN;
-            string path = @"";
+            //Get Data from tdlTruss file
+            string txtPath = txtpath;
+            string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(txtPath));
+            string trussesPath = $"{projectPath}\\Trusses";
+            string[] arrPath = trussesPath.Split('\\');
+            string projectID = arrPath[arrPath.Length-1];
             string fileName = @"";
             string extName = @"";
-            List<string> subListName = new List<string>();
-            List<string> mainListName = new List<string>();
-            List<Bearing_Enhancer> bearingEnhancers = new List<Bearing_Enhancer>();
-            path = "C:\\SST-EA\\Client\\Projects\\" + projectNumber+"\\Trusses";
-            mainListName = Directory.GetFiles(path).ToList();
+            List<string> subListTrussName = new List<string>();
+            List<string> mainListTrussName = new List<string>();
+            List<Bearing_Enhancer> bearingEnhancerItems = new List<Bearing_Enhancer>();
+            List<Top_Plate_Info> listTopPlate = new List<Top_Plate_Info>();
+            Top_Plate_Info tpi = new Top_Plate_Info();
+            mainListTrussName = Directory.GetFiles(trussesPath).ToList();
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
-            foreach (string Item in mainListName)
-            { 
-                Bearing_Enhancer bE = new Bearing_Enhancer();
+            foreach (string Item in mainListTrussName)
+            {
                 extName = Path.GetExtension(Item);
                 if (extName == ".tdlTruss")
                 {
-                    fileName = Path.GetFileNameWithoutExtension(Item);
-                    subListName.Add(fileName);
-
-                    //Get Data in tdlTruss file
                     xmlDoc.Load(Item);
                     rootNode = xmlDoc.DocumentElement;
-                    elementNode = rootNode.SelectSingleNode("//Script");
-                    string scpt = elementNode.InnerText.Trim();
-                    string[] arr_scpt = scpt.Split('\n');
-
-                    bE.TrussName = fileName;
-                    foreach(string I in arr_scpt)
+                    fileName = Path.GetFileNameWithoutExtension(Item);
+                    listTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName);
+                    if (listTopPlate != null)
                     {
-                        string[] S;
-                        if (I.Contains("plys"))
+                        foreach(Top_Plate_Info TP in listTopPlate)
                         {
-                            S = I.Split(':');
-                            bE.Ply = int.Parse(S[1]);
+                            Bearing_Enhancer bE = new Bearing_Enhancer();
+                            bE.TopPlateInfo = TP;
+                            bE.TrussName = fileName;
+                            //Get Data in <Script> Node
+                            elementNode = rootNode.SelectSingleNode("//Script");
+                            string scpt = elementNode.InnerText;
+                            string[] Arr = scpt.Split('\n');
+                            string[] S;
+                            foreach (string I in Arr)
+                            {
+                                
+                                if (I.Contains("plys"))
+                                {
+                                    S = I.Split(':');
+                                    bE.Ply = int.Parse(S[1]);
+                                    break;
+                                }
+                            }
+                            //Get Data in <LoadTemplate> Node
+                            //elementNode = rootNode.SelectSingleNode("//LoadTemplate");
+                            //string desc = elementNode.Attributes["Description"].Value;
+                            //string loadtem = elementNode.InnerText;
+                            //Arr = loadtem.Split('\n');
+                            //foreach (string I in Arr)
+                            //{
+
+                            //    if (I.Contains("std") && !desc.Contains("No Wind"))
+                            //    {
+                            //        S = I.Split(' ');
+                            //        bE.DOL = int.Parse(S[1]);
+                            //        break;
+                            //    }
+                            //}
+
+                            bearingEnhancerItems.Add(bE);
                         }
-
-                        break;
                     }
-
                 }
             }
             
+            return bearingEnhancerItems;
         }
 
-        public List<LumberInventory> Get_Lumber_Inv(string PJN)
-        {
-            List<LumberInventory> lumber_inv = new List<LumberInventory>();
-
-            string projectNumber = PJN;
-            string path = "C:\\SST-EA\\Client\\Projects\\" + projectNumber + "\\Presets\\TrussStudio\\LumberInventory.xml";
-            XmlDocument xmlDoc = new XmlDocument();
-            XmlNode rootNode, elementNode;
-
-            xmlDoc.Load(path);
-            rootNode = xmlDoc.DocumentElement;
-            elementNode = rootNode.SelectSingleNode("//LumberMaterialList");
-            XmlNodeList searchNodes = elementNode.ChildNodes;
-
-            foreach (XmlNode searchNode in searchNodes)
-            {
-                LumberInventory lumber = new LumberInventory();
-                lumber.Lumber_Key = searchNode.Attributes["Key"].Value;
-                lumber.Lumber_Name = searchNode.Attributes["Name"].Value;
-                lumber.Lumber_Size = searchNode.Attributes["Size"].Value;
-                lumber.Lumber_Thickness = searchNode.Attributes["Thickness"].Value;
-                lumber.Lumber_Width = searchNode.Attributes["Width"].Value;
-                if (searchNode.Attributes["Grade"] != null)
-                {
-                    lumber.Lumber_Grade = searchNode.Attributes["Grade"].Value;
-                }
-                else
-                {
-                    lumber.Lumber_Grade = "-";
-                }
-                lumber.Lumber_SpeciesName = searchNode.Attributes["SpeciesName"].Value;
-                lumber.Lumber_Sequence = int.Parse(searchNode.Attributes["Sequence"].Value);
-                lumber_inv.Add(lumber);
-            }
-            return lumber_inv;
-        }
+        
     }
 
 }

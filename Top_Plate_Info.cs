@@ -13,23 +13,24 @@ namespace Bearing_Enhancer_CAN
 {
     public class Top_Plate_Info
     {
+        public double DOL { get; set; }
         public string JointID { get; set; }
         public string XLocation { get; set; }
         public double Reaction { get; set; }
-        public string Material { get; set; }
         public string BearingWidth { get; set; }
         public string RequireWidth { get; set; }
+        public string Material { get; set; }
         public string LoadTransfer { get; set; }
 
-        public void Get_TOP_Info(string pjPath,string trussname)
+        public List<Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname)
         {
-            string projectPath = pjPath;
-            string[] arrPath = projectPath.Split('\\');
-            string projectID = arrPath[arrPath.Length - 1];
-            string tempName="";
+            //Get data from .txt file
+            List<Top_Plate_Info> listTopPlate = new List<Top_Plate_Info>();
+            string txtPath = txtpath;
+            string temName="";
             string[] arrLine = {};
             string[] arrLine2 = {};
-            string content = File.ReadAllText(projectPath);
+            string content = File.ReadAllText(txtPath);
             string[] arrFile = content.Split('\n');
             int i = 0;
             bool pickup = false;
@@ -41,8 +42,8 @@ namespace Bearing_Enhancer_CAN
 
                 if (line.Contains("Truss:") && line.Contains("Qty"))
                 {
-                    tempName = $"Truss:{arrLine[arrLine.Length - 1]}";
-                    tempName = tempName.TrimEnd('\r');
+                    temName = $"Truss:{arrLine[arrLine.Length - 1]}";
+                    temName = temName.TrimEnd('\r');
                 }
 
                 if(line.Contains("Jnt")&& line.Contains("X-Loc") && line.Contains("React") && line.Contains("Up") && line.Contains("Width") && line.Contains("Reqd") && line.Contains("Mat"))
@@ -56,41 +57,29 @@ namespace Bearing_Enhancer_CAN
                     break;
                 }
 
-                if ($"Truss:  {trussname}" == tempName && pickup == true)
+                if ($"Truss:  {trussname}" == temName && pickup == true)
                 {
                     Array.Resize(ref arrLine2, 0);
                     string line2 = line.TrimEnd('\r', '\n', '\t');
                     line2 = Regex.Replace(line, @"\s+", " ");
                     arrLine2 = line2.Split();
-                    Top_Plate_Info tPI = new Top_Plate_Info();
-                    tPI.JointID = arrLine2[1];
-                    tPI.XLocation = arrLine2[2];
-                    tPI.Reaction = double.Parse(arrLine2[3]);
-                    tPI.BearingWidth = arrLine2[5];
-                    tPI.RequireWidth = arrLine2[6];
-                    tPI.Material = arrLine2[7];
+                    if (arrLine2.Length==9 && arrLine2[6].Contains(@"**"))
+                    {
+                        Top_Plate_Info tPI = new Top_Plate_Info();
+                        tPI.JointID = arrLine2[1];
+                        tPI.XLocation = arrLine2[2];
+                        tPI.Reaction = double.Parse(arrLine2[3]);
+                        tPI.BearingWidth = arrLine2[5];
+                        tPI.RequireWidth = arrLine2[6];
+                        tPI.Material = arrLine2[7];
+                        listTopPlate.Add(tPI);
+                    }
+                    
                 }
-
                 
-
                 i = i + 1;
             }
-            //using (StreamReader reader = new StreamReader(path))
-            //{
-            //    string line;
-            //    while ((line=reader.ReadLine()) != null)
-            //    {
-            //        if (line.Contains("Truss:")&&line.Contains("Qty"))
-            //        {
-            //            arrLine = line.Split(':');
-            //            string tempName = $"Truss:{arrLine[arrLine.Length-1]}";
-
-            //        }
-
-
-            //    }
-            //}
-
+            return listTopPlate;
         }
     }
 
