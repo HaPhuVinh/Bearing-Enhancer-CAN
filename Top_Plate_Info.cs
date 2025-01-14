@@ -33,8 +33,9 @@ namespace Bearing_Enhancer_CAN
             string content = File.ReadAllText(txtPath);
             string[] arrFile = content.Split('\n');
             int i = 0;
-            bool pickup = false;
-            foreach (string line in arrFile)
+            bool pickup_React = false;
+            bool pickup_Loading = false;
+            foreach (string line in arrFile)//Pick up Loading and Reaction Summary
             {
                 Array.Resize(ref arrLine, 0);
                 arrLine = line.Split(':');
@@ -48,7 +49,13 @@ namespace Bearing_Enhancer_CAN
 
                 if(line.Contains("Jnt")&& line.Contains("X-Loc") && line.Contains("React") && line.Contains("Up") && line.Contains("Width") && line.Contains("Reqd") && line.Contains("Mat"))
                 {
-                    pickup = true;
+                    pickup_React = true;
+                    continue;
+                }
+
+                if (line.Contains("Loading(psf)"))
+                {
+                    pickup_Loading = true;
                     continue;
                 }
 
@@ -57,7 +64,7 @@ namespace Bearing_Enhancer_CAN
                     break;
                 }
 
-                if ($"Truss:  {trussname}" == temName && pickup == true)
+                if ($"Truss:  {trussname}" == temName && pickup_React == true)
                 {
                     Array.Resize(ref arrLine2, 0);
                     string line2 = line.TrimEnd('\r', '\n', '\t');
@@ -76,9 +83,11 @@ namespace Bearing_Enhancer_CAN
                     }
                     
                 }
+
                 
                 i = i + 1;
             }
+
             return listTopPlate;
         }
     }
