@@ -49,6 +49,7 @@
     <Compile Include="Bearing Enhancer.cs" />
     <Compile Include="Bearing_Solution.cs" />
     <Compile Include="Block_Info.cs" />
+    <Compile Include="Duration_Factor.cs" />
     <Compile Include="Fastener_Info.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

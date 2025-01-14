@@ -13,7 +13,7 @@ namespace Bearing_Enhancer_CAN
 {
     public class Top_Plate_Info
     {
-        public double DOL { get; set; }
+        Duration_Factor DOL {  get; set; }
         public string JointID { get; set; }
         public string XLocation { get; set; }
         public double Reaction { get; set; }
@@ -35,6 +35,7 @@ namespace Bearing_Enhancer_CAN
             int i = 0;
             bool pickup_React = false;
             bool pickup_Loading = false;
+            Duration_Factor kD = new Duration_Factor();
             foreach (string line in arrFile)//Pick up Loading and Reaction Summary
             {
                 Array.Resize(ref arrLine, 0);
@@ -53,19 +54,41 @@ namespace Bearing_Enhancer_CAN
                     continue;
                 }
 
-                if (line.Contains("Loading(psf)"))
+                if (line.Contains("Building Code:"))
                 {
                     pickup_Loading = true;
                     continue;
                 }
 
-                if (line.Contains("Max Horiz ="))
+                if ($"Truss:  {trussname}" == temName && pickup_Loading == true)
                 {
-                    break;
+                    Array.Resize(ref arrLine2, 0);
+                    string line2 = line.TrimEnd('\r', '\n', '\t');
+                    line2 = Regex.Replace(line, @"\s+", " ");
+                    arrLine2 = line2.Split();
+                    if (line.Contains(@"Kd") && line.Contains(@"(Snow)"))
+                    {
+                        
+                        kD.DOL_Snow = Double.Parse(arrLine2[7]);
+                    }
+
+                    if (line.Contains(@"Kd") && line.Contains(@"(Live)"))
+                    {
+                        kD.DOL_Live = Double.Parse(arrLine2[5]);
+                    }
+
+                    if (line.Contains(@"Kd") && line.Contains(@"(Wind)"))
+                    {
+                        kD.DOL_Wind = Double.Parse(arrLine2[5]);
+                    }
                 }
 
                 if ($"Truss:  {trussname}" == temName && pickup_React == true)
                 {
+                    if (line.Contains("Max Horiz ="))
+                    {
+                        break;
+                    }
                     Array.Resize(ref arrLine2, 0);
                     string line2 = line.TrimEnd('\r', '\n', '\t');
                     line2 = Regex.Replace(line, @"\s+", " ");
@@ -79,11 +102,10 @@ namespace Bearing_Enhancer_CAN
                         tPI.BearingWidth = arrLine2[5];
                         tPI.RequireWidth = arrLine2[6];
                         tPI.Material = arrLine2[7];
+                        tPI.DOL = kD;
                         listTopPlate.Add(tPI);
                     }
-                    
                 }
-
                 
                 i = i + 1;
             }
