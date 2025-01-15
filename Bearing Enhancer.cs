@@ -58,20 +58,26 @@ namespace Bearing_Enhancer_CAN
                             Bearing_Enhancer bE = new Bearing_Enhancer();
                             bE.TopPlateInfo = TP;
                             bE.TrussName = fileName;
-                            //Get Data in <Script> Node
+                            //Get Data in < Script > Node
                             elementNode = rootNode.SelectSingleNode("//Script");
                             string scpt = elementNode.InnerText;
                             string[] Arr = scpt.Split('\n');
                             string[] S;
                             foreach (string I in Arr)
                             {
-                                
-                                if (I.Contains("plys"))
+
+                                if (I.Contains("plys:"))
                                 {
                                     S = I.Split(':');
                                     bE.Ply = int.Parse(S[1]);
                                     break;
                                 }
+                                //if (I.Contains("brg:"))
+                                //{
+                                //    S = I.Split(':',' ') ;
+
+                                //    //break;
+                                //}
                             }
                             //Get Data in <LoadTemplate> Node
                             //elementNode = rootNode.SelectSingleNode("//LoadTemplate");

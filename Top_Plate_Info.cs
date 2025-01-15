@@ -69,17 +69,17 @@ namespace Bearing_Enhancer_CAN
                     if (line.Contains(@"Kd") && line.Contains(@"(Snow)"))
                     {
                         
-                        kD.DOL_Snow = Double.Parse(arrLine2[7]);
+                        kD.DOL_Snow = Double.Parse(arrLine2[6]);
                     }
 
                     if (line.Contains(@"Kd") && line.Contains(@"(Live)"))
                     {
-                        kD.DOL_Live = Double.Parse(arrLine2[5]);
+                        kD.DOL_Live = Double.Parse(arrLine2[4]);
                     }
 
                     if (line.Contains(@"Kd") && line.Contains(@"(Wind)"))
                     {
-                        kD.DOL_Wind = Double.Parse(arrLine2[5]);
+                        kD.DOL_Wind = Double.Parse(arrLine2[4]);
                     }
                 }
 
