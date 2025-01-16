@@ -34,7 +34,7 @@ namespace Bearing_Enhancer_CAN
             string projectID = arrPath[arrPath.Length-1];
             string fileName = @"";
             string extName = @"";
-            int i = 0;
+            int j = 0;
             List<string> subListTrussName = new List<string>();
             List<string> mainListTrussName = new List<string>();
             List<Bearing_Enhancer> bearingEnhancerItems = new List<Bearing_Enhancer>();
@@ -56,6 +56,7 @@ namespace Bearing_Enhancer_CAN
                     {
                         foreach(KeyValuePair<int,Top_Plate_Info> TP in dictTopPlate)
                         {
+                            j = 0;
                             Bearing_Enhancer bE = new Bearing_Enhancer();
                             bE.TopPlateInfo = TP.Value;
                             bE.TrussName = fileName;
@@ -75,12 +76,12 @@ namespace Bearing_Enhancer_CAN
                                 }
                                 if (I.Contains("brg:"))
                                 {
-                                    if (i == TP.Key)
+                                    if (j == TP.Key)
                                     {
                                         S = I.Split(' ');
                                         bE.TopPlateInfo.YLocation = S[3];
                                     }
-                                    i = i + 1;
+                                    j = j + 1;
                                     //break;
                                 }
                             }
