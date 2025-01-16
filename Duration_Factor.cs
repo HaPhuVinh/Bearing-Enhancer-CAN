@@ -8,8 +8,8 @@ namespace Bearing_Enhancer_CAN
 {
     internal class Duration_Factor
     {
-        public double DOL_Snow {  get; set; }
-        public double DOL_Live { get; set; }
-        public double DOL_Wind { get; set; }
+        public string DOL_Snow {  get; set; }
+        public string DOL_Live { get; set; }
+        public string DOL_Wind { get; set; }
     }
 }

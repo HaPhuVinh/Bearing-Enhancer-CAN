@@ -34,10 +34,11 @@ namespace Bearing_Enhancer_CAN
             string projectID = arrPath[arrPath.Length-1];
             string fileName = @"";
             string extName = @"";
+            int i = 0;
             List<string> subListTrussName = new List<string>();
             List<string> mainListTrussName = new List<string>();
             List<Bearing_Enhancer> bearingEnhancerItems = new List<Bearing_Enhancer>();
-            List<Top_Plate_Info> listTopPlate = new List<Top_Plate_Info>();
+            Dictionary<int,Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             Top_Plate_Info tpi = new Top_Plate_Info();
             mainListTrussName = Directory.GetFiles(trussesPath).ToList();
             XmlDocument xmlDoc = new XmlDocument();
@@ -50,13 +51,13 @@ namespace Bearing_Enhancer_CAN
                     xmlDoc.Load(Item);
                     rootNode = xmlDoc.DocumentElement;
                     fileName = Path.GetFileNameWithoutExtension(Item);
-                    listTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName);
-                    if (listTopPlate != null)
+                    dictTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName);
+                    if (dictTopPlate != null)
                     {
-                        foreach(Top_Plate_Info TP in listTopPlate)
+                        foreach(KeyValuePair<int,Top_Plate_Info> TP in dictTopPlate)
                         {
                             Bearing_Enhancer bE = new Bearing_Enhancer();
-                            bE.TopPlateInfo = TP;
+                            bE.TopPlateInfo = TP.Value;
                             bE.TrussName = fileName;
                             //Get Data in < Script > Node
                             elementNode = rootNode.SelectSingleNode("//Script");
@@ -70,14 +71,18 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     S = I.Split(':');
                                     bE.Ply = int.Parse(S[1]);
-                                    break;
+                                    //break;
                                 }
-                                //if (I.Contains("brg:"))
-                                //{
-                                //    S = I.Split(':',' ') ;
-
-                                //    //break;
-                                //}
+                                if (I.Contains("brg:"))
+                                {
+                                    if (i == TP.Key)
+                                    {
+                                        S = I.Split(' ');
+                                        bE.TopPlateInfo.YLocation = S[3];
+                                    }
+                                    i = i + 1;
+                                    //break;
+                                }
                             }
                             //Get Data in <LoadTemplate> Node
                             //elementNode = rootNode.SelectSingleNode("//LoadTemplate");

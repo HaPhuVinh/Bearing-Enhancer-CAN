@@ -16,16 +16,17 @@ namespace Bearing_Enhancer_CAN
         Duration_Factor DOL {  get; set; }
         public string JointID { get; set; }
         public string XLocation { get; set; }
+        public string YLocation { get; set; }
         public double Reaction { get; set; }
         public string BearingWidth { get; set; }
         public string RequireWidth { get; set; }
         public string Material { get; set; }
         public string LoadTransfer { get; set; }
 
-        public List<Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname)
+        public Dictionary<int,Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname)
         {
             //Get data from .txt file
-            List<Top_Plate_Info> listTopPlate = new List<Top_Plate_Info>();
+            Dictionary<int,Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             string txtPath = txtpath;
             string temName="";
             string[] arrLine = {};
@@ -69,17 +70,17 @@ namespace Bearing_Enhancer_CAN
                     if (line.Contains(@"Kd") && line.Contains(@"(Snow)"))
                     {
                         
-                        kD.DOL_Snow = Double.Parse(arrLine2[6]);
+                        kD.DOL_Snow = arrLine2[6];
                     }
 
                     if (line.Contains(@"Kd") && line.Contains(@"(Live)"))
                     {
-                        kD.DOL_Live = Double.Parse(arrLine2[4]);
+                        kD.DOL_Live = arrLine2[4];
                     }
 
                     if (line.Contains(@"Kd") && line.Contains(@"(Wind)"))
                     {
-                        kD.DOL_Wind = Double.Parse(arrLine2[4]);
+                        kD.DOL_Wind = arrLine2[4];
                     }
                 }
 
@@ -89,6 +90,7 @@ namespace Bearing_Enhancer_CAN
                     {
                         break;
                     }
+                    
                     Array.Resize(ref arrLine2, 0);
                     string line2 = line.TrimEnd('\r', '\n', '\t');
                     line2 = Regex.Replace(line, @"\s+", " ");
@@ -103,14 +105,16 @@ namespace Bearing_Enhancer_CAN
                         tPI.RequireWidth = arrLine2[6];
                         tPI.Material = arrLine2[7];
                         tPI.DOL = kD;
-                        listTopPlate.Add(tPI);
+                        dictTopPlate.Add(i,tPI);
+                        i = i + 1;
                     }
+
                 }
                 
-                i = i + 1;
+                
             }
 
-            return listTopPlate;
+            return dictTopPlate;
         }
     }
 
