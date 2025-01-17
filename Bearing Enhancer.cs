@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -67,7 +68,6 @@ namespace Bearing_Enhancer_CAN
                             string[] S;
                             foreach (string I in Arr)
                             {
-
                                 if (I.Contains("plys:"))
                                 {
                                     S = I.Split(':');
@@ -85,21 +85,8 @@ namespace Bearing_Enhancer_CAN
                                     //break;
                                 }
                             }
-                            //Get Data in <LoadTemplate> Node
-                            //elementNode = rootNode.SelectSingleNode("//LoadTemplate");
-                            //string desc = elementNode.Attributes["Description"].Value;
-                            //string loadtem = elementNode.InnerText;
-                            //Arr = loadtem.Split('\n');
-                            //foreach (string I in Arr)
-                            //{
-
-                            //    if (I.Contains("std") && !desc.Contains("No Wind"))
-                            //    {
-                            //        S = I.Split(' ');
-                            //        bE.DOL = int.Parse(S[1]);
-                            //        break;
-                            //    }
-                            //}
+                            //Get Data in <LumberResults> Node
+                            Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
 
                             bearingEnhancerItems.Add(bE);
                         }
@@ -109,8 +96,43 @@ namespace Bearing_Enhancer_CAN
             
             return bearingEnhancerItems;
         }
+        void Get_Lumber(string x, string y, XmlNode rootNode)
+        {
+            int i = 0;
+            string[] S, A;
+            string s;
+            List<ArrayList> listArrList=new List<ArrayList>();
+            XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
+            A = elementNode.InnerText.Split('\n');
+            foreach (string I in A)
+            {
+                
+                if (y== "BotChd")
+                {
+                    ArrayList arrList = new ArrayList();
+                    s =I.Trim('\r');
+                    if (s.Contains("TC"))
+                    {
+                        S = s.Split(' ');
+                        
+                        arrList.Add(i);
+                        arrList.Add(S[0]);
+                        arrList.Add(S[1]);
+                    }
+                    listArrList.Add(arrList);
+                }
+                //if (y == "BotChd")
+                //{
+                //    s = I.Trim('\r');
+                //    S = s.Split(' ');
 
-        
+
+                //}
+                
+                i += 1;
+            }
+        }
+
     }
 
 }

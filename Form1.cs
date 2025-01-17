@@ -32,10 +32,10 @@ namespace Bearing_Enhancer_CAN
             if (existFile)
             {
                 string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
-
+                List<Bearing_Enhancer>list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
-                BE.Get_Bearing_Info(txtPathes[0]);
-
+                list_BE=BE.Get_Bearing_Info(txtPathes[0]);
+                
                 //Top_Plate_Info TOP = new Top_Plate_Info();
                 //TOP.Get_TOP_Info(txtPath[0], "A");
             }
