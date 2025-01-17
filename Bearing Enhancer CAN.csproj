@@ -58,7 +58,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="LumberInventory.cs" />
-    <Compile Include="Lumber_Info.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Top_Plate_Info.cs" />

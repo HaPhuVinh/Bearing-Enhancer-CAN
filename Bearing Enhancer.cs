@@ -106,9 +106,13 @@ namespace Bearing_Enhancer_CAN
             A = elementNode.InnerText.Split('\n');
             foreach (string I in A)
             {
-                
+                i ++;
                 if (y== "BotChd")
                 {
+                    if (!I.Contains("BC"))
+                    {
+                        continue;
+                    }
                     ArrayList arrList = new ArrayList();
                     s =I.Trim('\r');
                     if (s.Contains("TC"))
@@ -119,18 +123,54 @@ namespace Bearing_Enhancer_CAN
                         arrList.Add(S[0]);
                         arrList.Add(S[1]);
                     }
+                    XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
+                    int j = 0;
+                    foreach(XmlNode N in nodeList)
+                    {
+                        j++;
+                        if (j == i)
+                        {
+                            string ss = N.Attributes["R"].Value;
+                            string[] sss = ss.Split();
+                            arrList.Add(sss[0]);
+                        }
+                    }
                     listArrList.Add(arrList);
                 }
-                //if (y == "BotChd")
-                //{
-                //    s = I.Trim('\r');
-                //    S = s.Split(' ');
+                if (y == "TopChd")
+                {
+                    if (!I.Contains("TC"))
+                    {
+                        continue;
+                    }
+                    ArrayList arrList = new ArrayList();
+                    s = I.Trim('\r');
+                    if (s.Contains("TC"))
+                    {
+                        S = s.Split(' ');
 
-
-                //}
+                        arrList.Add(i);
+                        arrList.Add(S[0]);
+                        arrList.Add(S[1]);
+                    }
+                    XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
+                    int j = 0;
+                    foreach (XmlNode N in nodeList)
+                    {
+                        j++;
+                        if (j == i)
+                        {
+                            string ss = N.Attributes["R"].Value;
+                            string[] sss = ss.Split();
+                            arrList.Add(sss[0]);
+                        }
+                    }
+                    listArrList.Add(arrList);
+                }
                 
-                i += 1;
             }
+            
+
         }
 
     }
