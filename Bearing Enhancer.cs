@@ -96,11 +96,12 @@ namespace Bearing_Enhancer_CAN
             
             return bearingEnhancerItems;
         }
-        void Get_Lumber(string x, string y, XmlNode rootNode)
+        string Get_Lumber(string x, string y, XmlNode rootNode)//Get lumber grade and lumber size at Xlocation of the bearing
         {
             int i = 0;
             string[] S, A;
             string s;
+            string keyLumber="";
             List<ArrayList> listArrList=new List<ArrayList>();
             XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
             A = elementNode.InnerText.Split('\n');
@@ -115,7 +116,7 @@ namespace Bearing_Enhancer_CAN
                     }
                     ArrayList arrList = new ArrayList();
                     s =I.Trim('\r');
-                    if (s.Contains("TC"))
+                    if (s.Contains("BC"))
                     {
                         S = s.Split(' ');
                         
@@ -131,8 +132,9 @@ namespace Bearing_Enhancer_CAN
                         if (j == i)
                         {
                             string ss = N.Attributes["R"].Value;
+                            ss = ss.Trim();
                             string[] sss = ss.Split();
-                            arrList.Add(sss[0]);
+                            arrList.Add(sss[sss.Length-3]);
                         }
                     }
                     listArrList.Add(arrList);
@@ -161,18 +163,26 @@ namespace Bearing_Enhancer_CAN
                         if (j == i)
                         {
                             string ss = N.Attributes["R"].Value;
+                            ss = ss.Trim();
                             string[] sss = ss.Split();
-                            arrList.Add(sss[0]);
+                            arrList.Add(sss[sss.Length-3]);
                         }
                     }
                     listArrList.Add(arrList);
                 }
                 
             }
-            
+            foreach (ArrayList al in listArrList)
+            {
+                //if ()
+                //{
 
+                //}
+            }
+            return keyLumber;
         }
 
     }
+
 
 }
