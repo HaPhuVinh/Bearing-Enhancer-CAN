@@ -9,4 +9,5 @@ namespace Bearing_Enhancer_CAN
     internal class TBE_Info
     {
     }
+
 }

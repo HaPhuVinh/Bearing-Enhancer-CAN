@@ -86,7 +86,7 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Get Data in <LumberResults> Node
-                            Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
+                            string keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
 
                             bearingEnhancerItems.Add(bE);
                         }
@@ -96,7 +96,7 @@ namespace Bearing_Enhancer_CAN
             
             return bearingEnhancerItems;
         }
-        string Get_Lumber(string x, string y, XmlNode rootNode)//Get lumber grade and lumber size at Xlocation of the bearing
+        string Get_Lumber(string x, string y, XmlNode rootNode)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
             int i = 0;
             string[] S, A;
@@ -131,10 +131,10 @@ namespace Bearing_Enhancer_CAN
                         j++;
                         if (j == i)
                         {
-                            string ss = N.Attributes["R"].Value;
+                            string ss = N.Attributes["L"].Value;
                             ss = ss.Trim();
                             string[] sss = ss.Split();
-                            arrList.Add(sss[sss.Length-3]);
+                            arrList.Add(sss[0]);
                         }
                     }
                     listArrList.Add(arrList);
@@ -162,27 +162,51 @@ namespace Bearing_Enhancer_CAN
                         j++;
                         if (j == i)
                         {
-                            string ss = N.Attributes["R"].Value;
+                            string ss = N.Attributes["L"].Value;
                             ss = ss.Trim();
                             string[] sss = ss.Split();
-                            arrList.Add(sss[sss.Length-3]);
+                            arrList.Add(sss[0]);
                         }
                     }
-                    listArrList.Add(arrList);
+                    listArrList.Add(arrList);//{id, YLocation, Lumber ID, XLocation at the right end}
                 }
                 
             }
+            double xloc = Convert_To_Inch(x);
+
             foreach (ArrayList al in listArrList)
             {
-                //if ()
-                //{
+                double rightEndLoc = Double.Parse(al[3].ToString());
 
-                //}
+                if (xloc >= rightEndLoc)
+                {
+                    keyLumber = al[2].ToString();
+                }
             }
             return keyLumber;
         }
 
+        double Convert_To_Inch(string xxx)
+        {
+            string s = xxx.Trim();
+            string[] ss = s.Split('-');
+            double q;
+            if (ss.Length>2)
+            {
+                q = double.Parse(ss[0]) * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
+            }
+            else if(ss.Length>1)
+            {
+                q = double.Parse(ss[0]) + double.Parse(ss[1]) / 16;
+            }
+            else
+            {
+                q=double.Parse(ss[0]) / 16;
+            }
+            
+            return q;
+        }
     }
 
-
+    
 }
