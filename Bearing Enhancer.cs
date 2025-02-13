@@ -17,6 +17,8 @@ namespace Bearing_Enhancer_CAN
         public int Ply { get; set; }
         public string LumSpecie { get; set; }
         public string LumSize { get; set; }
+        public string LumWidth { get; set; }
+        public string LumThick { get; set; }
         Top_Plate_Info TopPlateInfo { get; set; }
 
 
@@ -32,7 +34,7 @@ namespace Bearing_Enhancer_CAN
             string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(txtPath));
             string trussesPath = $"{projectPath}\\Trusses";
             string[] arrPath = trussesPath.Split('\\');
-            string projectID = arrPath[arrPath.Length-1];
+            string projectID = arrPath[arrPath.Length-2];
             string fileName = @"";
             string extName = @"";
             int j = 0;
@@ -87,6 +89,18 @@ namespace Bearing_Enhancer_CAN
                             }
                             //Get Data in <LumberResults> Node
                             string keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
+                            LumberInventory lumI = new LumberInventory();
+                            List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectID);
+                            foreach(LumberInventory LI in list_lumI)
+                            {
+                                if (keyLumber==LI.Lumber_Key)
+                                {
+                                    bE.LumSpecie = LI.Lumber_SpeciesName;
+                                    bE.LumSize = LI.Lumber_Size;
+                                    bE.LumWidth = LI.Lumber_Width;
+                                    bE.LumThick = LI.Lumber_Thickness;
+                                }
+                            }
 
                             bearingEnhancerItems.Add(bE);
                         }
