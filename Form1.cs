@@ -35,7 +35,7 @@ namespace Bearing_Enhancer_CAN
                 List<Bearing_Enhancer>list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
                 list_BE=BE.Get_Bearing_Info(txtPathes[0]);
-                
+                dataGridView_Truss.DataSource = list_BE;
                 //Top_Plate_Info TOP = new Top_Plate_Info();
                 //TOP.Get_TOP_Info(txtPath[0], "A");
             }

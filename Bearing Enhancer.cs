@@ -91,17 +91,25 @@ namespace Bearing_Enhancer_CAN
                             string keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
                             LumberInventory lumI = new LumberInventory();
                             List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectID);
-                            foreach(LumberInventory LI in list_lumI)
+
+                            if (keyLumber == "")
                             {
-                                if (keyLumber==LI.Lumber_Key)
+
+                            }
+                            else
+                            {
+                                foreach (LumberInventory LI in list_lumI)
                                 {
-                                    bE.LumSpecie = LI.Lumber_SpeciesName;
-                                    bE.LumSize = LI.Lumber_Size;
-                                    bE.LumWidth = LI.Lumber_Width;
-                                    bE.LumThick = LI.Lumber_Thickness;
+                                    if (keyLumber == LI.Lumber_Key)
+                                    {
+                                        bE.LumSpecie = LI.Lumber_SpeciesName;
+                                        bE.LumSize = LI.Lumber_Size;
+                                        bE.LumWidth = LI.Lumber_Width;
+                                        bE.LumThick = LI.Lumber_Thickness;
+                                    }
                                 }
                             }
-
+                            
                             bearingEnhancerItems.Add(bE);
                         }
                     }
@@ -187,12 +195,16 @@ namespace Bearing_Enhancer_CAN
                 
             }
             double xloc = Convert_To_Inch(x);
-
             foreach (ArrayList al in listArrList)
             {
                 double rightEndLoc = Double.Parse(al[3].ToString());
 
-                if (xloc >= rightEndLoc)
+                if (xloc <= rightEndLoc)
+                {
+                    keyLumber = al[2].ToString();
+                    break;
+                }
+                else
                 {
                     keyLumber = al[2].ToString();
                 }
