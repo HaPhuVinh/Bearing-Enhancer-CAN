@@ -19,7 +19,7 @@ namespace Bearing_Enhancer_CAN
         public string LumSize { get; set; }
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
-        Top_Plate_Info TopPlateInfo { get; set; }
+        public Top_Plate_Info TopPlateInfo { get; set; }
 
 
         public Bearing_Enhancer()
@@ -74,7 +74,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     S = I.Split(':');
                                     bE.Ply = int.Parse(S[1]);
-                                    //break;
+                                    
                                 }
                                 if (I.Contains("brg:"))
                                 {
@@ -84,7 +84,7 @@ namespace Bearing_Enhancer_CAN
                                         bE.TopPlateInfo.YLocation = S[3];
                                     }
                                     j = j + 1;
-                                    //break;
+                                    
                                 }
                             }
                             //Get Data in <LumberResults> Node
@@ -94,7 +94,7 @@ namespace Bearing_Enhancer_CAN
 
                             if (keyLumber == "")
                             {
-
+                                //Consider if necessary
                             }
                             else
                             {

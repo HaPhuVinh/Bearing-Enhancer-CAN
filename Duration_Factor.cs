@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
-    internal class Duration_Factor
+    public class Duration_Factor
     {
         public string DOL_Snow {  get; set; }
         public string DOL_Live { get; set; }

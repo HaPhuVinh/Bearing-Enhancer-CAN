@@ -35,9 +35,19 @@ namespace Bearing_Enhancer_CAN
                 List<Bearing_Enhancer>list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
                 list_BE=BE.Get_Bearing_Info(txtPathes[0]);
-                dataGridView_Truss.DataSource = list_BE;
-                //Top_Plate_Info TOP = new Top_Plate_Info();
-                //TOP.Get_TOP_Info(txtPath[0], "A");
+                //dataGridView_Truss.DataSource = list_BE;
+                foreach(Bearing_Enhancer be in list_BE)
+                {
+                    List<string> durFactors = new List<string>();
+                    durFactors.Add( be.TopPlateInfo.DOL.DOL_Snow);
+                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Live);
+                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Wind);
+                    DOL_Column.DataSource = durFactors;
+
+                    dataGridView_Table.Rows.Add(be.TrussName,be.Ply,be.LumSpecie,be.LumSize, be.LumWidth, be.LumThick, be.TopPlateInfo.DOL.DOL_Snow, 
+                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
+                        be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer);
+                }
             }
             else
             {
@@ -54,6 +64,11 @@ namespace Bearing_Enhancer_CAN
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
         {
 
         }

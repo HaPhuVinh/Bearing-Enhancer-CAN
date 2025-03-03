@@ -13,7 +13,7 @@ namespace Bearing_Enhancer_CAN
 {
     public class Top_Plate_Info
     {
-        Duration_Factor DOL {  get; set; }
+        public Duration_Factor DOL {  get; set; }
         public string JointID { get; set; }
         public string XLocation { get; set; }
         public string YLocation { get; set; }
