@@ -35,8 +35,15 @@ namespace Bearing_Enhancer_CAN
                 List<Bearing_Enhancer>list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
                 list_BE=BE.Get_Bearing_Info(txtPathes[0]);
-                //dataGridView_Truss.DataSource = list_BE;
-                foreach(Bearing_Enhancer be in list_BE)
+
+                LumberInventory lumberI = new LumberInventory();
+                List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
+                var list_LumSize = new List<string>();
+                var list_Specie = new List<string>();
+                var list_Ply = new List<string> { "1", "2", "3", "4"};
+                list_LumSize = list_Lumber.GroupBy(x=>x.Lumber_Size).ToList();
+
+                foreach (Bearing_Enhancer be in list_BE)
                 {
                     List<string> durFactors = new List<string>();
                     durFactors.Add( be.TopPlateInfo.DOL.DOL_Snow);
