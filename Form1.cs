@@ -38,10 +38,16 @@ namespace Bearing_Enhancer_CAN
 
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
-                var list_LumSize = new List<string>();
-                var list_Specie = new List<string>();
-                var list_Ply = new List<string> { "1", "2", "3", "4"};
-                list_LumSize = list_Lumber.GroupBy(x=>x.Lumber_Size).ToList();
+
+                List<string> list_Mat = list_BE.Select(x=>x.TopPlateInfo.Material).Distinct().ToList();
+                List<string> list_Ply = list_BE.Select(x=>x.Ply).Distinct().ToList();
+                List<string> list_LumSize = list_Lumber.Select(x=>x.Lumber_Size).Distinct().ToList();
+                List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
+
+                No_Ply.DataSource = list_Ply;
+                Lumber_Specie.DataSource = list_Specie;
+                Lumber_Size.DataSource = list_LumSize;
+                Material.DataSource = list_Mat;
 
                 foreach (Bearing_Enhancer be in list_BE)
                 {
@@ -51,7 +57,7 @@ namespace Bearing_Enhancer_CAN
                     durFactors.Add(be.TopPlateInfo.DOL.DOL_Wind);
                     DOL_Column.DataSource = durFactors;
 
-                    dataGridView_Table.Rows.Add(be.TrussName,be.Ply,be.LumSpecie,be.LumSize, be.LumWidth, be.LumThick, be.TopPlateInfo.DOL.DOL_Snow, 
+                    dataGridView_Table.Rows.Add(be.TrussName,be.Ply,be.LumSpecie,be.LumSize, be.TopPlateInfo.DOL.DOL_Snow, 
                         be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                         be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer);
                 }

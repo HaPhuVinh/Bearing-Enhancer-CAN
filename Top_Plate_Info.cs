@@ -102,7 +102,7 @@ namespace Bearing_Enhancer_CAN
                         tPI.XLocation = arrLine2[2];
                         tPI.Reaction = double.Parse(arrLine2[3]);
                         tPI.BearingWidth = arrLine2[5];
-                        tPI.RequireWidth = arrLine2[6];
+                        tPI.RequireWidth = arrLine2[6].Trim('*');
                         tPI.Material = arrLine2[7];
                         tPI.DOL = kD;
                         dictTopPlate.Add(i,tPI);

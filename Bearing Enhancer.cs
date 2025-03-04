@@ -14,7 +14,7 @@ namespace Bearing_Enhancer_CAN
     public class Bearing_Enhancer
     {
         public string TrussName { get; set; }
-        public int Ply { get; set; }
+        public string Ply { get; set; }
         public string LumSpecie { get; set; }
         public string LumSize { get; set; }
         public string LumWidth { get; set; }
@@ -73,7 +73,7 @@ namespace Bearing_Enhancer_CAN
                                 if (I.Contains("plys:"))
                                 {
                                     S = I.Split(':');
-                                    bE.Ply = int.Parse(S[1]);
+                                    bE.Ply = S[1].Trim();
                                     
                                 }
                                 if (I.Contains("brg:"))
