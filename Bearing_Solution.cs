@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
-    internal class Bearing_Solution
+    public class Bearing_Solution
     {
         public string SgtOption1 { get; set; }
         public string SgtOption2 { get; set; }

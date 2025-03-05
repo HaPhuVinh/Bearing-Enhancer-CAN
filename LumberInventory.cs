@@ -16,7 +16,7 @@ namespace Bearing_Enhancer_CAN
         public string Lumber_Width { get; set; }
         public string Lumber_Grade { get; set; }
         public string Lumber_SpeciesName { get; set; }
-        public int Lumber_Sequence { get; set; }
+        //public int Lumber_Sequence { get; set; }
 
 
         public List<LumberInventory> Get_Lumber_Inv(string PJN)
@@ -38,7 +38,14 @@ namespace Bearing_Enhancer_CAN
                 LumberInventory lumber = new LumberInventory();
                 lumber.Lumber_Key = searchNode.Attributes["Key"].Value;
                 lumber.Lumber_Name = searchNode.Attributes["Name"].Value;
-                lumber.Lumber_Size = searchNode.Attributes["Size"].Value;
+                if (searchNode.Attributes["Size"] != null)
+                {
+                    lumber.Lumber_Size = searchNode.Attributes["Size"].Value;
+                }
+                else
+                {
+                    continue;
+                }
                 lumber.Lumber_Thickness = searchNode.Attributes["Thickness"].Value;
                 lumber.Lumber_Width = searchNode.Attributes["Width"].Value;
                 if (searchNode.Attributes["Grade"] != null)
@@ -47,10 +54,17 @@ namespace Bearing_Enhancer_CAN
                 }
                 else
                 {
-                    lumber.Lumber_Grade = "-";
+                    continue;
                 }
-                lumber.Lumber_SpeciesName = searchNode.Attributes["SpeciesName"].Value;
-                lumber.Lumber_Sequence = int.Parse(searchNode.Attributes["Sequence"].Value);
+                if (searchNode.Attributes["Species"] != null)
+                {
+                    lumber.Lumber_SpeciesName = searchNode.Attributes["Species"].Value;
+                }
+                else
+                {
+                    continue;
+                }
+                //lumber.Lumber_Sequence = int.Parse(searchNode.Attributes["Sequence"].Value);
                 lumber_inv.Add(lumber);
             }
             return lumber_inv;

@@ -81,7 +81,7 @@ namespace Bearing_Enhancer_CAN
                                     if (j == TP.Key)
                                     {
                                         S = I.Split(' ');
-                                        bE.TopPlateInfo.YLocation = S[3];
+                                        bE.TopPlateInfo.YLocation = S.SingleOrDefault(n => n == "BotChd" || n == "TopChd" || n == "Web");
                                     }
                                     j = j + 1;
                                     

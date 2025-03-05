@@ -22,26 +22,27 @@ namespace Bearing_Enhancer_CAN
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string projectPath = textBox_PJNum.Text;
-            string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
-            string tempPath = $"{projectPath}\\Temp";
-            string[] arrPath = projectPath.Split('\\');
-            string projectID = arrPath[arrPath.Length-1];
-            string[] txtPathes = Directory.GetFiles(tempPath, "*.txt");
-            bool existFile = txtPathes.Count() == 1;
-            if (existFile)
+            dataGridView_Table.Rows.Clear();
+            try
             {
+                string projectPath = textBox_PJNum.Text;
+                string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
+                string tempPath = $"{projectPath}\\Temp";
+                string[] arrPath = projectPath.Split('\\');
+                string projectID = arrPath[arrPath.Length - 1];
+                string[] txtPathes = Directory.GetFiles(tempPath, "*.txt");
+
                 string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
-                List<Bearing_Enhancer>list_BE = new List<Bearing_Enhancer>();
+                List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
-                list_BE=BE.Get_Bearing_Info(txtPathes[0]);
+                list_BE = BE.Get_Bearing_Info(txtPathes[0]);
 
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
 
-                List<string> list_Mat = list_BE.Select(x=>x.TopPlateInfo.Material).Distinct().ToList();
-                List<string> list_Ply = list_BE.Select(x=>x.Ply).Distinct().ToList();
-                List<string> list_LumSize = list_Lumber.Select(x=>x.Lumber_Size).Distinct().ToList();
+                List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
+                List<string> list_Ply = list_BE.Select(x => x.Ply).Distinct().ToList();
+                List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
                 List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
 
                 No_Ply.DataSource = list_Ply;
@@ -52,23 +53,22 @@ namespace Bearing_Enhancer_CAN
                 foreach (Bearing_Enhancer be in list_BE)
                 {
                     List<string> durFactors = new List<string>();
-                    durFactors.Add( be.TopPlateInfo.DOL.DOL_Snow);
+                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Snow);
                     durFactors.Add(be.TopPlateInfo.DOL.DOL_Live);
                     durFactors.Add(be.TopPlateInfo.DOL.DOL_Wind);
                     DOL_Column.DataSource = durFactors;
 
-                    dataGridView_Table.Rows.Add(be.TrussName,be.Ply,be.LumSpecie,be.LumSize, be.TopPlateInfo.DOL.DOL_Snow, 
-                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
+                    dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow,
+                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                         be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer);
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show($"You need to choose the Open All icon in CS Engineer and export a .txt file via Bluebeam!");
+                MessageBox.Show(ex.Message);
             }
-
-
-
+            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
