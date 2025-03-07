@@ -99,7 +99,7 @@ namespace Bearing_Enhancer_CAN
                         string line2 = line.TrimEnd('\r', '\n', '\t');
                         line2 = Regex.Replace(line, @"\s+", " ");
                         arrLine2 = line2.Split();
-                        if (arrLine2.Length == 9)
+                        if (arrLine2.Length == 9)//Need more take care of this criteria
                         {
                             if (arrLine2[6].Contains(@"**"))
                             {
