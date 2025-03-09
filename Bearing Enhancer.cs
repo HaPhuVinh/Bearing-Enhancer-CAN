@@ -109,6 +109,12 @@ namespace Bearing_Enhancer_CAN
                                     }
                                 }
                             }
+
+                            //Calculate Load Transfer load
+                            double react = bE.TopPlateInfo.Reaction;
+                            double bear_W = Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
+                            double bear_Wrq = Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
+                            bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
                             
                             bearingEnhancerItems.Add(bE);
                         }

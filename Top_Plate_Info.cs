@@ -21,7 +21,7 @@ namespace Bearing_Enhancer_CAN
         public string BearingWidth { get; set; }
         public string RequireWidth { get; set; }
         public string Material { get; set; }
-        public string LoadTransfer { get; set; }
+        public double LoadTransfer { get; set; }
 
         public Dictionary<int,Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname)
         {
@@ -99,7 +99,13 @@ namespace Bearing_Enhancer_CAN
                         string line2 = line.TrimEnd('\r', '\n', '\t');
                         line2 = Regex.Replace(line, @"\s+", " ");
                         arrLine2 = line2.Split();
-                        if (arrLine2.Length == 9)//Need more take care of this criteria
+                        bool isLine = false;
+                        if (arrLine2.Length == 9)
+                        {
+                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF" }.Any(s => arrLine2[7].Contains(s));
+                        }
+                        
+                        if (arrLine2.Length == 9 && isLine)
                         {
                             if (arrLine2[6].Contains(@"**"))
                             {
