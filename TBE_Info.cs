@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
-    internal class TBE_Info
+    public class TBE_Info
     {
+        
     }
 
 }

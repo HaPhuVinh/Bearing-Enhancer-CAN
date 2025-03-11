@@ -102,7 +102,7 @@ namespace Bearing_Enhancer_CAN
                         bool isLine = false;
                         if (arrLine2.Length == 9)
                         {
-                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF" }.Any(s => arrLine2[7].Contains(s));
+                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF", "USER" }.Any(s => arrLine2[7].Contains(s));
                         }
                         
                         if (arrLine2.Length == 9 && isLine)

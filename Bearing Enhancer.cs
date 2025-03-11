@@ -20,13 +20,14 @@ namespace Bearing_Enhancer_CAN
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
         public Top_Plate_Info TopPlateInfo { get; set; }
-
+        public Bearing_Solution BearingSolution { get; set; }
 
         public Bearing_Enhancer()
         {
             
         }
 
+        #region Service Method
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath)
         {
             //Get Data from tdlTruss file
@@ -124,6 +125,49 @@ namespace Bearing_Enhancer_CAN
             
             return bearingEnhancerItems;
         }
+
+        public Bearing_Solution check_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate)
+        {
+            int plies = int.Parse(ply);
+            int No_Block = 0;
+            double lumThick = double.Parse(lumberthickness);
+            double brgWidth = Convert_To_Inch(topPlate.BearingWidth);
+            double rqdWidth = Convert_To_Inch(topPlate.RequireWidth);
+            double rqdArea = lumThick * plies * rqdWidth;
+            double brgArea = lumThick * plies * brgWidth;
+
+            if (topPlate.LoadTransfer < 0)
+            {
+                No_Block = 0;
+            }
+            else if (rqdArea <= brgArea + 1.5 * 1 * brgWidth)
+            {
+                if (plies > 3)
+                {
+                    No_Block = 2; //Alway use blocks on both faces for 4-ply
+                }
+                else
+                {
+                    No_Block = 1;
+                }
+            }
+            else if (rqdArea <= brgArea + 1.5 * 2 * brgWidth)
+            {
+                No_Block = 2;
+            }
+            else
+            {
+                No_Block = 3;
+            }
+
+
+
+            Bearing_Solution BS = new Bearing_Solution();
+            return BS; 
+        }
+        #endregion
+
+        #region Support Methods:
         string Get_Lumber(string x, string y, XmlNode rootNode)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
             int i = 0;
@@ -136,7 +180,7 @@ namespace Bearing_Enhancer_CAN
             foreach (string I in A)
             {
                 i ++;
-                if (y== "BotChd")
+                if (y == "BotChd")
                 {
                     if (!I.Contains("BC"))
                     {
@@ -238,7 +282,11 @@ namespace Bearing_Enhancer_CAN
             
             return q;
         }
+        #endregion
     }
 
-    
+    public class Bearing_Enhancer_TBE : Bearing_Enhancer
+    {
+
+    }
 }
