@@ -13,9 +13,5 @@ namespace Bearing_Enhancer_CAN
         public string SgtOption3 { get; set; }
         public string ChosenOption { get; set; }
 
-        void check_Solution(string a, string b)
-        {
-
-        }
     }
 }

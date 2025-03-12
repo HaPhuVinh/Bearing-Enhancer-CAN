@@ -16,7 +16,7 @@ namespace Bearing_Enhancer_CAN
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form_BE());
+            Application.Run(new Form_BearingEnhacerCAN());
         }
     }
 }

@@ -50,6 +50,7 @@
     <Compile Include="Bearing_Solution.cs" />
     <Compile Include="Block_Info.cs" />
     <Compile Include="Duration_Factor.cs" />
+    <Compile Include="English_Or_French.cs" />
     <Compile Include="Fastener_Info.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -57,6 +58,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Imperial_Or_Metric.cs" />
     <Compile Include="LumberInventory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

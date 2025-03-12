@@ -28,6 +28,10 @@ namespace Bearing_Enhancer_CAN
         }
 
         #region Service Method
+        public virtual void Get_Enhancer_Note()
+        {
+
+        } 
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath)
         {
             //Get Data from tdlTruss file
@@ -126,8 +130,9 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public Bearing_Solution check_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate)
+        public Bearing_Solution check_Bearing_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate)
         {
+            const double alternateInstallationFactor = 0.6;
             int plies = int.Parse(ply);
             int No_Block = 0;
             double lumThick = double.Parse(lumberthickness);
@@ -136,6 +141,7 @@ namespace Bearing_Enhancer_CAN
             double rqdArea = lumThick * plies * rqdWidth;
             double brgArea = lumThick * plies * brgWidth;
 
+            //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
                 No_Block = 0;
@@ -160,7 +166,11 @@ namespace Bearing_Enhancer_CAN
                 No_Block = 3;
             }
 
+            //Check TBE
+            if(brgWidth > 3.5)
+            {
 
+            }
 
             Bearing_Solution BS = new Bearing_Solution();
             return BS; 
@@ -287,6 +297,11 @@ namespace Bearing_Enhancer_CAN
 
     public class Bearing_Enhancer_TBE : Bearing_Enhancer
     {
+        public TBE_Info TBE_Info { get; set; }
 
+        public override void Get_Enhancer_Note()
+        {
+            base.Get_Enhancer_Note();
+        }
     }
 }

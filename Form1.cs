@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,16 +14,30 @@ using System.Xml;
 
 namespace Bearing_Enhancer_CAN
 {
-    public partial class Form_BE : Form
+    public partial class Form_BearingEnhacerCAN : Form
     {
-        public Form_BE()
+        public Form_BearingEnhacerCAN()
         {
             InitializeComponent();
+            this.Load += Form_BearingEnhacerCAN_Load;
         }
+        
+        private void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
+        {
+            comboBox_Language.Items.Add("English");
+            comboBox_Language.Items.Add("France");
+            comboBox_Language.Text = "English";
 
+            comboBox_Unit.Items.Add("Imperial");
+            comboBox_Unit.Items.Add("Metric");
+            comboBox_Unit.Text = "Imperial";
+        }
+        
         private void button1_Click(object sender, EventArgs e)
         {
             dataGridView_Table.Rows.Clear();
+            Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
+            TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
             try
             {
                 string projectPath = textBox_PJNum.Text;
