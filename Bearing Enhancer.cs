@@ -13,6 +13,8 @@ namespace Bearing_Enhancer_CAN
 {
     public class Bearing_Enhancer
     {
+        public string Language { get; set; }
+        public string Unit { get; set; }
         public string TrussName { get; set; }
         public string Ply { get; set; }
         public string LumSpecie { get; set; }
@@ -22,9 +24,14 @@ namespace Bearing_Enhancer_CAN
         public Top_Plate_Info TopPlateInfo { get; set; }
         public Bearing_Solution BearingSolution { get; set; }
 
+        public Bearing_Enhancer(string language, string unit)
+        {
+            Language = language;
+            Unit = unit;
+        }
+
         public Bearing_Enhancer()
         {
-            
         }
 
         #region Service Method
@@ -120,7 +127,10 @@ namespace Bearing_Enhancer_CAN
                             double bear_W = Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
                             double bear_Wrq = Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
                             bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
-                            
+
+                            //Get Bearing Solution
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.LumThick, bE.Ply, bE.TopPlateInfo, bE.Unit);
+
                             bearingEnhancerItems.Add(bE);
                         }
                     }
@@ -130,9 +140,10 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public Bearing_Solution check_Bearing_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate)
+        public List<string> Check_Bearing_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate, string unit)
         {
-            const double alternateInstallationFactor = 0.6;
+            List<string> list_BearingSolution = new List<string>();
+            const double alternateFactor = 0.6;
             int plies = int.Parse(ply);
             int No_Block = 0;
             double lumThick = double.Parse(lumberthickness);
@@ -144,7 +155,12 @@ namespace Bearing_Enhancer_CAN
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
-                No_Block = 0;
+                return list_BearingSolution;
+            }
+            else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
+            {
+                list_BearingSolution.Add("Within 5%");
+                return list_BearingSolution;
             }
             else if (rqdArea <= brgArea + 1.5 * 1 * brgWidth)
             {
@@ -165,15 +181,49 @@ namespace Bearing_Enhancer_CAN
             {
                 No_Block = 3;
             }
-
+            list_BearingSolution.Add("Number of Block: "+No_Block);
             //Check TBE
-            if(brgWidth > 3.5)
+            TBE_Info tbe_Data = new TBE_Info(unit);
+            if(brgWidth >= 3.5)
             {
-
+                if(topPlate.Material == "SPF")
+                {
+                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth>3.5 ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_BearingSolution.Add("TBE4");
+                    }
+                }
+                if(topPlate.Material == "DFL")
+                {
+                    double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_BearingSolution.Add("TBE4");
+                    }
+                }
+            }
+            if (topPlate.Material == "DLF")
+            {
+                if (topPlate.Material == "SPF")
+                {
+                    double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_BearingSolution.Add("TBE6");
+                    }
+                }
+                if (topPlate.Material == "DFL")
+                {
+                    double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_BearingSolution.Add("TBE6");
+                    }
+                }
             }
 
-            Bearing_Solution BS = new Bearing_Solution();
-            return BS; 
+            return list_BearingSolution; 
         }
         #endregion
 

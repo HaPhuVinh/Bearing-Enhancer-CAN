@@ -66,7 +66,7 @@
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button_Check.Location = new System.Drawing.Point(652, 15);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(121, 45);
             this.button_Check.TabIndex = 0;
@@ -90,7 +90,7 @@
             // 
             this.textBox_PJNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_PJNum.Location = new System.Drawing.Point(207, 15);
-            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_PJNum.Name = "textBox_PJNum";
             this.textBox_PJNum.Size = new System.Drawing.Size(382, 24);
             this.textBox_PJNum.TabIndex = 2;
@@ -118,8 +118,8 @@
             this.Bearing_Solution,
             this.Checked,
             this.Chosen_Solution});
-            this.dataGridView_Table.Location = new System.Drawing.Point(2, 112);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView_Table.Location = new System.Drawing.Point(2, 127);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
@@ -274,7 +274,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(7, 92);
+            this.label2.Location = new System.Drawing.Point(7, 110);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 18);
@@ -327,7 +327,7 @@
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1443, 727);
+            this.ClientSize = new System.Drawing.Size(1443, 744);
             this.Controls.Add(this.label_Unit);
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
@@ -339,7 +339,7 @@
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();

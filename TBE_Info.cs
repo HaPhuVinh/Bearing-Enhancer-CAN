@@ -36,7 +36,7 @@ namespace Bearing_Enhancer_CAN
                     };
                 }
             }
-            set { tbe4_dfl = value; }
+            //set { tbe4_dfl = value; }
         }
 
         double[,] tbe6_dfl;
@@ -65,7 +65,7 @@ namespace Bearing_Enhancer_CAN
                     };
                 }
             }
-            set { tbe6_dfl = value; }
+            //set { tbe6_dfl = value; }
         }
 
         double[,] tbe4_spf;
@@ -94,7 +94,7 @@ namespace Bearing_Enhancer_CAN
                     };
                 }
             }
-            set { tbe4_spf = value; }
+            //set { tbe4_spf = value; }
         }
 
         double[,] tbe6_spf;
@@ -123,7 +123,7 @@ namespace Bearing_Enhancer_CAN
                     };
                 }
             }
-            set { tbe6_spf = value; }
+            //set { tbe6_spf = value; }
         }
 
         //Metric

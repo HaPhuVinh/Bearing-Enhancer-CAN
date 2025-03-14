@@ -36,7 +36,7 @@ namespace Bearing_Enhancer_CAN
         private void button1_Click(object sender, EventArgs e)
         {
             dataGridView_Table.Rows.Clear();
-            Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
+            //Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
             TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
             try
             {
@@ -49,8 +49,14 @@ namespace Bearing_Enhancer_CAN
 
                 string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
-                Bearing_Enhancer BE = new Bearing_Enhancer();
+                Bearing_Enhancer BE = new Bearing_Enhancer(comboBox_Language.Text, comboBox_Unit.Text);
+                
                 list_BE = BE.Get_Bearing_Info(txtPathes[0]);
+
+                //foreach(Bearing_Enhancer bE in list_BE) //Get Bearing Solution
+                //{
+                //    //List<string> bear_Solution = bE.Check_Bearing_Solution(bE.LumThick, bE.Ply, bE.TopPlateInfo, bE.Unit);
+                //}
 
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
