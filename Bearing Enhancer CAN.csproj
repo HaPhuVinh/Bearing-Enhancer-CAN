@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bearing Enhancer.cs" />
-    <Compile Include="Bearing_Solution.cs" />
     <Compile Include="Block_Info.cs" />
     <Compile Include="Duration_Factor.cs" />
     <Compile Include="English_Or_French.cs" />

@@ -49,39 +49,41 @@ namespace Bearing_Enhancer_CAN
 
                 string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
-                Bearing_Enhancer BE = new Bearing_Enhancer(comboBox_Language.Text, comboBox_Unit.Text);
+                Bearing_Enhancer BE = new Bearing_Enhancer();
                 
-                list_BE = BE.Get_Bearing_Info(txtPathes[0]);
-
-                //foreach(Bearing_Enhancer bE in list_BE) //Get Bearing Solution
-                //{
-                //    //List<string> bear_Solution = bE.Check_Bearing_Solution(bE.LumThick, bE.Ply, bE.TopPlateInfo, bE.Unit);
-                //}
+                list_BE = BE.Get_Bearing_Info(txtPathes[0],comboBox_Language.Text, comboBox_Unit.Text);
 
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
 
                 List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
-                List<string> list_Ply = list_BE.Select(x => x.Ply).Distinct().ToList();
+                List<string> list_Ply =new List<string> {"1","2","3","4"};
                 List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
                 List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
+                List<string> snow_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Snow).Distinct().ToList();
+                List<string> live_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Live).Distinct().ToList();
+                List<string> wind_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Wind).Distinct().ToList();
+                List<string> list_DurationFactor = new List<string>();
+                list_DurationFactor.AddRange(snow_DurationFactor);
+                list_DurationFactor.AddRange(live_DurationFactor);
+                list_DurationFactor.AddRange(wind_DurationFactor);
+                list_DurationFactor = list_DurationFactor.Distinct().ToList();
 
                 No_Ply.DataSource = list_Ply;
                 Lumber_Specie.DataSource = list_Specie;
                 Lumber_Size.DataSource = list_LumSize;
+                DOL_Column.DataSource = list_DurationFactor;
                 Material.DataSource = list_Mat;
-
+                int i = 0;
                 foreach (Bearing_Enhancer be in list_BE)
                 {
-                    List<string> durFactors = new List<string>();
-                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Snow);
-                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Live);
-                    durFactors.Add(be.TopPlateInfo.DOL.DOL_Wind);
-                    DOL_Column.DataSource = durFactors;
+                    List<string> list_BearingSolution = be.BearingSolution;
 
                     dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow,
                         be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                         be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer);
+                    (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
+                    i++;
                 }
 
             }

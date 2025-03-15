@@ -13,8 +13,8 @@ namespace Bearing_Enhancer_CAN
 {
     public class Bearing_Enhancer
     {
-        public string Language { get; set; }
-        public string Unit { get; set; }
+        //public string Language { get; set; } = "";
+        //public string Unit { get; set; } = "";
         public string TrussName { get; set; }
         public string Ply { get; set; }
         public string LumSpecie { get; set; }
@@ -22,13 +22,13 @@ namespace Bearing_Enhancer_CAN
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
         public Top_Plate_Info TopPlateInfo { get; set; }
-        public Bearing_Solution BearingSolution { get; set; }
+        public List<string> BearingSolution { get; set; }
 
-        public Bearing_Enhancer(string language, string unit)
-        {
-            Language = language;
-            Unit = unit;
-        }
+        //public Bearing_Enhancer(string language, string unit)
+        //{
+        //    Language = language;
+        //    Unit = unit;
+        //}
 
         public Bearing_Enhancer()
         {
@@ -39,7 +39,7 @@ namespace Bearing_Enhancer_CAN
         {
 
         } 
-        public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath)
+        public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
             //Get Data from tdlTruss file
             string txtPath = txtpath;
@@ -66,7 +66,7 @@ namespace Bearing_Enhancer_CAN
                     xmlDoc.Load(Item);
                     rootNode = xmlDoc.DocumentElement;
                     fileName = Path.GetFileNameWithoutExtension(Item);
-                    dictTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName);
+                    dictTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName,language,unit);
                     if (dictTopPlate != null)
                     {
                         foreach(KeyValuePair<int,Top_Plate_Info> TP in dictTopPlate)
@@ -129,8 +129,8 @@ namespace Bearing_Enhancer_CAN
                             bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
 
                             //Get Bearing Solution
-                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.LumThick, bE.Ply, bE.TopPlateInfo, bE.Unit);
-
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.TopPlateInfo, unit);
+                            bE.BearingSolution = bear_Solution;
                             bearingEnhancerItems.Add(bE);
                         }
                     }
@@ -140,17 +140,16 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution (string lumberthickness, string ply, Top_Plate_Info topPlate, string unit)
+        public List<string> Check_Bearing_Solution (string ply, Top_Plate_Info topPlate, string unit)
         {
             List<string> list_BearingSolution = new List<string>();
             const double alternateFactor = 0.6;
             int plies = int.Parse(ply);
             int No_Block = 0;
-            double lumThick = double.Parse(lumberthickness);
             double brgWidth = Convert_To_Inch(topPlate.BearingWidth);
             double rqdWidth = Convert_To_Inch(topPlate.RequireWidth);
-            double rqdArea = lumThick * plies * rqdWidth;
-            double brgArea = lumThick * plies * brgWidth;
+            double rqdArea = 1.5 * plies * rqdWidth;
+            double brgArea = 1.5 * plies * brgWidth;
 
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
@@ -203,7 +202,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-            if (topPlate.Material == "DLF")
+            if (brgWidth >= 5.5)
             {
                 if (topPlate.Material == "SPF")
                 {

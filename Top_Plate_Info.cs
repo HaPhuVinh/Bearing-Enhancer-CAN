@@ -23,7 +23,7 @@ namespace Bearing_Enhancer_CAN
         public string Material { get; set; }
         public double LoadTransfer { get; set; }
 
-        public Dictionary<int,Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname)
+        public Dictionary<int,Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname, string language, string unit)
         {
             //Get data from .txt file
             Dictionary<int,Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
