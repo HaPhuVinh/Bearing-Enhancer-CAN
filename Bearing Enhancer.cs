@@ -154,6 +154,7 @@ namespace Bearing_Enhancer_CAN
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
+                list_BearingSolution.Add("Enhancer not required");
                 return list_BearingSolution;
             }
             else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
