@@ -181,7 +181,23 @@ namespace Bearing_Enhancer_CAN
             {
                 No_Block = 3;
             }
-            list_BearingSolution.Add("Number of Block: "+No_Block);
+            switch (No_Block)
+            {
+                case 1:
+                    list_BearingSolution.Add("Hor_Block_One_Face");
+                    list_BearingSolution.Add("Ver_Block_One_Face");
+                    list_BearingSolution.Add("Hor_Block_Each_Face");
+                    list_BearingSolution.Add("Ver_Block_Each_Face");
+                    break;
+                case 2:
+                    list_BearingSolution.Add("Hor_Block_Each_Face");
+                    list_BearingSolution.Add("Ver_Block_Each_Face");
+                    break;
+                //case 3:
+                //    list_BearingSolution.Add("Can not apply Bearing Block");
+                //    break;
+            }
+
             //Check TBE
             TBE_Info tbe_Data = new TBE_Info(unit);
             if(brgWidth >= 3.5)
@@ -222,7 +238,10 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-
+            if (list_BearingSolution.Count == 0)
+            {
+                list_BearingSolution.Add("Not found a relevant solution");
+            }
             return list_BearingSolution; 
         }
         #endregion
