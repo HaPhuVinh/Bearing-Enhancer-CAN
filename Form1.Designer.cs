@@ -48,6 +48,7 @@
             this.Joint_ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.X_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Y_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Location_Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Reaction = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Brg_Width = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Req_Width = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,7 +67,7 @@
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button_Check.Location = new System.Drawing.Point(652, 15);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(121, 45);
             this.button_Check.TabIndex = 0;
@@ -90,7 +91,7 @@
             // 
             this.textBox_PJNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_PJNum.Location = new System.Drawing.Point(207, 15);
-            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_PJNum.Name = "textBox_PJNum";
             this.textBox_PJNum.Size = new System.Drawing.Size(382, 24);
             this.textBox_PJNum.TabIndex = 2;
@@ -110,6 +111,7 @@
             this.Joint_ID,
             this.X_Location,
             this.Y_Location,
+            this.Location_Type,
             this.Reaction,
             this.Brg_Width,
             this.Req_Width,
@@ -119,7 +121,7 @@
             this.Checked,
             this.The_Note});
             this.dataGridView_Table.Location = new System.Drawing.Point(2, 127);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
@@ -254,6 +256,11 @@
             this.Y_Location.Name = "Y_Location";
             this.Y_Location.Width = 125;
             // 
+            // Location_Type
+            // 
+            this.Location_Type.HeaderText = "Location-Type";
+            this.Location_Type.Name = "Location_Type";
+            // 
             // Reaction
             // 
             this.Reaction.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -339,7 +346,7 @@
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
@@ -369,6 +376,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Joint_ID;
         private System.Windows.Forms.DataGridViewTextBoxColumn X_Location;
         private System.Windows.Forms.DataGridViewTextBoxColumn Y_Location;
+        private System.Windows.Forms.DataGridViewComboBoxColumn Location_Type;
         private System.Windows.Forms.DataGridViewTextBoxColumn Reaction;
         private System.Windows.Forms.DataGridViewTextBoxColumn Brg_Width;
         private System.Windows.Forms.DataGridViewTextBoxColumn Req_Width;

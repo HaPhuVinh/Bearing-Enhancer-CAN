@@ -121,6 +121,18 @@ namespace Bearing_Enhancer_CAN
                                     }
                                 }
                             }
+                            //Check Interior or Extorior Bearing
+                            double xloc = Convert_To_Inch(TP.Value.XLocation);
+                            double xleftend = double.Parse(keyLumber.x_leftend);
+                            double xrightend = double.Parse(keyLumber.x_rightend);
+                            if (xloc > xleftend + 8 && xloc < xrightend - 8)
+                            {
+                                bE.TopPlateInfo.Location_Type = "Interior";
+                            }
+                            else
+                            {
+                                bE.TopPlateInfo.Location_Type = "Exterior";
+                            }
 
                             //Calculate Load Transfer load
                             double react = bE.TopPlateInfo.Reaction;
@@ -181,21 +193,38 @@ namespace Bearing_Enhancer_CAN
             {
                 No_Block = 3;
             }
-            switch (No_Block)
+
+            //Check Block Solution
+            if (No_Block < 3)
             {
-                case 1:
-                    list_BearingSolution.Add("Hor_Block_One_Face");
-                    list_BearingSolution.Add("Ver_Block_One_Face");
-                    list_BearingSolution.Add("Hor_Block_Each_Face");
-                    list_BearingSolution.Add("Ver_Block_Each_Face");
-                    break;
-                case 2:
-                    list_BearingSolution.Add("Hor_Block_Each_Face");
-                    list_BearingSolution.Add("Ver_Block_Each_Face");
-                    break;
-                //case 3:
-                //    list_BearingSolution.Add("Can not apply Bearing Block");
-                //    break;
+                switch (plies)
+                {
+                    case 1:
+                        if (No_Block == 1)
+                        {
+                            
+                        }
+                        else
+                        {
+                            
+                        }
+                        //list_BearingSolution.Add("Hor_Block_One_Face");
+                        //list_BearingSolution.Add("Ver_Block_One_Face");
+                        //list_BearingSolution.Add("Hor_Block_Each_Face");
+                        //list_BearingSolution.Add("Ver_Block_Each_Face");
+                        break;
+                    case 2:
+                        //list_BearingSolution.Add("Hor_Block_Each_Face");
+                        //list_BearingSolution.Add("Ver_Block_Each_Face");
+                        break;
+                    case 3:
+                        //list_BearingSolution.Add("Can not apply Bearing Block");
+                        break;
+                    case 4:
+                        //list_BearingSolution.Add("Hor_Block_Each_Face");
+                        //list_BearingSolution.Add("Ver_Block_Each_Face");
+                        break;
+                }
             }
 
             //Check TBE
