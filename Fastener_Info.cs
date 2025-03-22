@@ -25,5 +25,26 @@ namespace Bearing_Enhancer_CAN
         public static (string Type, int SP, int DFL, int HF, int SPF, double APF) SDS25600_Screw { get; set; }
             = ("SDS25600 Screw [.25\"x6\"]", 475, 475, 420, 420, 5.0);
     }
-
+    public static class Fastener_Rows_Infor
+    {
+        public static (string LumberSize, int MinrowNail, int MaxrowNail, int MinrowSDW, int MaxrowSDW, int MinrowSDS, int MaxrowSDS) Lumber_2x4 { get; set; }
+            = ("2x4", 1, 2, 1, 2, 1, 2);
+        public static (string LumberSize, int MinrowNail, int MaxrowNail, int MinrowSDW, int MaxrowSDW, int MinrowSDS, int MaxrowSDS) Lumber_2x6 { get; set; }
+            = ("2x6", 2, 3, 2, 5, 2, 2);
+        public static (string LumberSize, int MinrowNail, int MaxrowNail, int MinrowSDW, int MaxrowSDW, int MinrowSDS, int MaxrowSDS) Lumber_2x8 { get; set; }
+            = ("2x8", 2, 4, 2, 8, 2, 3);
+        public static (string LumberSize, int MinrowNail, int MaxrowNail, int MinrowSDW, int MaxrowSDW, int MinrowSDS, int MaxrowSDS) Lumber_2x10 { get; set; }
+            = ("2x10", 3, 5, 2, 10, 2, 5);
+        public static (string LumberSize, int MinrowNail, int MaxrowNail, int MinrowSDW, int MaxrowSDW, int MinrowSDS, int MaxrowSDS) Lumber_2x12 { get; set; }
+            = ("2x12", 3, 6, 2, 12, 2, 6);
+    }
+    public static class Fastener_Spacing_Info
+    {
+        public static (string FastenerType, double MinSpacing, double MaxSpacing, double EndDistance) Nail { get; set; }
+            = ("Nail", 3.0, 12.0, 1.5);
+        public static (string FastenerType, double MinSpacing, double MaxSpacing, double EndDistance) SDW { get; set; }
+            = ("SDW", 6.0, 24.0, 4.0);
+        public static (string FastenerType, double MinSpacing, double MaxSpacing, double EndDistance) SDS { get; set; }
+            = ("SDS", 3.0, 24.0, 4.0);
+    }
 }

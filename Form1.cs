@@ -68,11 +68,13 @@ namespace Bearing_Enhancer_CAN
                 list_DurationFactor.AddRange(live_DurationFactor);
                 list_DurationFactor.AddRange(wind_DurationFactor);
                 list_DurationFactor = list_DurationFactor.Distinct().ToList();
+                List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 
                 No_Ply.DataSource = list_Ply;
                 Lumber_Specie.DataSource = list_Specie;
                 Lumber_Size.DataSource = list_LumSize;
                 DOL_Column.DataSource = list_DurationFactor;
+                Location_Type.DataSource = list_LocationType;
                 Material.DataSource = list_Mat;
                 int i = 0;
                 foreach (Bearing_Enhancer be in list_BE)
@@ -80,7 +82,7 @@ namespace Bearing_Enhancer_CAN
                     List<string> list_BearingSolution = be.BearingSolution;
 
                     dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow,
-                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
+                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                         be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer, list_BearingSolution[0]);
                     (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
                     
