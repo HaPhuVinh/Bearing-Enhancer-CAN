@@ -125,41 +125,9 @@ namespace Bearing_Enhancer_CAN
             }
             //set { tbe6_spf = value; }
         }
-
-        //Metric
-        //public double[,] kN_TBE4_DFL = {
-        //    //{ply, TBEOnly, TBEandWoodBearing}
-        //    {1,15.75,34.70 },
-        //    {2,16.28,54.18},
-        //    {3,16.28,73.15},
-        //    {4,16.28,92.10}
-        //};
-        //public double[,] kN_TBE6_DFL = {
-        //    {1,15.75,45.53 },
-        //    {2,17.17,76.73},
-        //    {3,17.17,106.52},
-        //    {4,17.17,136.30}
-        //};
-        //public double[,] kN_TBE4_SPF = {
-        //    {1,14.32,28.67 },
-        //    {2,15.30,43.99},
-        //    {3,15.30,58.36},
-        //    {4,15.30,72.71}
-        //};
-        //public double[,] kN_TBE6_SPF = {
-        //    {1,14.32,36.88 },
-        //    {2,15.75,60.85},
-        //    {3,15.75,83.41},
-        //    {4,15.75,105.96}
-        //};
         public TBE_Info(string imormet)
         {
             ImpOrMet = imormet;
         }
-        //public double[,] Get_TBE_Data()
-        //{
-
-        //    return new double[,] { };
-        //}
     }
 }

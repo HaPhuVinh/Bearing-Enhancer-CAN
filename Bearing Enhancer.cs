@@ -141,7 +141,7 @@ namespace Bearing_Enhancer_CAN
                             bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
 
                             //Get Bearing Solution
-                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.TopPlateInfo, unit);
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit);
                             bE.BearingSolution = bear_Solution;
                             bearingEnhancerItems.Add(bE);
                         }
@@ -152,7 +152,7 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution (string ply, Top_Plate_Info topPlate, string unit)
+        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit)
         {
             List<string> list_BearingSolution = new List<string>();
             const double alternateFactor = 0.6;
@@ -195,6 +195,7 @@ namespace Bearing_Enhancer_CAN
             }
 
             //Check Block Solution
+
             if (No_Block < 3)
             {
                 switch (plies)
@@ -202,6 +203,36 @@ namespace Bearing_Enhancer_CAN
                     case 1:
                         if (No_Block == 1)
                         {
+                            if (topPlate.Location_Type == "Exterior")
+                            {
+                                switch (lumSpecie)
+                                {
+                                    case "SP":
+
+                                        break;
+                                    case "DFL":
+                                        Fastener_Lateral_Design_Value fasDesignValue = new Fastener_Lateral_Design_Value(eFastenerName.Nail_Common_Wire_10d.ToString());
+                                        var designValue = fasDesignValue.Design_Value.DFL;
+                                        break;
+                                    case "DFLN":
+
+                                        break;
+                                }
+                                
+                                Block_Info BB_Nail_16 = new Block_Info(false, No_Block, lumSize, 16, eFastenerName.Nail_Common_Wire_10d.ToString());
+
+                                //Block_Info BB_SDW_16 = new Block_Info(false, No_Block, lumSize, 16, "SDW");
+                                //Block_Info BB_SDS_16 = new Block_Info(false, No_Block, lumSize, 16, "SDS");
+                                //Block_Info BB_SDW_18 = new Block_Info(false, No_Block, lumSize, 18, "SDW");
+                                //Block_Info BB_SDS_18 = new Block_Info(false, No_Block, lumSize, 18, "SDS");
+                                //Block_Info BB_SDW_24 = new Block_Info(false, No_Block, lumSize, 24, "SDW");
+                                //Block_Info BB_SDS_24 = new Block_Info(false, No_Block, lumSize, 24, "SDS");
+                                //List<Block_Info> list_Block = new List<Block_Info> { BB_Nail_16, BB_SDW_16, BB_SDS_16, BB_SDW_18, BB_SDS_18, BB_SDW_24, BB_SDS_24 };
+                            }
+                            else
+                            {
+
+                            }
                             
                         }
                         else
@@ -267,7 +298,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-            if (list_BearingSolution.Count == 0)
+            if (list_BearingSolution == null)
             {
                 list_BearingSolution.Add("Not found a relevant solution");
             }
