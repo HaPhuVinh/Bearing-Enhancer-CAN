@@ -212,15 +212,14 @@ namespace Bearing_Enhancer_CAN
                                         break;
                                     case "DFL":
                                         Fastener_Lateral_Design_Value fasDesignValue = new Fastener_Lateral_Design_Value(eFastenerName.Nail_Common_Wire_10d.ToString());
-                                        var designValue = fasDesignValue.Design_Value.DFL;
+                                        double designValue = fasDesignValue.Design_Value.DFL;
                                         break;
                                     case "DFLN":
 
                                         break;
                                 }
                                 
-                                Block_Info BB_Nail_16 = new Block_Info(false, No_Block, lumSize, 16, eFastenerName.Nail_Common_Wire_10d.ToString());
-
+                                //Block_Info BB_Nail_16 = new Block_Info(false, No_Block, lumSize, 16, eFastenerName.Nail_Common_Wire_10d.ToString());
                                 //Block_Info BB_SDW_16 = new Block_Info(false, No_Block, lumSize, 16, "SDW");
                                 //Block_Info BB_SDS_16 = new Block_Info(false, No_Block, lumSize, 16, "SDS");
                                 //Block_Info BB_SDW_18 = new Block_Info(false, No_Block, lumSize, 18, "SDW");
