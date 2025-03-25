@@ -205,28 +205,46 @@ namespace Bearing_Enhancer_CAN
                         {
                             if (topPlate.Location_Type == "Exterior")
                             {
-                                switch (lumSpecie)
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>() 
                                 {
-                                    case "SP":
-
-                                        break;
-                                    case "DFL":
-                                        Fastener_Lateral_Design_Value fasDesignValue = new Fastener_Lateral_Design_Value(eFastenerName.Nail_Common_Wire_10d.ToString());
-                                        double designValue = fasDesignValue.Design_Value.DFL;
-                                        break;
-                                    case "DFLN":
-
-                                        break;
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if(topPlate.LoadTransfer/ latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_BearingSolution.Add(suggestSolution);
+                                    }
+                                    else//Check Hor_Block on each face with nail if one face is not enough 
+                                    {
+                                        if (item.fastener == "Nail")
+                                        {
+                                            No_Block = 2;
+                                            Block_Info HBB2 = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            {
+                                                string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                list_BearingSolution.Add(suggestSolution);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Consider Ver-Block if Hor-Block is not enough room
+                                        }
+                                    }
                                 }
-                                
-                                //Block_Info BB_Nail_16 = new Block_Info(false, No_Block, lumSize, 16, eFastenerName.Nail_Common_Wire_10d.ToString());
-                                //Block_Info BB_SDW_16 = new Block_Info(false, No_Block, lumSize, 16, "SDW");
-                                //Block_Info BB_SDS_16 = new Block_Info(false, No_Block, lumSize, 16, "SDS");
-                                //Block_Info BB_SDW_18 = new Block_Info(false, No_Block, lumSize, 18, "SDW");
-                                //Block_Info BB_SDS_18 = new Block_Info(false, No_Block, lumSize, 18, "SDS");
-                                //Block_Info BB_SDW_24 = new Block_Info(false, No_Block, lumSize, 24, "SDW");
-                                //Block_Info BB_SDS_24 = new Block_Info(false, No_Block, lumSize, 24, "SDS");
-                                //List<Block_Info> list_Block = new List<Block_Info> { BB_Nail_16, BB_SDW_16, BB_SDS_16, BB_SDW_18, BB_SDS_18, BB_SDW_24, BB_SDS_24 };
+
                             }
                             else
                             {
@@ -238,21 +256,15 @@ namespace Bearing_Enhancer_CAN
                         {
                             
                         }
-                        //list_BearingSolution.Add("Hor_Block_One_Face");
-                        //list_BearingSolution.Add("Ver_Block_One_Face");
-                        //list_BearingSolution.Add("Hor_Block_Each_Face");
-                        //list_BearingSolution.Add("Ver_Block_Each_Face");
                         break;
                     case 2:
-                        //list_BearingSolution.Add("Hor_Block_Each_Face");
-                        //list_BearingSolution.Add("Ver_Block_Each_Face");
+
                         break;
                     case 3:
-                        //list_BearingSolution.Add("Can not apply Bearing Block");
+                        
                         break;
                     case 4:
-                        //list_BearingSolution.Add("Hor_Block_Each_Face");
-                        //list_BearingSolution.Add("Ver_Block_Each_Face");
+                        
                         break;
                 }
             }

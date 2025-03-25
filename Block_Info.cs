@@ -15,22 +15,22 @@ namespace Bearing_Enhancer_CAN
         public string FastenerType { get; set; } = "Nail";
 
         double maxNumberFastener;
-        public double MaxNumberFastener 
+        public double MaxNumberFastener
         {
             get 
             {
                 if (FastenerType.Contains("Nail"))
                 {
                     if (BlockSize == "2x4")
-                      return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowNail;
+                      return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowNail*(NumberBlock<3?NumberBlock:0);
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowNail;
+                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 0);
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowNail;
+                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 0);
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowNail;
+                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 0);
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowNail;
+                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 0);
                     else
                         return 0;
                 }
