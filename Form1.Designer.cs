@@ -55,6 +55,7 @@
             this.Material = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Load_Transfer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Vertical_Block = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
@@ -118,6 +119,7 @@
             this.Material,
             this.Load_Transfer,
             this.Bearing_Solution,
+            this.Vertical_Block,
             this.Checked,
             this.The_Note});
             this.dataGridView_Table.Location = new System.Drawing.Point(2, 127);
@@ -125,7 +127,7 @@
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
-            this.dataGridView_Table.Size = new System.Drawing.Size(1437, 612);
+            this.dataGridView_Table.Size = new System.Drawing.Size(1798, 612);
             this.dataGridView_Table.TabIndex = 3;
             // 
             // label2
@@ -251,10 +253,11 @@
             // 
             // Y_Location
             // 
+            this.Y_Location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.Y_Location.HeaderText = "Y-Location";
             this.Y_Location.MinimumWidth = 6;
             this.Y_Location.Name = "Y_Location";
-            this.Y_Location.Width = 125;
+            this.Y_Location.Width = 83;
             // 
             // Location_Type
             // 
@@ -312,6 +315,13 @@
             this.Bearing_Solution.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Bearing_Solution.Width = 125;
             // 
+            // Vertical_Block
+            // 
+            this.Vertical_Block.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.Vertical_Block.HeaderText = "Vertical-Block?";
+            this.Vertical_Block.Name = "Vertical_Block";
+            this.Vertical_Block.Width = 84;
+            // 
             // Checked
             // 
             this.Checked.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -334,7 +344,7 @@
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1443, 744);
+            this.ClientSize = new System.Drawing.Size(1801, 737);
             this.Controls.Add(this.label_Unit);
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
@@ -383,6 +393,7 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn Material;
         private System.Windows.Forms.DataGridViewTextBoxColumn Load_Transfer;
         private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Solution;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Vertical_Block;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
     }
