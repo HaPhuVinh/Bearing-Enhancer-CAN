@@ -9,13 +9,13 @@ namespace Bearing_Enhancer_CAN
 {
     public class Imperial_Or_Metric
     {
-        public string ImperialOrMetric = "Imperial";
-        public double miliFactor => ImperialOrMetric == "Imperial" ? 1 : 25.4;
-        public double kNFactor => ImperialOrMetric == "Imperial" ? 1 : 0.00444822;
+        public string Unit = "Imperial";
+        public double miliFactor => Unit == "Imperial" ? 1 : 25.4;
+        public double kNFactor => Unit == "Imperial" ? 1 : 0.00444822;
 
-        public Imperial_Or_Metric(string imp_met) 
+        public Imperial_Or_Metric(string unit) 
         {
-            ImperialOrMetric = imp_met;
+            Unit = unit;
         }
     }
 }

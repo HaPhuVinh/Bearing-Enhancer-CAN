@@ -42,6 +42,7 @@ namespace Bearing_Enhancer_CAN
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
             //Get Data from tdlTruss file
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             string txtPath = txtpath;
             string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(txtPath));
             string trussesPath = $"{projectPath}\\Trusses";
@@ -100,7 +101,7 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Get Data in <LumberResults> Node
-                            var keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode);
+                            var keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode, unit);
                             LumberInventory lumI = new LumberInventory();
                             List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectID);
 
@@ -122,7 +123,7 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Check Interior or Extorior Bearing
-                            double xloc = Convert_To_Inch(TP.Value.XLocation);
+                            double xloc =double.TryParse(TP.Value.XLocation, out double result)?result/iom.miliFactor: Convert_To_Inch(TP.Value.XLocation);
                             double xleftend = double.Parse(keyLumber.x_leftend);
                             double xrightend = double.Parse(keyLumber.x_rightend);
                             if (xloc > xleftend + 8 && xloc < xrightend - 8)
@@ -136,12 +137,12 @@ namespace Bearing_Enhancer_CAN
 
                             //Calculate Load Transfer load
                             double react = bE.TopPlateInfo.Reaction;
-                            double bear_W = Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
-                            double bear_Wrq = Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
+                            double bear_W = double.TryParse(bE.TopPlateInfo.BearingWidth,out double resultW)?resultW:Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
+                            double bear_Wrq = double.TryParse(bE.TopPlateInfo.RequireWidth,out double resultR)?resultR:Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
                             bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
 
                             //Get Bearing Solution
-                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit);
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit);//Need to consider the unit
                             bE.BearingSolution = bear_Solution;
                             bearingEnhancerItems.Add(bE);
                         }
@@ -155,7 +156,26 @@ namespace Bearing_Enhancer_CAN
         public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit)
         {
             List<string> list_BearingSolution = new List<string>();
-            const double alternateFactor = 0.6;
+
+            //Check Horizontal Block
+            list_BearingSolution.AddRange(Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit));
+            //Check Horizontal Block
+
+            //Check TBE
+            list_BearingSolution.AddRange(Check_TBE(ply, topPlate, unit));
+            if (list_BearingSolution == null)
+            {
+                list_BearingSolution.Add("Not found a relevant solution");
+            }
+            return list_BearingSolution;
+        }
+        #endregion
+
+        #region Support Methods:
+        List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit)
+        {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            List<string> list_Horizontal_Block = new List<string>();
             int plies = int.Parse(ply);
             int No_Block = 0;
             double brgWidth = Convert_To_Inch(topPlate.BearingWidth);
@@ -166,13 +186,350 @@ namespace Bearing_Enhancer_CAN
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
-                list_BearingSolution.Add("Enhancer not required");
-                return list_BearingSolution;
+                list_Horizontal_Block.Add("Bearing Enhancer is not required");
+                return list_Horizontal_Block;
             }
             else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
             {
-                list_BearingSolution.Add("Within 5%");
-                return list_BearingSolution;
+                list_Horizontal_Block.Add("Within 5%");
+                return list_Horizontal_Block;
+            }
+            else if (rqdArea <= brgArea + 1.5 * 1 * brgWidth)
+            {
+                if (plies > 3)
+                {
+                    No_Block = 2; //Alway use blocks on both faces for 4-ply
+                }
+                else
+                {
+                    No_Block = 1;
+                }
+            }
+            else if (rqdArea <= brgArea + 1.5 * 2 * brgWidth)
+            {
+                No_Block = 2;
+            }
+            else
+            {
+                No_Block = 3;
+            }
+
+            //Check Hor_Block Solution
+            if (No_Block < 3)
+            {
+                switch (plies)
+                {
+                    case 1://ply = 1
+                        if (No_Block == 1)
+                        {
+                            if (topPlate.Location_Type == "Exterior")
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                    else//Check Hor_Block on each face with nail if one face is not enough 
+                                    {
+                                        if (item.fastener == "Nail")
+                                        {
+                                            No_Block = 2;
+                                            Block_Info HBB2 = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            {
+                                                string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                list_Horizontal_Block.Add(suggestSolution);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else//Interior Bearing
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"Nail"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"Nail"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                    else//Check Hor_Block on each face with nail if one face is not enough 
+                                    {
+                                        if (item.fastener == "Nail")
+                                        {
+                                            No_Block = 2;
+                                            Block_Info HBB2 = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            {
+                                                string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                list_Horizontal_Block.Add(suggestSolution);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        else//No_Block = 2
+                        {
+                            if (topPlate.Location_Type == "Exterior")
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                }
+                            }
+                            else//Interior Bearing
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"Nail"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"Nail"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case 2://ply = 2
+                        if (No_Block == 1)
+                        {
+                            if(topPlate.LoadTransfer < 1000)
+                            if (topPlate.Location_Type == "Exterior")
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                    else//Check Hor_Block on each face with nail if one face is not enough 
+                                    {
+                                        if (item.fastener == "Nail")
+                                        {
+                                            No_Block = 2;
+                                            Block_Info HBB2 = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            {
+                                                string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                list_Horizontal_Block.Add(suggestSolution);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else//Interior Bearing
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"Nail"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"Nail"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                    else//Check Hor_Block on each face with nail if one face is not enough 
+                                    {
+                                        if (item.fastener == "Nail")
+                                        {
+                                            No_Block = 2;
+                                            Block_Info HBB2 = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            {
+                                                string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                list_Horizontal_Block.Add(suggestSolution);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        else//No_Block = 2
+                        {
+                            if (topPlate.Location_Type == "Exterior")
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                }
+                            }
+                            else//Interior Bearing
+                            {
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
+                                {
+                                    (16,"Nail"),
+                                    (16,"SDW22300"),
+                                    (16,"SDS25300"),
+                                    (18,"Nail"),
+                                    (18,"SDW22300"),
+                                    (18,"SDS25300"),
+                                    (24,"Nail"),
+                                    (24,"SDW22300"),
+                                    (24,"SDS25300")
+                                };
+                                foreach ((int length, string fastener) item in listFasUsed)
+                                {
+                                    Block_Info HBB = new Block_Info(false, No_Block, lumSize, item.length, item.fastener);
+                                    int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
+                                    int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    {
+                                        string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        list_Horizontal_Block.Add(suggestSolution);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case 3://ply = 3
+
+                        break;
+                    case 4://ply = 4
+
+                        break;
+                }
+            }
+
+            return list_Horizontal_Block;
+        }
+
+        List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, double unit)
+        {
+            List<string> list_Horizontal_Block = new List<string>();
+            int plies = int.Parse(ply);
+            int No_Block = 0;
+            double brgWidth = Convert_To_Inch(topPlate.BearingWidth);
+            double rqdWidth = Convert_To_Inch(topPlate.RequireWidth);
+            double rqdArea = 1.5 * plies * rqdWidth;
+            double brgArea = 1.5 * plies * brgWidth;
+
+            //Check Number of Block
+            if (topPlate.LoadTransfer < 0)
+            {
+                list_Horizontal_Block.Add("Bearing Enhancer is not required");
+                return list_Horizontal_Block;
+            }
+            else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
+            {
+                list_Horizontal_Block.Add("Within 5%");
+                return list_Horizontal_Block;
             }
             else if (rqdArea <= brgArea + 1.5 * 1 * brgWidth)
             {
@@ -205,7 +562,7 @@ namespace Bearing_Enhancer_CAN
                         {
                             if (topPlate.Location_Type == "Exterior")
                             {
-                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>() 
+                                List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
                                     (16,"Nail"),
                                     (16,"SDW22300"),
@@ -221,10 +578,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]);
-                                    if(topPlate.LoadTransfer/ latDeignValue <= HBB.MaxNumberFastener)
+                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
                                         string suggestSolution = $"{item.length}in.-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
-                                        list_BearingSolution.Add(suggestSolution);
+                                        list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
                                     {
@@ -235,7 +592,7 @@ namespace Bearing_Enhancer_CAN
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
                                                 string suggestSolution = $"{item.length}in.-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
-                                                list_BearingSolution.Add(suggestSolution);
+                                                list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
                                         else
@@ -250,76 +607,82 @@ namespace Bearing_Enhancer_CAN
                             {
 
                             }
-                            
+
                         }
                         else
                         {
-                            
+
                         }
                         break;
                     case 2:
 
                         break;
                     case 3:
-                        
+
                         break;
                     case 4:
-                        
+
                         break;
                 }
             }
 
-            //Check TBE
+            return list_Horizontal_Block;
+        }
+
+        List<string> Check_TBE(string ply, Top_Plate_Info topPlate, string unit)
+        {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            const double alternateFactor = 0.6;
+            int plies = int.Parse(ply);
+            double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB)? resultB:Convert_To_Inch(topPlate.BearingWidth);
+            double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR)?resultR:Convert_To_Inch(topPlate.RequireWidth);
             TBE_Info tbe_Data = new TBE_Info(unit);
-            if(brgWidth >= 3.5)
-            {
-                if(topPlate.Material == "SPF")
-                {
-                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth>3.5 ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
-                    {
-                        list_BearingSolution.Add("TBE4");
-                    }
-                }
-                if(topPlate.Material == "DFL")
-                {
-                    double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
-                    {
-                        list_BearingSolution.Add("TBE4");
-                    }
-                }
-            }
-            if (brgWidth >= 5.5)
+            List<string> list_TBE = new List<string>();
+            if (brgWidth >= 3.5*iom.miliFactor)
             {
                 if (topPlate.Material == "SPF")
                 {
-                    double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 ? alternateFactor : 1.0);
+                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5* iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
                     {
-                        list_BearingSolution.Add("TBE6");
+                        list_TBE.Add("TBE4");
                     }
                 }
                 if (topPlate.Material == "DFL")
                 {
-                    double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 ? alternateFactor : 1.0);
+                    double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
                     {
-                        list_BearingSolution.Add("TBE6");
+                        list_TBE.Add("TBE4");
                     }
                 }
             }
-            if (list_BearingSolution == null)
+            if (brgWidth >= 5.5* iom.miliFactor)
             {
-                list_BearingSolution.Add("Not found a relevant solution");
+                if (topPlate.Material == "SPF")
+                {
+                    double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_TBE.Add("TBE6");
+                    }
+                }
+                if (topPlate.Material == "DFL")
+                {
+                    double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
+                    if (topPlate.LoadTransfer <= allowableValue)
+                    {
+                        list_TBE.Add("TBE6");
+                    }
+                }
             }
-            return list_BearingSolution; 
+            
+            return list_TBE;
         }
-        #endregion
 
-        #region Support Methods:
-        (string key, string x_leftend, string x_rightend) Get_Lumber(string x, string y, XmlNode rootNode)//Get keyLumber grade and lumber size at Xlocation of the bearing
+        (string key, string x_leftend, string x_rightend) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             int i = 0;
             string[] S, A;
             string s;
@@ -404,7 +767,7 @@ namespace Bearing_Enhancer_CAN
                 }
                 
             }
-            double xloc = Convert_To_Inch(x);
+            double xloc = double.TryParse(x,out double result)?result/iom.miliFactor:Convert_To_Inch(x);
 
             foreach (ArrayList al in listArrList)
             {
