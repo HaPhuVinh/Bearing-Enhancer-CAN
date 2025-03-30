@@ -66,7 +66,6 @@ namespace Bearing_Enhancer_CAN
                 }
                 else
                     return 0;
-
             }
             set { maxNumberFastener = value; }
         }
