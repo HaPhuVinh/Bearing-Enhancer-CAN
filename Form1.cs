@@ -38,8 +38,8 @@ namespace Bearing_Enhancer_CAN
             dataGridView_Table.Rows.Clear();
             //Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
             TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
-            try
-            {
+            //try
+            //{
                 string projectPath = textBox_PJNum.Text;
                 string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
                 string tempPath = $"{projectPath}\\Temp";
@@ -89,11 +89,11 @@ namespace Bearing_Enhancer_CAN
                     i++;
                 }
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
             
         }
 
