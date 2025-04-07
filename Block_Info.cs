@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
+    public enum No_Solution_Enum
+    {
+        Please_check_and_input_relevant_data,
+        Bearing_Enhancer_is_not_required,
+        Within_5_Percent,
+    }
     public class Block_Info
     {
         public int Ply { get; set; } = 1;

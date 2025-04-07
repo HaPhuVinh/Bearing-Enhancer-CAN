@@ -8,6 +8,7 @@ using System.Xml;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections;
+using System.ComponentModel;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -155,20 +156,24 @@ namespace Bearing_Enhancer_CAN
 
         public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit)
         {
-            List<string> list_BearingSolution = new List<string>();
+            List<string> list_Bearing_Solution = new List<string>();
             
             //Check Horizontal Block
-            list_BearingSolution.AddRange(Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit));
-            //Check Horizontal Block
+            List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit);
+            list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
             //Check TBE
-            list_BearingSolution.AddRange(Check_TBE(ply, topPlate, unit));
-            
-            if(list_BearingSolution is null)
+            bool bCheckTBE = Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.ToString().Equals(list_Horizontal_Block[0]));
+            if (bCheckTBE == false)
             {
-                list_BearingSolution.Add("Please check and input data");
+                list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
             }
-            return list_BearingSolution;
+            
+            if(list_Bearing_Solution is null)
+            {
+                list_Bearing_Solution.Add("Not found an appropriate solution!");
+            }
+            return list_Bearing_Solution;
         }
         #endregion
 
@@ -186,18 +191,18 @@ namespace Bearing_Enhancer_CAN
             //Check lumber is null
             if (lumSize is null || lumSpecie is null)
             {
-                list_Horizontal_Block.Add("Not found Hor_Block solutions");
+                list_Horizontal_Block.Add(No_Solution_Enum.Please_check_and_input_relevant_data.ToString());
                 return list_Horizontal_Block;
             }
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
-                list_Horizontal_Block.Add("Bearing Enhancer is not required");
+                list_Horizontal_Block.Add(No_Solution_Enum.Bearing_Enhancer_is_not_required.ToString());
                 return list_Horizontal_Block;
             }
             else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
             {
-                list_Horizontal_Block.Add("Within 5%");
+                list_Horizontal_Block.Add(No_Solution_Enum.Within_5_Percent.ToString());
                 return list_Horizontal_Block;
             }
             else if (rqdArea <= brgArea + 1.5*iom.miliFactor * 1 * brgWidth)
@@ -637,6 +642,12 @@ namespace Bearing_Enhancer_CAN
             double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR)?resultR:Convert_To_Inch(topPlate.RequireWidth);
             TBE_Info tbe_Data = new TBE_Info(unit);
             List<string> list_TBE = new List<string>();
+            //Check lumber is null
+            //if (lumSize is null || lumSpecie is null)
+            //{
+            //    list_TBE.Add(No_Solution_Enum.Please_check_and_input_relevant_data.ToString());
+            //    return list_TBE;
+            //}
             if (brgWidth >= 3.5*iom.miliFactor)
             {
                 if (topPlate.Material == "SPF")
