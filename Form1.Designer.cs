@@ -34,12 +34,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox_PJNum = new System.Windows.Forms.TextBox();
             this.dataGridView_Table = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.comboBox_Language = new System.Windows.Forms.ComboBox();
-            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
-            this.label_Language = new System.Windows.Forms.Label();
-            this.label_Unit = new System.Windows.Forms.Label();
-            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -58,6 +52,12 @@
             this.Vertical_Block = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox_Language = new System.Windows.Forms.ComboBox();
+            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
+            this.label_Language = new System.Windows.Forms.Label();
+            this.label_Unit = new System.Windows.Forms.Label();
+            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -67,10 +67,10 @@
             this.button_Check.BackColor = System.Drawing.Color.White;
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button_Check.Location = new System.Drawing.Point(869, 18);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button_Check.Location = new System.Drawing.Point(652, 15);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button_Check.Name = "button_Check";
-            this.button_Check.Size = new System.Drawing.Size(161, 55);
+            this.button_Check.Size = new System.Drawing.Size(121, 45);
             this.button_Check.TabIndex = 0;
             this.button_Check.Text = "CHECK";
             this.button_Check.UseVisualStyleBackColor = false;
@@ -80,9 +80,10 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Arial Black", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 18);
+            this.label1.Location = new System.Drawing.Point(6, 15);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 26);
+            this.label1.Size = new System.Drawing.Size(182, 22);
             this.label1.TabIndex = 1;
             this.label1.Text = "Project Number path";
             this.label1.Click += new System.EventHandler(this.label1_Click);
@@ -90,10 +91,10 @@
             // textBox_PJNum
             // 
             this.textBox_PJNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_PJNum.Location = new System.Drawing.Point(276, 18);
-            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBox_PJNum.Location = new System.Drawing.Point(207, 15);
+            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox_PJNum.Name = "textBox_PJNum";
-            this.textBox_PJNum.Size = new System.Drawing.Size(508, 28);
+            this.textBox_PJNum.Size = new System.Drawing.Size(382, 24);
             this.textBox_PJNum.TabIndex = 2;
             this.textBox_PJNum.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
@@ -121,69 +122,13 @@
             this.Vertical_Block,
             this.Checked,
             this.The_Note});
-            this.dataGridView_Table.Location = new System.Drawing.Point(3, 156);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dataGridView_Table.Location = new System.Drawing.Point(2, 127);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
-            this.dataGridView_Table.Size = new System.Drawing.Size(2397, 753);
+            this.dataGridView_Table.Size = new System.Drawing.Size(1798, 612);
             this.dataGridView_Table.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(9, 135);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 24);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Data Table";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // comboBox_Language
-            // 
-            this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(276, 64);
-            this.comboBox_Language.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.comboBox_Language.Name = "comboBox_Language";
-            this.comboBox_Language.Size = new System.Drawing.Size(184, 24);
-            this.comboBox_Language.TabIndex = 5;
-            // 
-            // comboBox_Unit
-            // 
-            this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(276, 97);
-            this.comboBox_Unit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.comboBox_Unit.Name = "comboBox_Unit";
-            this.comboBox_Unit.Size = new System.Drawing.Size(184, 24);
-            this.comboBox_Unit.TabIndex = 5;
-            // 
-            // label_Language
-            // 
-            this.label_Language.AutoSize = true;
-            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(167, 65);
-            this.label_Language.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Language.Name = "label_Language";
-            this.label_Language.Size = new System.Drawing.Size(72, 18);
-            this.label_Language.TabIndex = 6;
-            this.label_Language.Text = "Language";
-            // 
-            // label_Unit
-            // 
-            this.label_Unit.AutoSize = true;
-            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(167, 96);
-            this.label_Unit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Unit.Name = "label_Unit";
-            this.label_Unit.Size = new System.Drawing.Size(34, 18);
-            this.label_Unit.TabIndex = 6;
-            this.label_Unit.Text = "Unit";
-            // 
-            // bearingEnhancerBindingSource
-            // 
-            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
             // 
             // Truss_Name
             // 
@@ -192,7 +137,7 @@
             this.Truss_Name.HeaderText = "Truss-Name";
             this.Truss_Name.MinimumWidth = 6;
             this.Truss_Name.Name = "Truss_Name";
-            this.Truss_Name.Width = 111;
+            this.Truss_Name.Width = 89;
             // 
             // No_Ply
             // 
@@ -203,7 +148,7 @@
             this.No_Ply.Name = "No_Ply";
             this.No_Ply.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.No_Ply.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.No_Ply.Width = 80;
+            this.No_Ply.Width = 66;
             // 
             // Lumber_Specie
             // 
@@ -214,7 +159,7 @@
             this.Lumber_Specie.Name = "Lumber_Specie";
             this.Lumber_Specie.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Lumber_Specie.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.Lumber_Specie.Width = 128;
+            this.Lumber_Specie.Width = 103;
             // 
             // Lumber_Size
             // 
@@ -224,7 +169,7 @@
             this.Lumber_Size.MinimumWidth = 6;
             this.Lumber_Size.Name = "Lumber_Size";
             this.Lumber_Size.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Lumber_Size.Width = 88;
+            this.Lumber_Size.Width = 71;
             // 
             // DOL_Column
             // 
@@ -234,7 +179,7 @@
             this.DOL_Column.MinimumWidth = 6;
             this.DOL_Column.Name = "DOL_Column";
             this.DOL_Column.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.DOL_Column.Width = 48;
+            this.DOL_Column.Width = 41;
             // 
             // Joint_ID
             // 
@@ -243,7 +188,7 @@
             this.Joint_ID.HeaderText = "Joint-ID";
             this.Joint_ID.MinimumWidth = 6;
             this.Joint_ID.Name = "Joint_ID";
-            this.Joint_ID.Width = 81;
+            this.Joint_ID.Width = 68;
             // 
             // X_Location
             // 
@@ -251,7 +196,7 @@
             this.X_Location.HeaderText = "X-Location";
             this.X_Location.MinimumWidth = 6;
             this.X_Location.Name = "X_Location";
-            this.X_Location.Width = 99;
+            this.X_Location.Width = 83;
             // 
             // Y_Location
             // 
@@ -259,6 +204,7 @@
             this.Y_Location.HeaderText = "Y-Location";
             this.Y_Location.MinimumWidth = 6;
             this.Y_Location.Name = "Y_Location";
+            this.Y_Location.Width = 83;
             // 
             // Location_Type
             // 
@@ -273,7 +219,7 @@
             this.Reaction.HeaderText = "Reaction";
             this.Reaction.MinimumWidth = 6;
             this.Reaction.Name = "Reaction";
-            this.Reaction.Width = 90;
+            this.Reaction.Width = 75;
             // 
             // Brg_Width
             // 
@@ -281,7 +227,7 @@
             this.Brg_Width.HeaderText = "Bearing-Width";
             this.Brg_Width.MinimumWidth = 6;
             this.Brg_Width.Name = "Brg_Width";
-            this.Brg_Width.Width = 121;
+            this.Brg_Width.Width = 99;
             // 
             // Req_Width
             // 
@@ -289,7 +235,7 @@
             this.Req_Width.HeaderText = "Required-Width";
             this.Req_Width.MinimumWidth = 6;
             this.Req_Width.Name = "Req_Width";
-            this.Req_Width.Width = 130;
+            this.Req_Width.Width = 106;
             // 
             // Material
             // 
@@ -298,7 +244,7 @@
             this.Material.MinimumWidth = 6;
             this.Material.Name = "Material";
             this.Material.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Material.Width = 61;
+            this.Material.Width = 50;
             // 
             // Load_Transfer
             // 
@@ -307,7 +253,7 @@
             this.Load_Transfer.MinimumWidth = 6;
             this.Load_Transfer.Name = "Load_Transfer";
             this.Load_Transfer.ReadOnly = true;
-            this.Load_Transfer.Width = 121;
+            this.Load_Transfer.Width = 98;
             // 
             // Bearing_Solution
             // 
@@ -324,7 +270,7 @@
             this.Vertical_Block.HeaderText = "Vertical-Block?";
             this.Vertical_Block.MinimumWidth = 6;
             this.Vertical_Block.Name = "Vertical_Block";
-            this.Vertical_Block.Width = 103;
+            this.Vertical_Block.Width = 84;
             // 
             // Checked
             // 
@@ -334,7 +280,7 @@
             this.Checked.MinimumWidth = 6;
             this.Checked.Name = "Checked";
             this.Checked.TrueValue = "1";
-            this.Checked.Width = 67;
+            this.Checked.Width = 56;
             // 
             // The_Note
             // 
@@ -343,12 +289,65 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 700;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.label2.Location = new System.Drawing.Point(7, 110);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 18);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Data Table";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // comboBox_Language
+            // 
+            this.comboBox_Language.FormattingEnabled = true;
+            this.comboBox_Language.Location = new System.Drawing.Point(207, 52);
+            this.comboBox_Language.Name = "comboBox_Language";
+            this.comboBox_Language.Size = new System.Drawing.Size(139, 21);
+            this.comboBox_Language.TabIndex = 5;
+            // 
+            // comboBox_Unit
+            // 
+            this.comboBox_Unit.FormattingEnabled = true;
+            this.comboBox_Unit.Location = new System.Drawing.Point(207, 79);
+            this.comboBox_Unit.Name = "comboBox_Unit";
+            this.comboBox_Unit.Size = new System.Drawing.Size(139, 21);
+            this.comboBox_Unit.TabIndex = 5;
+            // 
+            // label_Language
+            // 
+            this.label_Language.AutoSize = true;
+            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Language.Location = new System.Drawing.Point(125, 53);
+            this.label_Language.Name = "label_Language";
+            this.label_Language.Size = new System.Drawing.Size(63, 15);
+            this.label_Language.TabIndex = 6;
+            this.label_Language.Text = "Language";
+            // 
+            // label_Unit
+            // 
+            this.label_Unit.AutoSize = true;
+            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Unit.Location = new System.Drawing.Point(125, 78);
+            this.label_Unit.Name = "label_Unit";
+            this.label_Unit.Size = new System.Drawing.Size(29, 15);
+            this.label_Unit.TabIndex = 6;
+            this.label_Unit.Text = "Unit";
+            // 
+            // bearingEnhancerBindingSource
+            // 
+            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
+            // 
             // Form_BearingEnhacerCAN
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 907);
+            this.ClientSize = new System.Drawing.Size(1803, 737);
             this.Controls.Add(this.label_Unit);
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
@@ -360,7 +359,7 @@
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();

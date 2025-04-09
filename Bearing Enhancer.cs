@@ -163,15 +163,18 @@ namespace Bearing_Enhancer_CAN
             list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
             //Check TBE
-            bool bCheckTBE = Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.ToString().Equals(list_Horizontal_Block[0]));
+            bool bCheckTBE = Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription()==list_Horizontal_Block[0]);
             if (bCheckTBE == false)
             {
                 list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
             }
-            
-            if(list_Bearing_Solution is null)
+
+            //Check Vertical Block
+
+
+            if (list_Bearing_Solution is null)
             {
-                list_Bearing_Solution.Add("Not found an appropriate solution!");
+                list_Bearing_Solution.Add("Not-found-an-appropriate-solution");
             }
             return list_Bearing_Solution;
         }
@@ -191,18 +194,18 @@ namespace Bearing_Enhancer_CAN
             //Check lumber is null
             if (lumSize is null || lumSpecie is null)
             {
-                list_Horizontal_Block.Add(No_Solution_Enum.Please_check_and_input_relevant_data.ToString());
+                list_Horizontal_Block.Add(No_Solution_Enum.PleaseCheckAndInputRelevantData.GetDescription());
                 return list_Horizontal_Block;
             }
             //Check Number of Block
             if (topPlate.LoadTransfer < 0)
             {
-                list_Horizontal_Block.Add(No_Solution_Enum.Bearing_Enhancer_is_not_required.ToString());
+                list_Horizontal_Block.Add(No_Solution_Enum.BearingEnhancerIsNotRequired.GetDescription());
                 return list_Horizontal_Block;
             }
             else if ((topPlate.LoadTransfer / topPlate.Reaction) <= 0.05)
             {
-                list_Horizontal_Block.Add(No_Solution_Enum.Within_5_Percent.ToString());
+                list_Horizontal_Block.Add(No_Solution_Enum.Within5Percent.GetDescription());
                 return list_Horizontal_Block;
             }
             else if (rqdArea <= brgArea + 1.5*iom.miliFactor * 1 * brgWidth)

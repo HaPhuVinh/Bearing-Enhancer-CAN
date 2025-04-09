@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,9 +10,24 @@ namespace Bearing_Enhancer_CAN
 {
     public enum No_Solution_Enum
     {
-        Please_check_and_input_relevant_data,
-        Bearing_Enhancer_is_not_required,
-        Within_5_Percent,
+        [Description("Please-Check-And-Input-Relevant-Data")]
+        PleaseCheckAndInputRelevantData,
+
+        [Description("Bearing-Enhancer-Is-Not-Required")]
+        BearingEnhancerIsNotRequired,
+
+        [Description("Within-5%")]
+        Within5Percent,
+    }
+    public static class GetDescriptionExtension
+    {
+        public static string GetDescription(this Enum value)
+        {
+            return value.GetType()
+                        .GetField(value.ToString())
+                        ?.GetCustomAttribute<DescriptionAttribute>()
+                        ?.Description ?? value.ToString();
+        }
     }
     public class Block_Info
     {
