@@ -56,17 +56,20 @@ namespace Bearing_Enhancer_CAN
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
 
-                List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
+                //List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
+                List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
                 List<string> list_Ply =new List<string> {"1","2","3","4"};
-                List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
-                List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
-                List<string> snow_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Snow).Distinct().ToList();
-                List<string> live_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Live).Distinct().ToList();
-                List<string> wind_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Wind).Distinct().ToList();
-                List<string> list_DurationFactor = new List<string>();
-                list_DurationFactor.AddRange(snow_DurationFactor);
-                list_DurationFactor.AddRange(live_DurationFactor);
-                list_DurationFactor.AddRange(wind_DurationFactor);
+                //List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
+                List<string> list_LumSize = new List<string> {"2x4", "2x6", "2x8", "2x10", "2x12"};
+                //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
+                List<string> list_Specie = new List<string> {"SPF", "DFL", "DFLN", "SP", "SYP", "HF"};
+                //List<string> snow_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Snow).Distinct().ToList();
+                //List<string> live_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Live).Distinct().ToList();
+                //List<string> wind_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Wind).Distinct().ToList();
+                List<string> list_DurationFactor = new List<string>() {"1.00", "1.15", "1.25", "1.33","1.60" };
+                //list_DurationFactor.AddRange(snow_DurationFactor);
+                //list_DurationFactor.AddRange(live_DurationFactor);
+                //list_DurationFactor.AddRange(wind_DurationFactor);
                 list_DurationFactor = list_DurationFactor.Distinct().ToList();
                 List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 

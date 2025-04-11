@@ -10,7 +10,9 @@ namespace Bearing_Enhancer_CAN
     public enum eLumberSpecie
     {
         SP,
+        SYP,
         DFL,
+        DFLN,
         SPF,
         HF,
     }
