@@ -31,8 +31,58 @@ namespace Bearing_Enhancer_CAN
             comboBox_Unit.Items.Add("Imperial");
             comboBox_Unit.Items.Add("Metric");
             comboBox_Unit.Text = "Imperial";
+            
+            List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
+            List<string> list_Ply = new List<string> { "1", "2", "3", "4" };
+            List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
+            List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
+            List<string> list_DurationFactor = new List<string>() { "1.00", "1.15", "1.25", "1.33", "1.60" };
+            list_DurationFactor = list_DurationFactor.Distinct().ToList();
+            List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
+
+            No_Ply.DataSource = list_Ply;
+            Lumber_Specie.DataSource = list_Specie;
+            Lumber_Size.DataSource = list_LumSize;
+            DOL_Column.DataSource = list_DurationFactor;
+            Location_Type.DataSource = list_LocationType;
+            Material.DataSource = list_Mat;
+
+            // Đăng ký sự kiện thay đổi trạng thái ô
+            dataGridView_Table.CellValueChanged += DataGridView_Table_CellValueChanged;
+            dataGridView_Table.CurrentCellDirtyStateChanged += (s, ev) =>
+            {
+                if (dataGridView_Table.IsCurrentCellDirty)
+                    dataGridView_Table.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            };
         }
-        
+        private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
+            {
+                bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[15].Value);
+
+                if (isChecked)
+                {
+                    using (Form_Vertical_Block_Info f = new Form_Vertical_Block_Info())
+                    {
+                        if (f.ShowDialog() == DialogResult.OK)
+                        {
+                            //dataGridView_Table.Rows[e.RowIndex].Cells[1].Value = f.InputValue;
+                        }
+                        else
+                        {
+                            // Nếu người dùng đóng form mà không nhập, bỏ tick
+                            dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
+                        }
+                    }
+                }
+                else
+                {
+                    //dataGridView_Table.Rows[e.RowIndex].Cells[1].Value = "";
+                }
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             dataGridView_Table.Rows.Clear();
@@ -55,30 +105,17 @@ namespace Bearing_Enhancer_CAN
 
                 LumberInventory lumberI = new LumberInventory();
                 List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
-
+                
                 //List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
-                List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
-                List<string> list_Ply =new List<string> {"1","2","3","4"};
                 //List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
-                List<string> list_LumSize = new List<string> {"2x4", "2x6", "2x8", "2x10", "2x12"};
-                //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
-                List<string> list_Specie = new List<string> {"SPF", "DFL", "DFLN", "SP", "SYP", "HF"};
+               //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
                 //List<string> snow_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Snow).Distinct().ToList();
                 //List<string> live_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Live).Distinct().ToList();
                 //List<string> wind_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Wind).Distinct().ToList();
-                List<string> list_DurationFactor = new List<string>() {"1.00", "1.15", "1.25", "1.33","1.60" };
                 //list_DurationFactor.AddRange(snow_DurationFactor);
                 //list_DurationFactor.AddRange(live_DurationFactor);
                 //list_DurationFactor.AddRange(wind_DurationFactor);
-                list_DurationFactor = list_DurationFactor.Distinct().ToList();
-                List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 
-                No_Ply.DataSource = list_Ply;
-                Lumber_Specie.DataSource = list_Specie;
-                Lumber_Size.DataSource = list_LumSize;
-                DOL_Column.DataSource = list_DurationFactor;
-                Location_Type.DataSource = list_LocationType;
-                Material.DataSource = list_Mat;
                 int i = 0;
                 foreach (Bearing_Enhancer be in list_BE)
                 {
@@ -114,5 +151,7 @@ namespace Bearing_Enhancer_CAN
         {
 
         }
-    }
+        
+}
+
 }
