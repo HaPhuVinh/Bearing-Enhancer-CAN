@@ -75,24 +75,70 @@ namespace Bearing_Enhancer_CAN
                         f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString()??"2x4";
                         f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString()??"SPF";
                         f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString()??"3-08";
-                        
+
                         if (f2.ShowDialog() == DialogResult.OK)
                         {
                             dataGridView_Table.Rows[e.RowIndex].Cells[3].Value = f2.LumSize;
                             dataGridView_Table.Rows[e.RowIndex].Cells[2].Value = f2.LumSpecie;
-                            dataGridView_Table.Rows[e.RowIndex].Cells[10].Value = f2.ContactLength;
-                            row.DefaultCellStyle.BackColor = Color.LightPink; // Đổi màu ô thành xanh lá cây
+                            dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = f2.ContactLength;
+
+                            Bearing_Enhancer BE = new Bearing_Enhancer();
+                            BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value.ToString();
+                            BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value.ToString();
+                            BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value.ToString();
+                            BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value.ToString();
+                            Top_Plate_Info topPlate = new Top_Plate_Info();
+                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value.ToString();
+                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value.ToString();
+                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value.ToString();
+                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value.ToString();
+                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value.ToString());
+                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value.ToString();
+                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value.ToString();
+                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
+                            topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                            BE.TopPlateInfo = topPlate;
+
+                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply,BE.LumSize,BE.LumSpecie, BE.TopPlateInfo,comboBox_Unit.Text,true);
+                            (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
+                            dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
+
+                            row.DefaultCellStyle.BackColor = Color.Silver; // Đổi màu dòng
                         }
                         else
                         {
                             // Nếu người dùng đóng form mà không nhập, bỏ tick
                             dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
+
+                            
                         }
                     }
                 }
                 else
                 {
-                    //dataGridView_Table.Rows[e.RowIndex].Cells[1].Value = "";
+                    dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = "";
+                    row.DefaultCellStyle.BackColor = default;
+
+                    Bearing_Enhancer BE = new Bearing_Enhancer();
+                    BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value.ToString();
+                    BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value.ToString();
+                    BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value.ToString();
+                    BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value.ToString();
+                    Top_Plate_Info topPlate = new Top_Plate_Info();
+                    topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value.ToString();
+                    topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value.ToString();
+                    topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value.ToString();
+                    topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value.ToString();
+                    topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value.ToString());
+                    topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value.ToString();
+                    topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value.ToString();
+                    topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
+                    topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                    BE.TopPlateInfo = topPlate;
+
+                    List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
+                    (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
+                    dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
                 }
             }
         }
@@ -102,7 +148,7 @@ namespace Bearing_Enhancer_CAN
         {
             dataGridView_Table.Rows.Clear();
             //Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
-            TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
+            //TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
             //try
             //{
                 string projectPath = textBox_PJNum.Text;
@@ -118,9 +164,8 @@ namespace Bearing_Enhancer_CAN
                 
                 list_BE = BE.Get_Bearing_Info(txtPathes[0],comboBox_Language.Text, comboBox_Unit.Text);
 
-                LumberInventory lumberI = new LumberInventory();
-                List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
-                
+                //LumberInventory lumberI = new LumberInventory();
+                //List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
                 //List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
                 //List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
                //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();

@@ -34,6 +34,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox_PJNum = new System.Windows.Forms.TextBox();
             this.dataGridView_Table = new System.Windows.Forms.DataGridView();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox_Language = new System.Windows.Forms.ComboBox();
+            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
+            this.label_Language = new System.Windows.Forms.Label();
+            this.label_Unit = new System.Windows.Forms.Label();
+            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -50,15 +57,9 @@
             this.Load_Transfer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Vertical_Block = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Contact_Length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label2 = new System.Windows.Forms.Label();
-            this.comboBox_Language = new System.Windows.Forms.ComboBox();
-            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
-            this.label_Language = new System.Windows.Forms.Label();
-            this.label_Unit = new System.Windows.Forms.Label();
-            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -121,6 +122,7 @@
             this.Load_Transfer,
             this.Bearing_Solution,
             this.Vertical_Block,
+            this.Contact_Length,
             this.Checked,
             this.The_Note});
             this.dataGridView_Table.Location = new System.Drawing.Point(3, 156);
@@ -130,6 +132,68 @@
             this.dataGridView_Table.RowTemplate.Height = 24;
             this.dataGridView_Table.Size = new System.Drawing.Size(2397, 753);
             this.dataGridView_Table.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.label2.Location = new System.Drawing.Point(9, 135);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 24);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Data Table";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // comboBox_Language
+            // 
+            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Language.FormattingEnabled = true;
+            this.comboBox_Language.Location = new System.Drawing.Point(276, 64);
+            this.comboBox_Language.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBox_Language.Name = "comboBox_Language";
+            this.comboBox_Language.Size = new System.Drawing.Size(184, 26);
+            this.comboBox_Language.TabIndex = 5;
+            // 
+            // comboBox_Unit
+            // 
+            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Unit.FormattingEnabled = true;
+            this.comboBox_Unit.Location = new System.Drawing.Point(276, 106);
+            this.comboBox_Unit.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBox_Unit.Name = "comboBox_Unit";
+            this.comboBox_Unit.Size = new System.Drawing.Size(184, 26);
+            this.comboBox_Unit.TabIndex = 5;
+            // 
+            // label_Language
+            // 
+            this.label_Language.AutoSize = true;
+            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Language.Location = new System.Drawing.Point(167, 65);
+            this.label_Language.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label_Language.Name = "label_Language";
+            this.label_Language.Size = new System.Drawing.Size(82, 20);
+            this.label_Language.TabIndex = 6;
+            this.label_Language.Text = "Language";
+            // 
+            // label_Unit
+            // 
+            this.label_Unit.AutoSize = true;
+            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Unit.Location = new System.Drawing.Point(167, 105);
+            this.label_Unit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label_Unit.Name = "label_Unit";
+            this.label_Unit.Size = new System.Drawing.Size(39, 20);
+            this.label_Unit.TabIndex = 6;
+            this.label_Unit.Text = "Unit";
+            // 
+            // bearingEnhancerBindingSource
+            // 
+            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // Truss_Name
             // 
@@ -272,6 +336,15 @@
             this.Vertical_Block.Name = "Vertical_Block";
             this.Vertical_Block.Width = 103;
             // 
+            // Contact_Length
+            // 
+            this.Contact_Length.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.Contact_Length.HeaderText = "Contact-Length";
+            this.Contact_Length.MinimumWidth = 6;
+            this.Contact_Length.Name = "Contact_Length";
+            this.Contact_Length.ReadOnly = true;
+            this.Contact_Length.Width = 125;
+            // 
             // Checked
             // 
             this.Checked.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -288,68 +361,6 @@
             this.The_Note.MinimumWidth = 6;
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 700;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(9, 135);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 24);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Data Table";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // comboBox_Language
-            // 
-            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(276, 64);
-            this.comboBox_Language.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.comboBox_Language.Name = "comboBox_Language";
-            this.comboBox_Language.Size = new System.Drawing.Size(184, 26);
-            this.comboBox_Language.TabIndex = 5;
-            // 
-            // comboBox_Unit
-            // 
-            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(276, 106);
-            this.comboBox_Unit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.comboBox_Unit.Name = "comboBox_Unit";
-            this.comboBox_Unit.Size = new System.Drawing.Size(184, 26);
-            this.comboBox_Unit.TabIndex = 5;
-            // 
-            // label_Language
-            // 
-            this.label_Language.AutoSize = true;
-            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(167, 65);
-            this.label_Language.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Language.Name = "label_Language";
-            this.label_Language.Size = new System.Drawing.Size(82, 20);
-            this.label_Language.TabIndex = 6;
-            this.label_Language.Text = "Language";
-            // 
-            // label_Unit
-            // 
-            this.label_Unit.AutoSize = true;
-            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(167, 105);
-            this.label_Unit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Unit.Name = "label_Unit";
-            this.label_Unit.Size = new System.Drawing.Size(39, 20);
-            this.label_Unit.TabIndex = 6;
-            this.label_Unit.Text = "Unit";
-            // 
-            // bearingEnhancerBindingSource
-            // 
-            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
             // 
             // Form_BearingEnhacerCAN
             // 
@@ -391,6 +402,7 @@
         private System.Windows.Forms.ComboBox comboBox_Unit;
         private System.Windows.Forms.Label label_Language;
         private System.Windows.Forms.Label label_Unit;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Truss_Name;
         private System.Windows.Forms.DataGridViewComboBoxColumn No_Ply;
         private System.Windows.Forms.DataGridViewComboBoxColumn Lumber_Specie;
@@ -407,9 +419,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Load_Transfer;
         private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Solution;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Vertical_Block;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Contact_Length;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
-        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }
 

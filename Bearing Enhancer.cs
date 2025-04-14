@@ -154,27 +154,29 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = true)
+        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false)
         {
             List<string> list_Bearing_Solution = new List<string>();
-            
+
             //Check Horizontal Block
-            List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit);
-            list_Bearing_Solution.AddRange(list_Horizontal_Block);
-
-            //Check TBE
-            bool bCheckTBE = Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription()==list_Horizontal_Block[0]);
-            if (bCheckTBE == false)
+            if (bVertical == false)
             {
-                list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
-            }
+                List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit);
+                list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
+                //Check TBE
+                bool bCheckTBE = list_Bearing_Solution != null ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
+                if (bCheckTBE == false)
+                {
+                    list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
+                }
+            }
             //Check Vertical Block
-            //if(bVertical == true)
-            //{
-            //    List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit);
-            //    list_Bearing_Solution.AddRange(list_Vertical_Block);
-            //}
+            if (bVertical == true)
+            {
+                List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit);
+                list_Bearing_Solution.AddRange(list_Vertical_Block);
+            }
 
             if (list_Bearing_Solution is null)
             {
