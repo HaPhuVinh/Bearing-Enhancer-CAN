@@ -110,6 +110,7 @@ namespace Bearing_Enhancer_CAN
                             // Nếu người dùng đóng form mà không nhập, bỏ tick
                             dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
 
+                            //Test Pull
                             
                         }
                     }
