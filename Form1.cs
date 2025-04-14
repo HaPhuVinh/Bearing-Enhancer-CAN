@@ -54,20 +54,34 @@ namespace Bearing_Enhancer_CAN
                 if (dataGridView_Table.IsCurrentCellDirty)
                     dataGridView_Table.CommitEdit(DataGridViewDataErrorContexts.Commit);
             };
+
+            
         }
+        
         private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
+                
                 bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[15].Value);
+                DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
 
                 if (isChecked)
                 {
-                    using (Form_Vertical_Block_Info f = new Form_Vertical_Block_Info())
+                    using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
                     {
-                        if (f.ShowDialog() == DialogResult.OK)
+                        f2.Language = comboBox_Language.Text;
+                        f2.Unit = comboBox_Unit.Text;
+                        f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString()??"2x4";
+                        f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString()??"SPF";
+                        f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString()??"3-08";
+                        
+                        if (f2.ShowDialog() == DialogResult.OK)
                         {
-                            //dataGridView_Table.Rows[e.RowIndex].Cells[1].Value = f.InputValue;
+                            dataGridView_Table.Rows[e.RowIndex].Cells[3].Value = f2.LumSize;
+                            dataGridView_Table.Rows[e.RowIndex].Cells[2].Value = f2.LumSpecie;
+                            dataGridView_Table.Rows[e.RowIndex].Cells[10].Value = f2.ContactLength;
+                            row.DefaultCellStyle.BackColor = Color.LightPink; // Đổi màu ô thành xanh lá cây
                         }
                         else
                         {
@@ -82,6 +96,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
