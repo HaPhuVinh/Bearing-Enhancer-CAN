@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -16,8 +17,132 @@ namespace Bearing_Enhancer_CAN
 {
     public partial class Form_BearingEnhacerCAN : Form
     {
+        private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            // Lấy tên cột
+            string headerText = dataGridView_Table.Columns[e.ColumnIndex].HeaderText;
+
+            // Kiểm tra cột "No.-Ply"
+            if (headerText.Equals("No.-Ply"))
+            {
+                if (e.FormattedValue.ToString()=="")
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "No.-Ply is not empty!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Lumber-Specie"
+            if (headerText.Equals("Lumber-Specie"))
+            {
+                if (e.FormattedValue.ToString() == "")
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Lumber-Specie is not empty!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Lumber-Size"
+            if (headerText.Equals("Lumber-Size"))
+            {
+                if (e.FormattedValue.ToString() == "")
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Lumber-Size is not empty!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Location-Type"
+            if (headerText.Equals("Location-Type"))
+            {
+                if (e.FormattedValue.ToString() == "")
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Location-Type is not empty!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Reaction"
+            if (headerText.Equals("Reaction"))
+            {
+                Regex regexReaction = new Regex(@"^\d+$");
+                string input = e.FormattedValue.ToString();
+                if (!regexReaction.IsMatch(input))
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Reaction as interger!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Bearing-Width"
+            if (headerText.Equals("Bearing-Width"))
+            {
+                Regex regexBearingWidth = new Regex(@"^\d+(-\d+){1,2}$");
+                string input = e.FormattedValue.ToString();
+                if (!regexBearingWidth.IsMatch(input))
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Bearing-Width as the format: 3-08, 5-08!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Required-Width"
+            if (headerText.Equals("Required-Width"))
+            {
+                Regex regexRequiredWidth = new Regex(@"^\d+(-\d+){1,2}$");
+                string input = e.FormattedValue.ToString();
+                if (!regexRequiredWidth.IsMatch(input))
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Required-Width as the format: 3-08, 5-08!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+            // Kiểm tra cột "Material"
+            if (headerText.Equals("Material"))
+            {
+                if (e.FormattedValue.ToString() == "")
+                {
+                    // Hiển thị lỗi tại hàng
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Material is not empty!";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = string.Empty;
+                }
+            }
+        }
+
         private int hoveredRowIndex = -1;
-        
         private void dataGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.RowIndex != hoveredRowIndex)
@@ -90,13 +215,16 @@ namespace Bearing_Enhancer_CAN
             dataGridView_Table.CellMouseEnter += dataGridView_CellMouseEnter;
             dataGridView_Table.CellMouseLeave += dataGridView_CellMouseLeave;
 
+            // Đăng ký sự kiện kiểm tra ô
+            dataGridView_Table.CellValidating += dataGridView_CellValidating;
+
         }
-        
+
         private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
-                
+
                 bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[15].Value);
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
 
@@ -106,9 +234,9 @@ namespace Bearing_Enhancer_CAN
                     {
                         f2.Language = comboBox_Language.Text;
                         f2.Unit = comboBox_Unit.Text;
-                        f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString()??"2x4";
-                        f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString()??"SPF";
-                        f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString()??"3-08";
+                        f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString() ?? "2x4";
+                        f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString() ?? "SPF";
+                        f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString() ?? "3-08";
 
                         if (f2.ShowDialog() == DialogResult.OK)
                         {
@@ -117,24 +245,24 @@ namespace Bearing_Enhancer_CAN
                             dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = f2.ContactLength;
 
                             Bearing_Enhancer BE = new Bearing_Enhancer();
-                            BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value.ToString();
-                            BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value.ToString();
-                            BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value.ToString();
-                            BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value.ToString();
+                            BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                            BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                            BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                            BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
                             Top_Plate_Info topPlate = new Top_Plate_Info();
-                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value.ToString();
-                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value.ToString();
-                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value.ToString();
-                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value.ToString();
-                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value.ToString());
-                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value.ToString();
-                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value.ToString();
-                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
+                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                             BE.TopPlateInfo = topPlate;
                             string contLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value.ToString();
 
-                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply,BE.LumSize,BE.LumSpecie, BE.TopPlateInfo,comboBox_Unit.Text,true, contLength);
+                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, true, contLength);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
 
@@ -150,26 +278,26 @@ namespace Bearing_Enhancer_CAN
                 }
                 else
                 {
+                    // Nếu bỏ tick, xóa giá trị trong ô Contact Length và đổi màu dòng về mặc định
                     dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = "";
                     row.DefaultCellStyle.BackColor = default;
 
                     Bearing_Enhancer BE = new Bearing_Enhancer();
-                    BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value.ToString();
-                    BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value.ToString();
-                    BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value.ToString();
-                    BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value.ToString();
+                    BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                    BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                    BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                    BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
                     Top_Plate_Info topPlate = new Top_Plate_Info();
-                    topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value.ToString();
-                    topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value.ToString();
-                    topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value.ToString();
-                    topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value.ToString();
-                    topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value.ToString());
-                    topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value.ToString();
-                    topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value.ToString();
-                    topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
+                    topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                    topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                    topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                    topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                    topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                    topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                    topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                    topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
                     topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                     BE.TopPlateInfo = topPlate;
-                    
 
                     List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
                     (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
@@ -184,8 +312,8 @@ namespace Bearing_Enhancer_CAN
             dataGridView_Table.Rows.Clear();
             //Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
             //TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
-            //try
-            //{
+            try
+            {
                 string projectPath = textBox_PJNum.Text;
                 string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
                 string tempPath = $"{projectPath}\\Temp";
@@ -224,12 +352,12 @@ namespace Bearing_Enhancer_CAN
                     i++;
                 }
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-            
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

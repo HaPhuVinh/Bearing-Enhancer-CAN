@@ -622,7 +622,6 @@ namespace Bearing_Enhancer_CAN
                         break;
                 }
             }
-          
             return list_Horizontal_Block;
         }
 

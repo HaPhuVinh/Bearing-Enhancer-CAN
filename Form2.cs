@@ -49,8 +49,8 @@ namespace Bearing_Enhancer_CAN
         private void buttonOK_Click(object sender, EventArgs e)
         {
             bool isValid = true;
-            string input = txt_Contact_Length.Text.Trim();
-            Regex regex = new Regex(Unit == "Imperial" ? @"^\d+(-\d+){1,2}$" : @"^\d+$");
+            string input = txt_Contact_Length.Text;
+            Regex regex = new Regex(@"^\d+(-\d+){1,2}$");
             if (string.IsNullOrWhiteSpace(txt_Contact_Length.Text) || !regex.IsMatch(input))
             {
                 errorProvider1.SetError(txt_Contact_Length, "Please enter a valid contact length! Example: 0-12, 3-08, 1-00-00");
@@ -69,6 +69,7 @@ namespace Bearing_Enhancer_CAN
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
+
         }
     }
 }
