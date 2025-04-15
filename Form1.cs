@@ -16,6 +16,38 @@ namespace Bearing_Enhancer_CAN
 {
     public partial class Form_BearingEnhacerCAN : Form
     {
+        private int hoveredRowIndex = -1;
+        
+        private void dataGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex != hoveredRowIndex)
+            {
+                // Nếu đã có dòng đang hover, trả lại màu cũ
+                if (hoveredRowIndex >= 0)
+                {
+                    ResetRowStyle(hoveredRowIndex);
+                }
+
+                hoveredRowIndex = e.RowIndex;
+
+                var row = dataGridView_Table.Rows[e.RowIndex];
+                row.DefaultCellStyle.Font = new Font(dataGridView_Table.Font, FontStyle.Bold);
+            }
+        }
+
+        private void dataGridView_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == hoveredRowIndex && e.RowIndex >= 0)
+            {
+                ResetRowStyle(hoveredRowIndex);
+                hoveredRowIndex = -1;
+            }
+        }
+        private void ResetRowStyle(int rowIndex)
+        {
+            var row = dataGridView_Table.Rows[rowIndex];
+            row.DefaultCellStyle.Font = dataGridView_Table.DefaultCellStyle.Font;
+        }
         public Form_BearingEnhacerCAN()
         {
             InitializeComponent();
@@ -54,8 +86,10 @@ namespace Bearing_Enhancer_CAN
                 if (dataGridView_Table.IsCurrentCellDirty)
                     dataGridView_Table.CommitEdit(DataGridViewDataErrorContexts.Commit);
             };
+            // Đăng ký sự kiện hover chuột
+            dataGridView_Table.CellMouseEnter += dataGridView_CellMouseEnter;
+            dataGridView_Table.CellMouseLeave += dataGridView_CellMouseLeave;
 
-            
         }
         
         private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -98,20 +132,19 @@ namespace Bearing_Enhancer_CAN
                             topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                             BE.TopPlateInfo = topPlate;
+                            string contLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value.ToString();
 
-                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply,BE.LumSize,BE.LumSpecie, BE.TopPlateInfo,comboBox_Unit.Text,true);
+                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply,BE.LumSize,BE.LumSpecie, BE.TopPlateInfo,comboBox_Unit.Text,true, contLength);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
 
-                            row.DefaultCellStyle.BackColor = Color.Silver; // Đổi màu dòng
+                            row.DefaultCellStyle.BackColor = Color.AntiqueWhite; // Đổi màu dòng
                         }
                         else
                         {
                             // Nếu người dùng đóng form mà không nhập, bỏ tick
                             dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
 
-                            //Test Pull
-                            
                         }
                     }
                 }
@@ -136,10 +169,11 @@ namespace Bearing_Enhancer_CAN
                     topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value.ToString();
                     topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                     BE.TopPlateInfo = topPlate;
+                    
 
-                    List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
-                    (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
-                    dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
+                    List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
+                    (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
+                    dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
                 }
             }
         }

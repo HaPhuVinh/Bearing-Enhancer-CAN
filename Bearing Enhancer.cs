@@ -154,7 +154,7 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false)
+        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false, string contactlength = "0-00")
         {
             List<string> list_Bearing_Solution = new List<string>();
 
@@ -174,7 +174,7 @@ namespace Bearing_Enhancer_CAN
             //Check Vertical Block
             if (bVertical == true)
             {
-                List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit);
+                List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit, contactlength);
                 list_Bearing_Solution.AddRange(list_Vertical_Block);
             }
 
@@ -626,7 +626,7 @@ namespace Bearing_Enhancer_CAN
             return list_Horizontal_Block;
         }
 
-        List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string contactLength = "3-08")
+        List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string contactLength)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             List<string> list_Vertical_Block = new List<string>();
@@ -701,7 +701,7 @@ namespace Bearing_Enhancer_CAN
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
-                                    if(l1>24)//Check Ver_Block on each face with nail
+                                    if(l1>24)//Check Ver_Block on each face with Nail
                                     {
                                         if (item == "Nail")
                                         {

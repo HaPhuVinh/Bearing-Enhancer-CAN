@@ -61,7 +61,7 @@ namespace Bearing_Enhancer_CAN
                 else if(FastenerType.Contains("SDW22300"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW*(Ply==2&&NumberBlock<3?NumberBlock:0);
+                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW*(Ply==2&&NumberBlock<3?NumberBlock:1);
                     else if (BlockSize == "2x6")
                         return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x8")
