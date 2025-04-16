@@ -165,7 +165,7 @@ namespace Bearing_Enhancer_CAN
                 list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
                 //Check TBE
-                bool bCheckTBE = list_Bearing_Solution != null ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
+                bool bCheckTBE = list_Horizontal_Block.Count != 0 ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
                 if (bCheckTBE == false)
                 {
                     list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
@@ -178,7 +178,7 @@ namespace Bearing_Enhancer_CAN
                 list_Bearing_Solution.AddRange(list_Vertical_Block);
             }
 
-            if (list_Bearing_Solution is null)
+            if (list_Bearing_Solution.Count == 0)
             {
                 list_Bearing_Solution.Add("Not-found-an-appropriate-solution");
             }
