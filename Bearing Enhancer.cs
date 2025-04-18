@@ -36,9 +36,9 @@ namespace Bearing_Enhancer_CAN
         }
 
         #region Service Method
-        public virtual void Get_Enhancer_Note()
+        public virtual string Get_Enhancer_Note(string bearingsolution)
         {
-
+            return "";
         } 
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
@@ -246,7 +246,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -260,20 +260,21 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length*iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length*iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
                                     {
-                                        if (item.fastener == "Nail")
+                                        if (item.fastener.Contains("Nail"))
                                         {
                                             No_Block = 2;
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -284,13 +285,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"Nail"),
+                                    (18,"CommonWire10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"Nail"),
+                                    (24,"CommonWire10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -300,20 +301,21 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col])*iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
                                     {
-                                        if (item.fastener == "Nail")
+                                        if (item.fastener.Contains("Nail"))
                                         {
                                             No_Block = 2;
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -327,7 +329,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -341,9 +343,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col])*iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -352,13 +355,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"Nail"),
+                                    (18,"CommonWire10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"Nail"),
+                                    (24,"CommonWire10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -368,9 +371,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -387,7 +391,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"Nail"),
+                                        (16,"CommonWire10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
                                         (18,"SDW22458"),
@@ -401,9 +405,10 @@ namespace Bearing_Enhancer_CAN
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                         double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
-                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                             list_Horizontal_Block.Add(suggestSolution);
                                         }
                                     }
@@ -412,13 +417,13 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"Nail"),
+                                        (16,"CommonWire10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
-                                        (18,"Nail"),
+                                        (18,"CommonWire10dNail"),
                                         (18,"SDW22458"),
                                         (18,"SDS25412"),
-                                        (24,"Nail"),
+                                        (24,"CommonWire10dNail"),
                                         (24,"SDW22458"),
                                         (24,"SDS25412")
                                     };
@@ -428,9 +433,10 @@ namespace Bearing_Enhancer_CAN
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                         double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
-                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                             list_Horizontal_Block.Add(suggestSolution);
                                         }
                                     }
@@ -442,7 +448,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"Nail"),
+                                        (16,"CommonWire10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
                                         (18,"SDW22458"),
@@ -456,11 +462,12 @@ namespace Bearing_Enhancer_CAN
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                         double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
-                                        if (item.fastener != "Nail")
+                                        double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
+                                        if (!item.fastener.Contains("Nail"))
                                         {
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -470,7 +477,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block2, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -479,28 +486,29 @@ namespace Bearing_Enhancer_CAN
                                 else//Interior Bearing
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
-                                {
-                                    (16,"Nail"),
-                                    (16,"SDW22300"),
-                                    (16,"SDS25300"),
-                                    (18,"Nail"),
-                                    (18,"SDW22300"),
-                                    (18,"SDS25300"),
-                                    (24,"Nail"),
-                                    (24,"SDW22300"),
-                                    (24,"SDS25300")
-                                };
+                                    {
+                                        (16,"CommonWire10dNail"),
+                                        (16,"SDW22300"),
+                                        (16,"SDS25300"),
+                                        (18,"CommonWire10dNail"),
+                                        (18,"SDW22300"),
+                                        (18,"SDS25300"),
+                                        (24,"CommonWire10dNail"),
+                                        (24,"SDW22300"),
+                                        (24,"SDS25300")
+                                    };
                                     foreach ((int length, string fastener) item in listFasUsed)
                                     {
                                         Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                         double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
-                                        if (item.fastener != "Nail")
+                                        double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
+                                        if (!item.fastener.Contains("Nail"))
                                         {
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -510,7 +518,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block2, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -524,7 +532,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -538,9 +546,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -549,13 +558,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"Nail"),
+                                    (16,"CommonWire10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"Nail"),
+                                    (18,"CommonWire10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"Nail"),
+                                    (24,"CommonWire10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -565,9 +574,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -590,9 +600,10 @@ namespace Bearing_Enhancer_CAN
                             int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                             int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                             double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                            double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
-                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                 list_Horizontal_Block.Add(suggestSolution);
                             }
                         }
@@ -613,9 +624,10 @@ namespace Bearing_Enhancer_CAN
                             int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                             int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                             double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                            double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
-                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item.fastener}";
+                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                 list_Horizontal_Block.Add(suggestSolution);
                             }
                         }
@@ -680,7 +692,7 @@ namespace Bearing_Enhancer_CAN
                             int l1 = 12;
                             List<string> listFasUsed1 = new List<string>()
                             {
-                                "Nail",
+                                "CommonWire10dNail",
                                 "SDW22300",
                                 "SDS25300",
                             };
@@ -694,21 +706,22 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
                                     if(l1>24)//Check Ver_Block on each face with Nail
                                     {
-                                        if (item == "Nail")
+                                        if (item.Contains("Nail"))
                                         {
                                             No_Block = 2;
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l1, item);
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                                string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -723,7 +736,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit1 = false;
                             List<string> listFasUsed1 = new List<string>()
                             {
-                                ("Nail"),
+                                ("CommonWire10dNail"),
                                 ("SDW22300"),
                                 ("SDS25300"),
                             };
@@ -737,9 +750,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
@@ -757,7 +771,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit2 = false;
                             List<string> listFasUsed2 = new List<string>()
                             {
-                                ("Nail"),
+                                ("CommonWire10dNail"),
                                 ("SDW22458"),
                                 ("SDS25412"),
                             };
@@ -771,21 +785,22 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit2 = true;
                                     }
                                     if (l2 > 24)//Check Hor_Block on each face with nail if one face is not enough
                                     {
-                                        if (item == "Nail")
+                                        if (item.Contains("Nail"))
                                         {
                                             No_Block = 2;
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, item);
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -795,7 +810,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, "SDW22300");
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -805,7 +820,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, "SDS25300");
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor} {iom.Text} - {(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")} - {No_Block} -Face- {item}";
+                                                string suggestSolution = $"{l2 * iom.miliFactor} {iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -820,7 +835,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit2 = false;
                             List<string> listFasUsed2 = new List<string>()
                             {
-                                ("Nail"),
+                                ("CommonWire10dNail"),
                                 ("SDW22300"),
                                 ("SDS25300"),
                             };
@@ -834,9 +849,10 @@ namespace Bearing_Enhancer_CAN
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit2 = true;
                                     }
@@ -864,9 +880,10 @@ namespace Bearing_Enhancer_CAN
                                 int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                 int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                 double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
-                                    string suggestSolution = $"{l3 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                    string suggestSolution = $"{l3 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                     list_Vertical_Block.Add(suggestSolution);
                                     exit3 = true;
                                 }
@@ -894,9 +911,10 @@ namespace Bearing_Enhancer_CAN
                                 int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                 int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                 double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
-                                    string suggestSolution = $"{l4 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{item}";
+                                    string suggestSolution = $"{l4 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                     list_Vertical_Block.Add(suggestSolution);
                                     exit4 = true;
                                 }
@@ -1099,11 +1117,41 @@ namespace Bearing_Enhancer_CAN
 
     public class Bearing_Enhancer_TBE : Bearing_Enhancer
     {
-        public TBE_Info TBE_Info { get; set; }
+        public string Chosen_Solution { get; set; }
 
-        public override void Get_Enhancer_Note()
+        public override string Get_Enhancer_Note(string bearingsolution)
         {
-            base.Get_Enhancer_Note();
+            return "";
+        }
+
+    }
+
+    public class Bearing_Enhancer_VerBlock : Bearing_Enhancer
+    {
+        public string Chosen_Solution { get; set; }
+        public Block_Info Ver_Block { get; set; }
+        public override string Get_Enhancer_Note(string bearingsolution)
+        {
+            return "";
+        }
+    }
+    public class Bearing_Enhancer_HorBlock : Bearing_Enhancer
+    {
+        public string Chosen_Solution { get; set; }
+        public Block_Info Hor_Block { get; set; }
+        public override string Get_Enhancer_Note(string bearingsolution)
+        {
+            Get_Block_Info(bearingsolution);
+            return "";
+        }
+        void Get_Block_Info(string chosenSolution)
+        {
+            string[] arrKey = chosenSolution.Split();
+            Hor_Block.BlockLength = int.Parse(arrKey[0].Replace("in.", "").Trim());
+            Hor_Block.Vertical = false;
+            Hor_Block.NumberBlock = int.Parse(arrKey[3]);
+            Hor_Block.NumberFastener = int.Parse(arrKey[5]);
+            Hor_Block.FastenerType = arrKey[6];
         }
     }
 }

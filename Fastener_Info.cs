@@ -18,7 +18,7 @@ namespace Bearing_Enhancer_CAN
     }
     public enum eFastenerName
     {
-        Nail_Common_Wire_10d,
+        CommonWire10dNail,
         SDW22300,
         SDW22458,
         SDW22638,
@@ -26,6 +26,7 @@ namespace Bearing_Enhancer_CAN
         SDS25412,
         SDS25600,
     }
+
     //public class Fastener_Lateral_Design_Value
     //{
     //    public string FastenerType { get; set; }=eFastenerName.Nail_Common_Wire_10d.ToString();
@@ -69,7 +70,7 @@ namespace Bearing_Enhancer_CAN
                 new string[] { "SDS25300", "SDS25300 Screw [.25\"x3\"]", "370", "370", "370", "370", "320", "320", "5.0" },
                 new string[] { "SDS25412", "SDS25412 Screw [.25\"x4 1/2\"]", "475", "475", "475", "475", "420", "420", "5.0" },
                 new string[] { "SDS25600", "SDS25600 Screw [.25\"x6\"]", "475", "475", "475", "475", "420", "420", "5.0" },
-                new string[] { "Nail", "3\" Common Wire 10d [min .144\"x3\"]", "191", "191", "177", "177", "161", "159", "2.5" }
+                new string[] { "CommonWire10dNail", "3\" Common Wire 10d [min .144\"x3\"]", "191", "191", "177", "177", "161", "159", "2.5" }
             };
     }
     public static class Fastener_Rows_Infor

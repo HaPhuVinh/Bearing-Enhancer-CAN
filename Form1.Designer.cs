@@ -71,7 +71,7 @@
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button_Check.Location = new System.Drawing.Point(448, 53);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(140, 58);
             this.button_Check.TabIndex = 0;
@@ -95,7 +95,7 @@
             // 
             this.textBox_PJNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_PJNum.Location = new System.Drawing.Point(207, 15);
-            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_PJNum.Name = "textBox_PJNum";
             this.textBox_PJNum.Size = new System.Drawing.Size(382, 24);
             this.textBox_PJNum.TabIndex = 2;
@@ -127,7 +127,7 @@
             this.Checked,
             this.The_Note});
             this.dataGridView_Table.Location = new System.Drawing.Point(2, 127);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
@@ -311,7 +311,7 @@
             this.Bearing_Solution.Name = "Bearing_Solution";
             this.Bearing_Solution.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Bearing_Solution.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.Bearing_Solution.Width = 250;
+            this.Bearing_Solution.Width = 270;
             // 
             // Vertical_Block
             // 
@@ -361,7 +361,7 @@
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();

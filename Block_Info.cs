@@ -37,6 +37,7 @@ namespace Bearing_Enhancer_CAN
         public string BlockSize { get; set; }
         public double BlockLength { get; set; }
         public string FastenerType { get; set; } = "Nail";
+        public int NumberFastener { get; set; }
 
         double maxNumberFastener;
         public double MaxNumberFastener
@@ -163,6 +164,7 @@ namespace Bearing_Enhancer_CAN
             BlockLength = blockLength;
             FastenerType = fastenerType;
         }
+        
     }
 }
     
