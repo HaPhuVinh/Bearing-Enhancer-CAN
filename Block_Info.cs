@@ -39,6 +39,152 @@ namespace Bearing_Enhancer_CAN
         public string FastenerType { get; set; } = "Nail";
         public int NumberFastener { get; set; }
 
+        double endDistance;
+        public double EndDistance
+        {
+            get
+            {
+                if (FastenerType.Contains("Nail"))
+                    return Fastener_Spacing_Info.Nail.EndDistance;
+                else if (FastenerType.Contains("SDW"))
+                    return Fastener_Spacing_Info.SDW.EndDistance;
+                else if (FastenerType.Contains("SDS"))
+                    return Fastener_Spacing_Info.SDS.EndDistance;
+                else
+                    return 0;
+            }
+            set { endDistance = value; }
+        }
+
+        double minSpacing;
+        public double MinSpacing
+        {
+            get
+            {
+                if (FastenerType.Contains("Nail"))
+                    return Fastener_Spacing_Info.Nail.MinSpacing;
+                else if (FastenerType.Contains("SDW"))
+                    return Fastener_Spacing_Info.SDW.MinSpacing;
+                else if (FastenerType.Contains("SDS"))
+                    return Fastener_Spacing_Info.SDS.MinSpacing;
+                else
+                    return 0;
+            }
+            set { minSpacing = value; }
+        }
+
+        double minRow;
+        public double MinRow
+        {
+            get 
+            {
+                if (FastenerType.Contains("Nail"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MinrowNail;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MinrowNail;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MinrowNail;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MinrowNail;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MinrowNail;
+                    else
+                        return 0;
+                }
+                else if (FastenerType.Contains("SDW"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MinrowSDW;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MinrowSDW;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MinrowSDW;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MinrowSDW;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MinrowSDW;
+                    else
+                        return 0;
+                }
+                else if (FastenerType.Contains("SDS"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MinrowSDS;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MinrowSDS;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MinrowSDS;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MinrowSDS;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MinrowSDS;
+                    else
+                        return 0;
+                }
+                else
+                    return 0;
+            }
+            set { minRow = value; }
+        }
+
+        double maxRow;
+        public double MaxRow
+        {
+            get
+            {
+                if (FastenerType.Contains("Nail"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MaxrowNail;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MaxrowNail;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MaxrowNail;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MaxrowNail;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MaxrowNail;
+                    else
+                        return 0;
+                }
+                else if (FastenerType.Contains("SDW"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW;
+                    else
+                        return 0;
+                }
+                else if (FastenerType.Contains("SDS"))
+                {
+                    if (BlockSize == "2x4")
+                        return Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS;
+                    else if (BlockSize == "2x6")
+                        return Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS;
+                    else if (BlockSize == "2x8")
+                        return Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS;
+                    else if (BlockSize == "2x10")
+                        return Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS;
+                    else if (BlockSize == "2x12")
+                        return Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS;
+                    else
+                        return 0;
+                }
+                else
+                    return 0;
+            }
+            set { maxRow = value; }
+        }
+
         double maxNumberFastener;
         public double MaxNumberFastener
         {
@@ -155,6 +301,7 @@ namespace Bearing_Enhancer_CAN
             set { maxNumberFastener = value; }
         }
         //public int MinNumberFastener { get; set; }
+
         public Block_Info(int ply, bool vertical, int numBlock, string blockSize, double blockLength, string fastenerType)
         {
             Ply = ply;

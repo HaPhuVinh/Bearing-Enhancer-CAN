@@ -36,7 +36,7 @@ namespace Bearing_Enhancer_CAN
         }
 
         #region Service Method
-        public virtual string Get_Enhancer_Note(string bearingsolution)
+        public virtual string Get_Enhancer_Note(string bearingsolution, string language)
         {
             return "";
         } 
@@ -1119,7 +1119,7 @@ namespace Bearing_Enhancer_CAN
     {
         public string Chosen_Solution { get; set; }
 
-        public override string Get_Enhancer_Note(string bearingsolution)
+        public override string Get_Enhancer_Note(string bearingsolution, string language)
         {
             return "";
         }
@@ -1130,7 +1130,7 @@ namespace Bearing_Enhancer_CAN
     {
         public string Chosen_Solution { get; set; }
         public Block_Info Ver_Block { get; set; }
-        public override string Get_Enhancer_Note(string bearingsolution)
+        public override string Get_Enhancer_Note(string bearingsolution, string language)
         {
             return "";
         }
@@ -1138,20 +1138,47 @@ namespace Bearing_Enhancer_CAN
     public class Bearing_Enhancer_HorBlock : Bearing_Enhancer
     {
         public string Chosen_Solution { get; set; }
-        public Block_Info Hor_Block { get; set; }
-        public override string Get_Enhancer_Note(string bearingsolution)
+
+        public Bearing_Enhancer_HorBlock(string chosensolution)
         {
-            Get_Block_Info(bearingsolution);
-            return "";
+            Chosen_Solution = chosensolution;
         }
-        void Get_Block_Info(string chosenSolution)
+        public override string Get_Enhancer_Note(string chosensolution, string language)
         {
-            string[] arrKey = chosenSolution.Split();
-            Hor_Block.BlockLength = int.Parse(arrKey[0].Replace("in.", "").Trim());
-            Hor_Block.Vertical = false;
-            Hor_Block.NumberBlock = int.Parse(arrKey[3]);
-            Hor_Block.NumberFastener = int.Parse(arrKey[5]);
-            Hor_Block.FastenerType = arrKey[6];
+            string[] arrKey = chosensolution.Split();
+            int numberPly = int.Parse(Ply);
+            int blockLength = int.Parse(arrKey[0].Replace("in.", "").Trim());
+            bool vertical = false;
+            int numberBlock = int.Parse(arrKey[3]);
+            int numberFastener = int.Parse(arrKey[5]);
+            string fastenerType = arrKey[6];
+            
+            Block_Info Hor_Block = new Block_Info(numberPly,vertical,numberBlock,LumSize,blockLength,fastenerType);
+            double row = Math.Ceiling(numberFastener/((blockLength-2*Hor_Block.EndDistance)/Hor_Block.MinSpacing+1));
+            string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e=>e.ToString()==fastenerType).GetDescription();
+            string theNote = "";
+            if(language == "English")
+            {
+                if (fastenerType.Contains("Nail"))
+                {
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of {numberFastener} nails.";
+                }
+                else if (fastenerType.Contains("SDW"))
+                {
+
+                }
+                else if (fastenerType.Contains("SDS"))
+                {
+
+                }
+                else { theNote = ""; }
+            }
+            else
+            {
+                
+            }
+
+            return theNote;
         }
     }
 }

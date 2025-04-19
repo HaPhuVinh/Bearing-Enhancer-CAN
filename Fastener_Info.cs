@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -18,12 +19,19 @@ namespace Bearing_Enhancer_CAN
     }
     public enum eFastenerName
     {
+        [Description("3\" 10d Common Wire Nails")]
         CommonWire10dNail,
+        [Description("SDW22300 Screws")]
         SDW22300,
+        [Description("SDW22458 Screws ")]
         SDW22458,
+        [Description("SDW22638 Screws")]
         SDW22638,
+        [Description("SDS25300 Screws")]
         SDS25300,
+        [Description("SDS25412 Screws")]
         SDS25412,
+        [Description("SDS25600 Screws")]
         SDS25600,
     }
 
