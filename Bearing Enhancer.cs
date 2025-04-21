@@ -36,7 +36,7 @@ namespace Bearing_Enhancer_CAN
         }
 
         #region Service Method
-        public virtual string Generate_Enhancer_Note(string bearingsolution, string language)
+        public virtual string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
         {
             return "";
         } 
@@ -1119,7 +1119,7 @@ namespace Bearing_Enhancer_CAN
     {
         public string Chosen_Solution { get; set; }
 
-        public override string Generate_Enhancer_Note(string bearingsolution, string language)
+        public override string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
         {
             return "";
         }
@@ -1130,7 +1130,7 @@ namespace Bearing_Enhancer_CAN
     {
         public string Chosen_Solution { get; set; }
         public Block_Info Ver_Block { get; set; }
-        public override string Generate_Enhancer_Note(string bearingsolution, string language)
+        public override string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
         {
             return "";
         }
@@ -1143,7 +1143,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language)
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
             string[] arrKey = chosensolution.Split();
             int numberPly = int.Parse(Ply);
@@ -1165,11 +1165,11 @@ namespace Bearing_Enhancer_CAN
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, 2x#x##\" SPF #2 (or better), to one/both face(s) of the bottom chord/web #-# w/ # (staggered) row(s) of Simpson SDW##### screws @ #\" o.c. Install the screws per Simpson specifications. Install a minimum of (#) screws.";
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of {numberFastener} screws.";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attach bearing block BB1, 2x#x##\" SPF #2 (or better), to one/both face(s) of the bottom chord/web #-# w/ (#) Simpson SDS##### screws. See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {numberFastener} Simpson {fasDescription}. See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
                 }
                 else { theNote = ""; }
             }
