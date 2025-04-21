@@ -1161,15 +1161,15 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of {numberFastener} nails.";
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({numberFastener}) nails.";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of {numberFastener} screws.";
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({numberFastener}) screws.";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {numberFastener} Simpson {fasDescription}. See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
+                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ ({numberFastener}) Simpson {fasDescription}. See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
                 }
                 else { theNote = ""; }
             }
@@ -1177,15 +1177,15 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, 2x#x##po EPS #2 (ou mieux), sur une/les deux face(s) de la MI/l’âme #-# avec # rangée(s) (décalées) de XXXXXXXXX @ #po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de (#) clous.";
+                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({numberFastener}) clous.";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, 2x#x#po EPS #2 (ou mieux), sur une/les deux face(s) de la MI/l’âme #-# avec # rangée(s) (décalées) de vis SDW##### de Simpson@ #po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de (#) vis.";
+                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({numberFastener}) vis.";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, 2x#x#po EPS #2 (ou mieux), sur une/les deux face(s) de la MI/l’âme #-# avec # vis SDS##### de Simpson. Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
+                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec ({numberFastener}) vis {fasDescription} de Simpson. Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
                 }
                 else { theNote = ""; }
             }
