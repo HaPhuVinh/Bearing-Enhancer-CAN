@@ -8,19 +8,11 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
-    public enum eLumberSpecie
-    {
-        SP,
-        SYP,
-        DFL,
-        DFLN,
-        SPF,
-        HF,
-    }
+    
     public enum eFastenerName
     {
-        [Description("3\" 10d Common Wire Nails")]
-        CommonWire10dNail,
+        [Description("10d box nail [min .128\"x3\"]")]
+        Box10dNail,
         [Description("SDW22300 Screws")]
         SDW22300,
         [Description("SDW22458 Screws ")]
@@ -78,7 +70,7 @@ namespace Bearing_Enhancer_CAN
                 new string[] { "SDS25300", "SDS25300 Screw [.25\"x3\"]", "370", "370", "370", "370", "320", "320", "5.0" },
                 new string[] { "SDS25412", "SDS25412 Screw [.25\"x4 1/2\"]", "475", "475", "475", "475", "420", "420", "5.0" },
                 new string[] { "SDS25600", "SDS25600 Screw [.25\"x6\"]", "475", "475", "475", "475", "420", "420", "5.0" },
-                new string[] { "CommonWire10dNail", "3\" Common Wire 10d [min .144\"x3\"]", "191", "191", "177", "177", "161", "159", "2.5" }
+                new string[] { "Box10dNail", "10d box nail [min .128\"x3\"]", "154", "154", "142", "142", "136", "128", "2.5" }
             };
     }
     public static class Fastener_Rows_Infor

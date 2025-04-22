@@ -110,7 +110,7 @@ namespace Bearing_Enhancer_CAN
                     i++;
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -120,7 +120,6 @@ namespace Bearing_Enhancer_CAN
         private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
             
-
             if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
 
@@ -244,6 +243,77 @@ namespace Bearing_Enhancer_CAN
                         dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
                     }
                 }
+            }
+
+            if (e.ColumnIndex == 17 && e.RowIndex >= 0) // Cột Checked CheckBox
+            {
+                int isChecked17 = Convert.ToInt16(dataGridView_Table.Rows[e.RowIndex].Cells[17].Value);
+                DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
+                var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
+                if (isChecked17==1)
+                {
+                    if (string.IsNullOrWhiteSpace(cell.Value.ToString()))
+                    {
+                        MessageBox.Show("Please check and input relevant data!");
+                        row.Cells[17].Value = false;
+                    }
+                    else
+                    {
+                        Bearing_Enhancer BE = new Bearing_Enhancer();
+                        BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                        BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                        BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                        BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
+                        Top_Plate_Info topPlate = new Top_Plate_Info();
+                        topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                        topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                        topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                        topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                        topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                        topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                        topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                        topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
+                        topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                        BE.TopPlateInfo = topPlate;
+                        string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value?.ToString();
+                        string chosenSolution = cell.Value.ToString();
+
+                        if (chosenSolution.Contains("5%"))
+                        {
+                            Bearing_Enhancer beItem = new Bearing_Enhancer_5Percent(chosenSolution);
+                            beItem = BE;
+                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
+                            row.Cells[18].Value = theNote;
+                        }
+                        else if (chosenSolution.Contains("Hor"))
+                        {
+                            Bearing_Enhancer beItem = new Bearing_Enhancer_HorBlock(chosenSolution);
+                            beItem = BE;
+                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
+                            row.Cells[18].Value = theNote;
+                        }
+                        else if (chosenSolution.Contains("Ver"))
+                        {
+                            Bearing_Enhancer beItem = new Bearing_Enhancer_VerBlock(chosenSolution);
+                            beItem = BE;
+                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
+                            row.Cells[18].Value = theNote;
+                        }
+                        else if (chosenSolution.Contains("TBE"))
+                        {
+                            Bearing_Enhancer beItem = new Bearing_Enhancer_TBE(chosenSolution);
+                            beItem = BE;
+                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
+                            row.Cells[18].Value = theNote;
+                        }
+                        else { }
+                    }
+                }
+                else
+                {
+                    row.Cells[18].Value = "";
+                }
+
             }
         }
         private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)//Sự kiện rời khỏi Ô

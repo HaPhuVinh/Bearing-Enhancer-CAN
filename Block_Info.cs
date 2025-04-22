@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 
 namespace Bearing_Enhancer_CAN
 {
+    public enum eLumberSpecie
+    {
+        SP,
+        SYP,
+        DFL,
+        DFLN,
+        SPF,
+        HF,
+    }
     public enum No_Solution_Enum
     {
         [Description("Please-Check-And-Input-Relevant-Data")]

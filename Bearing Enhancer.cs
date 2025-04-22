@@ -9,13 +9,12 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections;
 using System.ComponentModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Bearing_Enhancer_CAN
 {
     public class Bearing_Enhancer
     {
-        //public string Language { get; set; } = "";
-        //public string Unit { get; set; } = "";
         public string TrussName { get; set; }
         public string Ply { get; set; }
         public string LumSpecie { get; set; }
@@ -25,12 +24,6 @@ namespace Bearing_Enhancer_CAN
         public Top_Plate_Info TopPlateInfo { get; set; }
         public List<string> BearingSolution { get; set; }
 
-        //public Bearing_Enhancer(string language, string unit)
-        //{
-        //    Language = language;
-        //    Unit = unit;
-        //}
-
         public Bearing_Enhancer()
         {
         }
@@ -39,7 +32,7 @@ namespace Bearing_Enhancer_CAN
         public virtual string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
         {
             return "";
-        } 
+        }
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
             //Get Data from tdlTruss file
@@ -48,14 +41,14 @@ namespace Bearing_Enhancer_CAN
             string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(txtPath));
             string trussesPath = $"{projectPath}\\Trusses";
             string[] arrPath = trussesPath.Split('\\');
-            string projectID = arrPath[arrPath.Length-2];
+            string projectID = arrPath[arrPath.Length - 2];
             string fileName = @"";
             string extName = @"";
             int j = 0;
             List<string> subListTrussName = new List<string>();
             List<string> mainListTrussName = new List<string>();
             List<Bearing_Enhancer> bearingEnhancerItems = new List<Bearing_Enhancer>();
-            Dictionary<int,Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
+            Dictionary<int, Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             Top_Plate_Info tpi = new Top_Plate_Info();
             mainListTrussName = Directory.GetFiles(trussesPath).ToList();
             XmlDocument xmlDoc = new XmlDocument();
@@ -68,10 +61,10 @@ namespace Bearing_Enhancer_CAN
                     xmlDoc.Load(Item);
                     rootNode = xmlDoc.DocumentElement;
                     fileName = Path.GetFileNameWithoutExtension(Item);
-                    dictTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName,language,unit);
+                    dictTopPlate = tpi.Get_TopPlate_Info(txtPath, fileName, language, unit);
                     if (dictTopPlate != null)
                     {
-                        foreach(KeyValuePair<int,Top_Plate_Info> TP in dictTopPlate)
+                        foreach (KeyValuePair<int, Top_Plate_Info> TP in dictTopPlate)
                         {
                             j = 0;
                             Bearing_Enhancer bE = new Bearing_Enhancer();
@@ -88,7 +81,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     S = I.Split(':');
                                     bE.Ply = S[1].Trim();
-                                    
+
                                 }
                                 if (I.Contains("brg:"))
                                 {
@@ -98,11 +91,11 @@ namespace Bearing_Enhancer_CAN
                                         bE.TopPlateInfo.YLocation = S.SingleOrDefault(n => n == "BotChd" || n == "TopChd" || n == "Web");
                                     }
                                     j = j + 1;
-                                    
+
                                 }
                             }
                             //Get Data in <LumberResults> Node
-                            var keyLumber = Get_Lumber(TP.Value.XLocation,TP.Value.YLocation,rootNode, unit);
+                            var keyLumber = Get_Lumber(TP.Value.XLocation, TP.Value.YLocation, rootNode, unit);
                             LumberInventory lumI = new LumberInventory();
                             List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectID);
 
@@ -124,7 +117,7 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Check Interior or Extorior Bearing
-                            double xloc =double.TryParse(TP.Value.XLocation, out double result)?result/iom.miliFactor: Convert_To_Inch(TP.Value.XLocation);
+                            double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
                             double xleftend = double.Parse(keyLumber.x_leftend);
                             double xrightend = double.Parse(keyLumber.x_rightend);
                             if (xloc > xleftend + 8 && xloc < xrightend - 8)
@@ -138,9 +131,9 @@ namespace Bearing_Enhancer_CAN
 
                             //Calculate Load Transfer load
                             double react = bE.TopPlateInfo.Reaction;
-                            double bear_W = double.TryParse(bE.TopPlateInfo.BearingWidth,out double resultW)?resultW:Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
-                            double bear_Wrq = double.TryParse(bE.TopPlateInfo.RequireWidth,out double resultR)?resultR:Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
-                            bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq),0);
+                            double bear_W = double.TryParse(bE.TopPlateInfo.BearingWidth, out double resultW) ? resultW : Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
+                            double bear_Wrq = double.TryParse(bE.TopPlateInfo.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
+                            bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq), 0);
 
                             //Get Bearing Solution
                             List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit);
@@ -150,11 +143,11 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-            
+
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution (string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false, string contactlength = "0-00")
+        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false, string contactlength = "0-00")
         {
             List<string> list_Bearing_Solution = new List<string>();
 
@@ -195,8 +188,8 @@ namespace Bearing_Enhancer_CAN
             int No_Block = 0;
             double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
             double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
-            double rqdArea = 1.5*iom.miliFactor * plies * rqdWidth;
-            double brgArea = 1.5*iom.miliFactor * plies * brgWidth;
+            double rqdArea = 1.5 * iom.miliFactor * plies * rqdWidth;
+            double brgArea = 1.5 * iom.miliFactor * plies * brgWidth;
             //Check lumber is null
             if (lumSize is null || lumSpecie is null)
             {
@@ -214,7 +207,7 @@ namespace Bearing_Enhancer_CAN
                 list_Horizontal_Block.Add(No_Solution_Enum.Within5Percent.GetDescription());
                 return list_Horizontal_Block;
             }
-            else if (rqdArea <= brgArea + 1.5*iom.miliFactor * 1 * brgWidth)
+            else if (rqdArea <= brgArea + 1.5 * iom.miliFactor * 1 * brgWidth)
             {
                 if (plies > 3)
                 {
@@ -225,7 +218,7 @@ namespace Bearing_Enhancer_CAN
                     No_Block = 1;
                 }
             }
-            else if (rqdArea <= brgArea + 1.5*iom.miliFactor * 2 * brgWidth)
+            else if (rqdArea <= brgArea + 1.5 * iom.miliFactor * 2 * brgWidth)
             {
                 No_Block = 2;
             }
@@ -246,7 +239,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -256,14 +249,14 @@ namespace Bearing_Enhancer_CAN
                                 };
                                 foreach ((int length, string fastener) item in listFasUsed)
                                 {
-                                    Block_Info HBB = new Block_Info(plies,false, No_Block, lumSize, item.length, item.fastener);
+                                    Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
                                     double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length*iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
@@ -285,13 +278,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"CommonWire10dNail"),
+                                    (18,"Box10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"CommonWire10dNail"),
+                                    (24,"Box10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -300,7 +293,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col])*iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -329,7 +322,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -342,7 +335,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col])*iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -355,13 +348,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"CommonWire10dNail"),
+                                    (18,"Box10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"CommonWire10dNail"),
+                                    (24,"Box10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -391,7 +384,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"CommonWire10dNail"),
+                                        (16,"Box10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
                                         (18,"SDW22458"),
@@ -417,13 +410,13 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"CommonWire10dNail"),
+                                        (16,"Box10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
-                                        (18,"CommonWire10dNail"),
+                                        (18,"Box10dNail"),
                                         (18,"SDW22458"),
                                         (18,"SDS25412"),
-                                        (24,"CommonWire10dNail"),
+                                        (24,"Box10dNail"),
                                         (24,"SDW22458"),
                                         (24,"SDS25412")
                                     };
@@ -448,7 +441,7 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"CommonWire10dNail"),
+                                        (16,"Box10dNail"),
                                         (16,"SDW22458"),
                                         (16,"SDS25412"),
                                         (18,"SDW22458"),
@@ -487,13 +480,13 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                     {
-                                        (16,"CommonWire10dNail"),
+                                        (16,"Box10dNail"),
                                         (16,"SDW22300"),
                                         (16,"SDS25300"),
-                                        (18,"CommonWire10dNail"),
+                                        (18,"Box10dNail"),
                                         (18,"SDW22300"),
                                         (18,"SDS25300"),
-                                        (24,"CommonWire10dNail"),
+                                        (24,"Box10dNail"),
                                         (24,"SDW22300"),
                                         (24,"SDS25300")
                                     };
@@ -532,7 +525,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
                                     (18,"SDW22300"),
@@ -558,13 +551,13 @@ namespace Bearing_Enhancer_CAN
                             {
                                 List<(int length, string fastener)> listFasUsed = new List<(int, string)>()
                                 {
-                                    (16,"CommonWire10dNail"),
+                                    (16,"Box10dNail"),
                                     (16,"SDW22300"),
                                     (16,"SDS25300"),
-                                    (18,"CommonWire10dNail"),
+                                    (18,"Box10dNail"),
                                     (18,"SDW22300"),
                                     (18,"SDS25300"),
-                                    (24,"CommonWire10dNail"),
+                                    (24,"Box10dNail"),
                                     (24,"SDW22300"),
                                     (24,"SDS25300")
                                 };
@@ -692,7 +685,7 @@ namespace Bearing_Enhancer_CAN
                             int l1 = 12;
                             List<string> listFasUsed1 = new List<string>()
                             {
-                                "CommonWire10dNail",
+                                "Box10dNail",
                                 "SDW22300",
                                 "SDS25300",
                             };
@@ -713,7 +706,7 @@ namespace Bearing_Enhancer_CAN
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
-                                    if(l1>24)//Check Ver_Block on each face with Nail
+                                    if (l1 > 24)//Check Ver_Block on each face with Nail
                                     {
                                         if (item.Contains("Nail"))
                                         {
@@ -727,7 +720,7 @@ namespace Bearing_Enhancer_CAN
                                         }
                                     }
                                     l1 += 6;
-                                } while (exit1==false);
+                                } while (exit1 == false);
                             }
                         }
                         else//No_Block = 2
@@ -736,7 +729,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit1 = false;
                             List<string> listFasUsed1 = new List<string>()
                             {
-                                ("CommonWire10dNail"),
+                                ("Box10dNail"),
                                 ("SDW22300"),
                                 ("SDS25300"),
                             };
@@ -757,9 +750,9 @@ namespace Bearing_Enhancer_CAN
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
-                                    
+
                                     l1 += 6;
-                                } while (exit1==false);
+                                } while (exit1 == false);
                             }
                         }
 
@@ -771,7 +764,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit2 = false;
                             List<string> listFasUsed2 = new List<string>()
                             {
-                                ("CommonWire10dNail"),
+                                ("Box10dNail"),
                                 ("SDW22458"),
                                 ("SDS25412"),
                             };
@@ -826,7 +819,7 @@ namespace Bearing_Enhancer_CAN
                                         }
                                     }
                                     l2 += 6;
-                                } while (exit2==false);
+                                } while (exit2 == false);
                             }
                         }
                         else//No_Block = 2
@@ -835,7 +828,7 @@ namespace Bearing_Enhancer_CAN
                             bool exit2 = false;
                             List<string> listFasUsed2 = new List<string>()
                             {
-                                ("CommonWire10dNail"),
+                                ("Box10dNail"),
                                 ("SDW22300"),
                                 ("SDS25300"),
                             };
@@ -934,8 +927,8 @@ namespace Bearing_Enhancer_CAN
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             const double alternateFactor = 0.6;
             int plies = int.Parse(ply);
-            double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB)? resultB:Convert_To_Inch(topPlate.BearingWidth);
-            double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR)?resultR:Convert_To_Inch(topPlate.RequireWidth);
+            double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
+            double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
             TBE_Info tbe_Data = new TBE_Info(unit);
             List<string> list_TBE = new List<string>();
             //Check lumber is null
@@ -944,11 +937,11 @@ namespace Bearing_Enhancer_CAN
             //    list_TBE.Add(No_Solution_Enum.Please_check_and_input_relevant_data.ToString());
             //    return list_TBE;
             //}
-            if (brgWidth >= 3.5*iom.miliFactor)
+            if (brgWidth >= 3.5 * iom.miliFactor)
             {
                 if (topPlate.Material == "SPF")
                 {
-                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5* iom.miliFactor ? alternateFactor : 1.0);
+                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
                     {
                         list_TBE.Add("TBE4");
@@ -963,7 +956,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-            if (brgWidth >= 5.5* iom.miliFactor)
+            if (brgWidth >= 5.5 * iom.miliFactor)
             {
                 if (topPlate.Material == "SPF")
                 {
@@ -982,7 +975,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
             }
-            
+
             return list_TBE;
         }
 
@@ -992,13 +985,13 @@ namespace Bearing_Enhancer_CAN
             int i = 0;
             string[] S, A;
             string s;
-            string keyLumber="";
-            List<ArrayList> listArrList=new List<ArrayList>();
+            string keyLumber = "";
+            List<ArrayList> listArrList = new List<ArrayList>();
             XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
             A = elementNode.InnerText.Split('\n');
             foreach (string I in A)
             {
-                i ++;
+                i++;
                 if (y == "BotChd")
                 {
                     if (!I.Contains("BC"))
@@ -1006,18 +999,18 @@ namespace Bearing_Enhancer_CAN
                         continue;
                     }
                     ArrayList arrList = new ArrayList();
-                    s =I.Trim('\r');
+                    s = I.Trim('\r');
                     if (s.Contains("BC"))
                     {
                         S = s.Split(' ');
-                        
+
                         arrList.Add(i);
                         arrList.Add(S[0]);
                         arrList.Add(S[1]);
                     }
                     XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
                     int j = 0;
-                    foreach(XmlNode N in nodeList)
+                    foreach (XmlNode N in nodeList)
                     {
                         j++;
                         if (j == i)
@@ -1030,7 +1023,7 @@ namespace Bearing_Enhancer_CAN
                             string sr = N.Attributes["R"].Value;
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
-                            arrList.Add(ssr[ssr.Length-3]);
+                            arrList.Add(ssr[ssr.Length - 3]);
                         }
                     }
                     listArrList.Add(arrList);
@@ -1071,9 +1064,9 @@ namespace Bearing_Enhancer_CAN
                     }
                     listArrList.Add(arrList);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
                 }
-                
+
             }
-            double xloc = double.TryParse(x,out double result)?result/iom.miliFactor:Convert_To_Inch(x);
+            double xloc = double.TryParse(x, out double result) ? result / iom.miliFactor : Convert_To_Inch(x);
 
             foreach (ArrayList al in listArrList)
             {
@@ -1089,7 +1082,7 @@ namespace Bearing_Enhancer_CAN
                     keyLumber = al[2].ToString();
                 }
             }
-            return listArrList.Count>0?(keyLumber, listArrList[0][3].ToString(), listArrList[listArrList.Count-1][4].ToString()):("","0","0");
+            return listArrList.Count > 0 ? (keyLumber, listArrList[0][3].ToString(), listArrList[listArrList.Count - 1][4].ToString()) : ("", "0", "0");
         }
 
         double Convert_To_Inch(string xxx)
@@ -1097,42 +1090,110 @@ namespace Bearing_Enhancer_CAN
             string s = xxx.Trim();
             string[] ss = s.Split('-');
             double q;
-            if (ss.Length>2)
+            if (ss.Length > 2)
             {
                 q = double.Parse(ss[0]) * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
             }
-            else if(ss.Length>1)
+            else if (ss.Length > 1)
             {
                 q = double.Parse(ss[0]) + double.Parse(ss[1]) / 16;
             }
             else
             {
-                q=double.Parse(ss[0]) / 16;
+                q = double.Parse(ss[0]) / 16;
             }
-            
+
             return q;
         }
         #endregion
     }
-
     public class Bearing_Enhancer_TBE : Bearing_Enhancer
     {
         public string Chosen_Solution { get; set; }
-
-        public override string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
+        public Bearing_Enhancer_TBE(string chosensolution)
         {
-            return "";
+            Chosen_Solution = chosensolution;
         }
-
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        {
+            string theNote = "";
+            if (language == "English")
+            {
+                theNote = $"Simpson {chosensolution} may be used as a bearing enhancer. See the latest Simpson Strong - Tie Construction Connectors catalog for installation instructions.";
+            }
+            else
+            {
+                theNote = $"Le renfort d'appuis {chosensolution} de Simpson peut être utilisé. Consultez le plus récent catalogue des connecteurs de Simpson Strong-Tie pour les instructions d’installation.";
+            }
+            return theNote;
+        }
     }
-
     public class Bearing_Enhancer_VerBlock : Bearing_Enhancer
     {
         public string Chosen_Solution { get; set; }
-        public Block_Info Ver_Block { get; set; }
-        public override string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
+        public Bearing_Enhancer_VerBlock(string chosensolution)
         {
-            return "";
+            Chosen_Solution = chosensolution;
+        }
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
+        {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            string[] arrKey = chosensolution.Split();
+            int numberPly = int.Parse(Ply);
+            double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
+            bool vertical = true;
+            int numberBlock = int.Parse(arrKey[3]);
+            int numberFastener = int.Parse(arrKey[5]);
+            string fastenerType = arrKey[6];
+
+            Block_Info Hor_Block = new Block_Info(numberPly, vertical, numberBlock, LumSize, blockLength, fastenerType);
+            double row = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1));
+            string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e => e.ToString() == fastenerType).GetDescription();
+
+            List<string[]> LumberSizeUnit = new List<string[]>()
+            {
+                new string[]  { "2x4", "38x89" },
+                new string[]  { "2x6", "38x140" },
+                new string[]  { "2x8", "38x184" },
+                new string[]  { "2x10", "38x235" },
+                new string[]  { "2x12", "38x286" },
+            };
+            string lumSize = iom.Unit == "Imperial" ? LumSize : LumberSizeUnit.FirstOrDefault(e => e[0] == LumSize)[1];
+
+            string theNote = "";
+            if (language == "English")
+            {
+                if (fastenerType.Contains("Nail"))
+                {
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                }
+                else if (fastenerType.Contains("SDW"))
+                {
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                }
+                else if (fastenerType.Contains("SDS"))
+                {
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) Simpson {fasDescription}{(Hor_Block.NumberBlock == 2 ? " per block." : ".")} See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
+                }
+                else { theNote = ""; }
+            }
+            else
+            {
+                if (fastenerType.Contains("Nail"))
+                {
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                }
+                else if (fastenerType.Contains("SDW"))
+                {
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                }
+                else if (fastenerType.Contains("SDS"))
+                {
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
+                }
+                else { theNote = ""; }
+            }
+            return theNote;
         }
     }
     public class Bearing_Enhancer_HorBlock : Bearing_Enhancer
@@ -1145,31 +1206,43 @@ namespace Bearing_Enhancer_CAN
         }
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             string[] arrKey = chosensolution.Split();
             int numberPly = int.Parse(Ply);
-            int blockLength = int.Parse(arrKey[0].Replace("in.", "").Trim());
+            double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
             bool vertical = false;
             int numberBlock = int.Parse(arrKey[3]);
             int numberFastener = int.Parse(arrKey[5]);
             string fastenerType = arrKey[6];
-            
-            Block_Info Hor_Block = new Block_Info(numberPly,vertical,numberBlock,LumSize,blockLength,fastenerType);
-            double row = Math.Ceiling(numberFastener/((blockLength-2*Hor_Block.EndDistance)/Hor_Block.MinSpacing+1));
-            string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e=>e.ToString()==fastenerType).GetDescription();
+
+            Block_Info Hor_Block = new Block_Info(numberPly, vertical, numberBlock, LumSize, blockLength, fastenerType);
+            double row = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1));
+            string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e => e.ToString() == fastenerType).GetDescription();
+
+            List<string[]> LumberSizeUnit = new List<string[]>()
+            {
+                new string[]  { "2x4", "38x89" },
+                new string[]  { "2x6", "38x140" },
+                new string[]  { "2x8", "38x184" },
+                new string[]  { "2x10", "38x235" },
+                new string[]  { "2x12", "38x286" },
+            };
+            string lumSize = iom.Unit == "Imperial" ? LumSize : LumberSizeUnit.FirstOrDefault(e => e[0] == LumSize)[1];
+
             string theNote = "";
-            if(language == "English")
+            if (language == "English")
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({numberFastener}) nails.";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({numberFastener}) screws.";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attach bearing block BB1, {LumSize}x{Hor_Block.BlockLength}\" {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ ({numberFastener}) Simpson {fasDescription}. See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) Simpson {fasDescription}{(Hor_Block.NumberBlock == 2 ? " per block." : ".")} See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
                 }
                 else { theNote = ""; }
             }
@@ -1177,19 +1250,40 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({numberFastener}) clous.";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({numberFastener}) vis.";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {LumSize}x{Hor_Block.BlockLength}po {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec ({numberFastener}) vis {fasDescription} de Simpson. Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
                 }
                 else { theNote = ""; }
             }
+            return theNote;
+        }
+    }
 
+    public class Bearing_Enhancer_5Percent : Bearing_Enhancer
+    {
+        public string Chosen_Solution { get; set; }
+        public Bearing_Enhancer_5Percent(string chosensolution)
+        {
+            Chosen_Solution = chosensolution;
+        }
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        {
+            string theNote = "";
+            if (language == "English")
+            {
+                theNote = $"Bearing factored reaction within 5% over Bearing Capacity. Building Designer may provide adequate bearing size or enhancement.";
+            }
+            else
+            {
+                theNote = $"Les réactions d’appuis pondérées sont moins de 5% au-dessus de la capacité des appuis. L'ingénieur concepteur peut fournir un détail de renfort d'appui approprié.";
+            }
             return theNote;
         }
     }
