@@ -40,6 +40,7 @@
             this.label_Language = new System.Windows.Forms.Label();
             this.label_Unit = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.btn_export_data = new System.Windows.Forms.Button();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -68,12 +69,12 @@
             // button_Check
             // 
             this.button_Check.BackColor = System.Drawing.Color.White;
-            this.button_Check.Font = new System.Drawing.Font("Arial Black", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_Check.Font = new System.Drawing.Font("Lucida Console", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button_Check.Location = new System.Drawing.Point(448, 53);
+            this.button_Check.Location = new System.Drawing.Point(463, 52);
             this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
-            this.button_Check.Size = new System.Drawing.Size(140, 58);
+            this.button_Check.Size = new System.Drawing.Size(126, 49);
             this.button_Check.TabIndex = 0;
             this.button_Check.Text = "CHECK";
             this.button_Check.UseVisualStyleBackColor = false;
@@ -139,7 +140,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(7, 110);
+            this.label2.Location = new System.Drawing.Point(7, 109);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 18);
@@ -188,6 +189,18 @@
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
+            // 
+            // btn_export_data
+            // 
+            this.btn_export_data.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
+            this.btn_export_data.Location = new System.Drawing.Point(625, 53);
+            this.btn_export_data.Name = "btn_export_data";
+            this.btn_export_data.Size = new System.Drawing.Size(107, 48);
+            this.btn_export_data.TabIndex = 7;
+            this.btn_export_data.Text = "Export Data";
+            this.btn_export_data.UseVisualStyleBackColor = true;
+            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
             // 
             // bearingEnhancerBindingSource
             // 
@@ -315,9 +328,11 @@
             // 
             // Vertical_Block
             // 
+            this.Vertical_Block.FalseValue = "False";
             this.Vertical_Block.HeaderText = "Vertical-Block?";
             this.Vertical_Block.MinimumWidth = 6;
             this.Vertical_Block.Name = "Vertical_Block";
+            this.Vertical_Block.TrueValue = "True";
             this.Vertical_Block.Width = 84;
             // 
             // Contact_Length
@@ -330,26 +345,28 @@
             // 
             // Checked
             // 
-            this.Checked.FalseValue = "0";
+            this.Checked.FalseValue = "False";
             this.Checked.HeaderText = "Checked";
             this.Checked.MinimumWidth = 6;
             this.Checked.Name = "Checked";
-            this.Checked.TrueValue = "1";
+            this.Checked.TrueValue = "True";
             this.Checked.Width = 56;
             // 
             // The_Note
             // 
+            this.The_Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.The_Note.HeaderText = "The-Note";
             this.The_Note.MinimumWidth = 6;
             this.The_Note.Name = "The_Note";
-            this.The_Note.Width = 700;
+            this.The_Note.Width = 77;
             // 
             // Form_BearingEnhacerCAN
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1443, 737);
+            this.ClientSize = new System.Drawing.Size(1803, 737);
+            this.Controls.Add(this.btn_export_data);
             this.Controls.Add(this.label_Unit);
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
@@ -385,6 +402,7 @@
         private System.Windows.Forms.Label label_Language;
         private System.Windows.Forms.Label label_Unit;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Button btn_export_data;
         private System.Windows.Forms.DataGridViewTextBoxColumn Truss_Name;
         private System.Windows.Forms.DataGridViewComboBoxColumn No_Ply;
         private System.Windows.Forms.DataGridViewComboBoxColumn Lumber_Specie;

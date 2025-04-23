@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -50,7 +51,7 @@ namespace Bearing_Enhancer_CAN
             Material.DataSource = list_Mat;
 
             // Đăng ký sự kiện thay đổi trạng thái ô
-            dataGridView_Table.CellValueChanged += DataGridView_Table_CellValueChanged;
+            dataGridView_Table.CellValueChanged += DataGridViewTable_CellValueChanged;
             dataGridView_Table.CurrentCellDirtyStateChanged += (s, ev) =>
             {
                 if (dataGridView_Table.IsCurrentCellDirty)
@@ -62,7 +63,8 @@ namespace Bearing_Enhancer_CAN
 
             // Đăng ký sự kiện kiểm tra ô
             dataGridView_Table.CellValidating += dataGridView_CellValidating;
-
+            //Đăng kí sự kiện Double_Click
+            this.dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
         }
 
         private void button1_Click(object sender, EventArgs e)// Button Check
@@ -117,204 +119,200 @@ namespace Bearing_Enhancer_CAN
 
 }
 
-        private void DataGridView_Table_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
+        private void DataGridViewTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
-            
-            if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
-            {
-
-                bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[15].Value);
-                DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
-                string[] columnsToCheck = { "No_Ply", "Location_Type", "Reaction", "Brg_Width", "Req_Width", "Material" };
-                var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"];
-                if (isChecked)
+                if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
                 {
-                    bool checkNull = false;
-                    string cellValue;
-                    foreach (string colName in columnsToCheck)
-                    {
-                        cellValue = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
-                        checkNull = string.IsNullOrWhiteSpace(cellValue);
-                        if (checkNull) 
-                        {
-                            break;
-                        }
-                        
-                    }
 
-                    if (checkNull)
+                    bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[15].Value);
+                    DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
+                    string[] columnsToCheck = { "No_Ply", "Location_Type", "Reaction", "Brg_Width", "Req_Width", "Material" };
+                    var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"];
+                    if (isChecked)
                     {
-                        MessageBox.Show("Please check and input data into columns: No.-Ply, Location-Type, Reaction, Bearing-Width, Required-Width, Material");
+                        bool checkNull = false;
+                        string cellValue;
+                        foreach (string colName in columnsToCheck)
+                        {
+                            cellValue = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
+                            checkNull = string.IsNullOrWhiteSpace(cellValue);
+                            if (checkNull)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        if (checkNull)
+                        {
+                            MessageBox.Show("Please check and input data into columns: No.-Ply, Location-Type, Reaction, Bearing-Width, Required-Width, Material");
+                        }
+                        else
+                        {
+                            using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
+                            {
+                                f2.Language = comboBox_Language.Text;
+                                f2.Unit = comboBox_Unit.Text;
+                                f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString() ?? "2x4";
+                                f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString() ?? "SPF";
+                                f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString() ?? "3-08";
+
+                                if (f2.ShowDialog() == DialogResult.OK)
+                                {
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[3].Value = f2.LumSize;
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[2].Value = f2.LumSpecie;
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = f2.ContactLength;
+
+                                    Bearing_Enhancer BE = new Bearing_Enhancer();
+                                    BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                                    BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                                    BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                                    BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
+                                    Top_Plate_Info topPlate = new Top_Plate_Info();
+                                    topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                                    topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                                    topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                                    topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                                    topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                                    topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                                    topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                                    topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
+                                    topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                                    BE.TopPlateInfo = topPlate;
+                                    string contLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value.ToString();
+
+                                    List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, true, contLength);
+                                    (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
+
+                                    row.DefaultCellStyle.BackColor = Color.AntiqueWhite; // Đổi màu dòng
+                                }
+                                else
+                                {
+                                    // Nếu người dùng đóng form mà không nhập, bỏ tick
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
+
+                                }
+                            }
+
+                        }
+
                     }
                     else
                     {
-                        using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
+                        bool checkNull = false;
+                        string cellValue;
+                        foreach (string colName in columnsToCheck)
                         {
-                            f2.Language = comboBox_Language.Text;
-                            f2.Unit = comboBox_Unit.Text;
-                            f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString() ?? "2x4";
-                            f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString() ?? "SPF";
-                            f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString() ?? "3-08";
-
-                            if (f2.ShowDialog() == DialogResult.OK)
+                            cellValue = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
+                            checkNull = string.IsNullOrWhiteSpace(cellValue);
+                            if (checkNull)
                             {
-                                dataGridView_Table.Rows[e.RowIndex].Cells[3].Value = f2.LumSize;
-                                dataGridView_Table.Rows[e.RowIndex].Cells[2].Value = f2.LumSpecie;
-                                dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = f2.ContactLength;
+                                break;
+                            }
+                        }
 
-                                Bearing_Enhancer BE = new Bearing_Enhancer();
-                                BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
-                                BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
-                                BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
-                                BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
-                                Top_Plate_Info topPlate = new Top_Plate_Info();
-                                topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
-                                topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
-                                topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
-                                topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
-                                topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
-                                topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
-                                topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
-                                topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
-                                topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
-                                BE.TopPlateInfo = topPlate;
-                                string contLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value.ToString();
+                        if (checkNull)
+                        {
+                            MessageBox.Show("Please check and input data into columns: No.-Ply, Location-Type, Reaction, Bearing-Width, Required-Width, Material");
+                        }
+                        else
+                        {
+                            // Nếu bỏ tick, xóa giá trị trong ô Contact Length và đổi màu dòng về mặc định
+                            dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = "";
+                            row.DefaultCellStyle.BackColor = default;
 
-                                List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, true, contLength);
-                                (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
-                                dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
+                            Bearing_Enhancer BE = new Bearing_Enhancer();
+                            BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                            BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                            BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                            BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
+                            Top_Plate_Info topPlate = new Top_Plate_Info();
+                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
+                            topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                            BE.TopPlateInfo = topPlate;
 
-                                row.DefaultCellStyle.BackColor = Color.AntiqueWhite; // Đổi màu dòng
+                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
+                            (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
+                            dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
+                        }
+                    }
+                }
+
+                if (e.ColumnIndex == 17 || e.ColumnIndex == 15 || e.ColumnIndex == 14 && e.RowIndex >= 0) // Cột Checked || Vertical-Block || Bearing-Solution
+            {
+                    bool isChecked17 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[17].Value);
+                    DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
+                    var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
+                    if (isChecked17)
+                    {
+                        if (string.IsNullOrWhiteSpace(cell.FormattedValue.ToString()))
+                        {
+                            MessageBox.Show("Please check and input relevant data!");
+                            row.Cells[17].Value = false;
+                        }
+                        else
+                        {
+
+                            string chosenSolution = cell.Value.ToString();
+                            Bearing_Enhancer beItem;
+
+                            if (chosenSolution.Contains("5%"))
+                            {
+                                beItem = new Bearing_Enhancer_5Percent(chosenSolution);
+                            }
+                            else if (chosenSolution.Contains("Hor"))
+                            {
+                                beItem = new Bearing_Enhancer_HorBlock(chosenSolution);
+                            }
+                            else if (chosenSolution.Contains("Ver"))
+                            {
+                                beItem = new Bearing_Enhancer_VerBlock(chosenSolution);
+                            }
+                            else if (chosenSolution.Contains("TBE"))
+                            {
+                                beItem = new Bearing_Enhancer_TBE(chosenSolution);
                             }
                             else
                             {
-                                // Nếu người dùng đóng form mà không nhập, bỏ tick
-                                dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
-
+                                return;
                             }
+
+                            beItem.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                            beItem.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
+                            beItem.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                            beItem.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
+                            Top_Plate_Info topPlate = new Top_Plate_Info();
+                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
+                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
+                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
+                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
+                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
+                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
+                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
+                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
+                            topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
+                            beItem.TopPlateInfo = topPlate;
+                            string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value?.ToString();
+
+
+                            string theNote = $"Jnt_{beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text)}";
+                            row.Cells[18].Value = theNote;
                         }
-
-                    }
-
-                }
-                else
-                {
-                    bool checkNull = false;
-                    string cellValue;
-                    foreach (string colName in columnsToCheck)
-                    {
-                        cellValue = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
-                        checkNull = string.IsNullOrWhiteSpace(cellValue);
-                        if (checkNull)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (checkNull)
-                    {
-                        MessageBox.Show("Please check and input data into columns: No.-Ply, Location-Type, Reaction, Bearing-Width, Required-Width, Material");
                     }
                     else
                     {
-                        // Nếu bỏ tick, xóa giá trị trong ô Contact Length và đổi màu dòng về mặc định
-                        dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = "";
-                        row.DefaultCellStyle.BackColor = default;
-
-                        Bearing_Enhancer BE = new Bearing_Enhancer();
-                        BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
-                        BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
-                        BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
-                        BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
-                        Top_Plate_Info topPlate = new Top_Plate_Info();
-                        topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
-                        topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
-                        topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
-                        topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
-                        topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
-                        topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
-                        topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
-                        topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
-                        topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
-                        BE.TopPlateInfo = topPlate;
-
-                        List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
-                        (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
-                        dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
+                        row.Cells[18].Value = "";
                     }
-                }
-            }
 
-            if (e.ColumnIndex == 17 && e.RowIndex >= 0) // Cột Checked CheckBox
-            {
-                int isChecked17 = Convert.ToInt16(dataGridView_Table.Rows[e.RowIndex].Cells[17].Value);
-                DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
-                var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
-                if (isChecked17==1)
-                {
-                    if (string.IsNullOrWhiteSpace(cell.Value.ToString()))
-                    {
-                        MessageBox.Show("Please check and input relevant data!");
-                        row.Cells[17].Value = false;
-                    }
-                    else
-                    {
-                        Bearing_Enhancer BE = new Bearing_Enhancer();
-                        BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
-                        BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells[1].Value?.ToString();
-                        BE.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString();
-                        BE.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString();
-                        Top_Plate_Info topPlate = new Top_Plate_Info();
-                        topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells[5].Value?.ToString();
-                        topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells[6].Value?.ToString();
-                        topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells[7].Value?.ToString();
-                        topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells[8].Value?.ToString();
-                        topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells[9].Value?.ToString());
-                        topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
-                        topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells[11].Value?.ToString();
-                        topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells[12].Value?.ToString();
-                        topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
-                        BE.TopPlateInfo = topPlate;
-                        string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value?.ToString();
-                        string chosenSolution = cell.Value.ToString();
-
-                        if (chosenSolution.Contains("5%"))
-                        {
-                            Bearing_Enhancer beItem = new Bearing_Enhancer_5Percent(chosenSolution);
-                            beItem = BE;
-                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
-                            row.Cells[18].Value = theNote;
-                        }
-                        else if (chosenSolution.Contains("Hor"))
-                        {
-                            Bearing_Enhancer beItem = new Bearing_Enhancer_HorBlock(chosenSolution);
-                            beItem = BE;
-                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
-                            row.Cells[18].Value = theNote;
-                        }
-                        else if (chosenSolution.Contains("Ver"))
-                        {
-                            Bearing_Enhancer beItem = new Bearing_Enhancer_VerBlock(chosenSolution);
-                            beItem = BE;
-                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
-                            row.Cells[18].Value = theNote;
-                        }
-                        else if (chosenSolution.Contains("TBE"))
-                        {
-                            Bearing_Enhancer beItem = new Bearing_Enhancer_TBE(chosenSolution);
-                            beItem = BE;
-                            string theNote = beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text);
-                            row.Cells[18].Value = theNote;
-                        }
-                        else { }
-                    }
                 }
-                else
-                {
-                    row.Cells[18].Value = "";
-                }
-
-            }
         }
         private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)//Sự kiện rời khỏi Ô
         {
@@ -574,6 +572,29 @@ namespace Bearing_Enhancer_CAN
             row.DefaultCellStyle.Font = dataGridView_Table.DefaultCellStyle.Font;
         }
 
+        private void dataGridViewTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 17&& e.RowIndex>=0) // Cột Checked
+            {
+                // Lấy giá trị hiện tại của ô vừa double-click làm mẫu
+                DataGridViewCheckBoxCell clickedCell = (DataGridViewCheckBoxCell)dataGridView_Table.Rows[e.RowIndex].Cells[17];
+                clickedCell.Value = true;
+                bool currentValue = false;
+
+                if (bool.TryParse(clickedCell.Value.ToString(), out currentValue))
+                {
+                    bool newValue = currentValue;
+
+                    foreach (DataGridViewRow row in dataGridView_Table.Rows)
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            row.Cells[17].Value = newValue;
+                        }
+                    }
+                }
+            }
+        }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -608,6 +629,67 @@ namespace Bearing_Enhancer_CAN
 
             return q;
         }
+
+        private void btn_export_data_Click(object sender, EventArgs e)
+        {
+            ExportToExcel(dataGridView_Table);
+        }
+
+        private void ExportToExcel(DataGridView dgv)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog()
+            {
+                Filter = "Excel Workbook|*.xlsx",
+                FileName = "Bearing Enhancer Report.xlsx"
+            })
+            {
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        Excel.Application excelApp = new Excel.Application();
+                        Excel.Workbook workbook = excelApp.Workbooks.Add(Type.Missing);
+                        Excel.Worksheet worksheet = workbook.Sheets[1];
+                        worksheet.Name = "Bearing Enhancer Data";
+
+                        // Ghi tiêu đề cột
+                        for (int i = 0; i < dgv.Columns.Count; i++)
+                        {
+                            worksheet.Cells[1, i + 1] = dgv.Columns[i].HeaderText;
+                        }
+
+                        // Ghi dữ liệu
+                        for (int i = 0; i < dgv.Rows.Count; i++)
+                        {
+                            for (int j = 0; j < dgv.Columns.Count; j++)
+                            {
+                                object val = dgv.Rows[i].Cells[j].Value;
+                                Excel.Range cell = (Excel.Range)worksheet.Cells[i + 2, j + 1];
+                                cell.NumberFormat = "@"; // Định dạng text
+                                cell.Value2 = val?.ToString();
+                            }
+                        }
+                        //Tô màu dòng tiêu đề
+                        Excel.Range headerRange = worksheet.get_Range("A1", "S1"); // Giả sử 4 cột
+                        headerRange.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightGray);
+                        //Auto fit cột
+                        worksheet.Columns.AutoFit();
+                        // Lưu file tại vị trí đã chọn
+                        workbook.SaveAs(sfd.FileName);
+                        workbook.Close();
+                        excelApp.Quit();
+
+                        MessageBox.Show("Excel export successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error when exporting Excel: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        
     }
 
 }

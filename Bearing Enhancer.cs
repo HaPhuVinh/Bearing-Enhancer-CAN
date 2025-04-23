@@ -1138,7 +1138,7 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
-            string[] arrKey = chosensolution.Split();
+            string[] arrKey = chosensolution.Split('-');
             int numberPly = int.Parse(Ply);
             double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
             bool vertical = true;
@@ -1207,7 +1207,7 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
-            string[] arrKey = chosensolution.Split();
+            string[] arrKey = chosensolution.Split('-');
             int numberPly = int.Parse(Ply);
             double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
             bool vertical = false;
@@ -1265,7 +1265,6 @@ namespace Bearing_Enhancer_CAN
             return theNote;
         }
     }
-
     public class Bearing_Enhancer_5Percent : Bearing_Enhancer
     {
         public string Chosen_Solution { get; set; }
