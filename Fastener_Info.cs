@@ -11,7 +11,7 @@ namespace Bearing_Enhancer_CAN
     
     public enum eFastenerName
     {
-        [Description("10d box nail [min .128\"x3\"]")]
+        [Description("10d box nail")]
         Box10dNail,
         [Description("SDW22300 Screws")]
         SDW22300,

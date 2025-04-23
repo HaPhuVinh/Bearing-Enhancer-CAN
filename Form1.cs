@@ -28,7 +28,7 @@ namespace Bearing_Enhancer_CAN
         private void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
         {
             comboBox_Language.Items.Add("English");
-            comboBox_Language.Items.Add("France");
+            comboBox_Language.Items.Add("French");
             comboBox_Language.Text = "English";
 
             comboBox_Unit.Items.Add("Imperial");
@@ -155,13 +155,14 @@ namespace Bearing_Enhancer_CAN
                                 f2.Unit = comboBox_Unit.Text;
                                 f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells[3].Value?.ToString() ?? "2x4";
                                 f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells[2].Value?.ToString() ?? "SPF";
-                                f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString() ?? "3-08";
+                                f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells[10].Value?.ToString();
 
                                 if (f2.ShowDialog() == DialogResult.OK)
                                 {
+                                    Imperial_Or_Metric iom = new Imperial_Or_Metric(comboBox_Unit.Text,comboBox_Language.Text);
                                     dataGridView_Table.Rows[e.RowIndex].Cells[3].Value = f2.LumSize;
                                     dataGridView_Table.Rows[e.RowIndex].Cells[2].Value = f2.LumSpecie;
-                                    dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = f2.ContactLength;
+                                    dataGridView_Table.Rows[e.RowIndex].Cells[16].Value = iom.Unit=="Imperial"? f2.ContactLength: Convert.ToString(Convert_String_Inch(f2.ContactLength)*iom.miliFactor);
 
                                     Bearing_Enhancer BE = new Bearing_Enhancer();
                                     BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells[0].Value?.ToString();
@@ -181,7 +182,7 @@ namespace Bearing_Enhancer_CAN
                                     BE.TopPlateInfo = topPlate;
                                     string contLength = dataGridView_Table.Rows[e.RowIndex].Cells[16].Value.ToString();
 
-                                    List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, true, contLength);
+                                    List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text,comboBox_Language.Text, true, contLength);
                                     (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
                                     dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listVerBBlock[0];
 
@@ -239,7 +240,7 @@ namespace Bearing_Enhancer_CAN
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                             BE.TopPlateInfo = topPlate;
 
-                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
+                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text,comboBox_Language.Text, false);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
                         }
@@ -530,7 +531,7 @@ namespace Bearing_Enhancer_CAN
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells[13].Value.ToString());
                             BE.TopPlateInfo = topPlate;
 
-                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, false);
+                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, comboBox_Language.Text, false);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells[14].Value = listHorBBlock[0];
                         }

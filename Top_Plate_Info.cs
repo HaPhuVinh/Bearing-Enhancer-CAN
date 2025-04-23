@@ -27,6 +27,7 @@ namespace Bearing_Enhancer_CAN
         public Dictionary<int,Top_Plate_Info> Get_TopPlate_Info(string txtpath,string trussname, string language, string unit)
         {
             //Get data from .txt file
+            English_Or_French langText = new English_Or_French(language);
             Dictionary<int,Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             string txtPath = txtpath;
             string temName="";
@@ -41,13 +42,13 @@ namespace Bearing_Enhancer_CAN
             Duration_Factor kD = new Duration_Factor();
             foreach (string line in arrFile)//Pick up Loading and Reaction Summary
             {
-                if (line.Contains("Truss:") && line.Contains("Qty"))
+                if (line.Contains(langText.Truss) && line.Contains(langText.Qty))
                 {
                     Array.Resize(ref arrLine, 0);
                     arrLine = line.Split(':');
-                    temName = $"Truss:{arrLine[arrLine.Length - 1]}";
+                    temName = $"{langText.Truss}{arrLine[arrLine.Length - 1]}";
                     temName = temName.TrimEnd('\r');
-                    if (temName == $"Truss:  {trussname}")
+                    if (temName == $"{langText.Truss}  {trussname}")
                     {
                         thisTruss = true;
                         continue;
@@ -60,7 +61,7 @@ namespace Bearing_Enhancer_CAN
                 
                 if(thisTruss) 
                 {
-                    if (line.Contains("Building Code:"))
+                    if (line.Contains(langText.BuildingCode))
                     {
                         pickup_Loading = true;
                         continue;
@@ -71,23 +72,23 @@ namespace Bearing_Enhancer_CAN
                         string line2 = line.TrimEnd('\r', '\n', '\t');
                         line2 = Regex.Replace(line, @"\s+", " ");
                         arrLine2 = line2.Split();
-                        if (line.Contains(@"Kd") && line.Contains(@"(Snow)"))
+                        if (line.Contains(langText.Kd) && line.Contains(langText.Snow))
                         {
                             kD.DOL_Snow = arrLine2[6];
                         }
 
-                        if (line.Contains(@"Kd") && line.Contains(@"(Live)"))
+                        if (line.Contains(langText.Kd) && line.Contains(langText.Live))
                         {
                             kD.DOL_Live = arrLine2[4];
                         }
 
-                        if (line.Contains(@"Kd") && line.Contains(@"(Wind)"))
+                        if (line.Contains(langText.Kd) && line.Contains(langText.Wind))
                         {
                             kD.DOL_Wind = arrLine2[4];
                         }
                     }
 
-                    if (line.Contains("Jnt") && line.Contains("X-Loc") && line.Contains("React") && line.Contains("Up") && line.Contains("Width") && line.Contains("Reqd") && line.Contains("Mat"))
+                    if (line.Contains(langText.Jnt) && line.Contains(langText.XLoc) && line.Contains(langText.React) && line.Contains(langText.Up) && line.Contains(langText.Width) && line.Contains(langText.Reqd) && line.Contains(langText.Mat))
                     {
                         pickup_React = true;
                         continue;
@@ -122,7 +123,7 @@ namespace Bearing_Enhancer_CAN
                             }
                             i = i + 1;
                         }
-                        if (line.Contains("Unfactored Reaction Summary"))
+                        if (line.Contains(langText.UnfactoredReactionSummary))
                         {
                             break;
                         }

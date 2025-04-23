@@ -88,7 +88,7 @@ namespace Bearing_Enhancer_CAN
                                     if (j == TP.Key)
                                     {
                                         S = I.Split(' ');
-                                        bE.TopPlateInfo.YLocation = S.SingleOrDefault(n => n == "BotChd" || n == "TopChd" || n == "Web");
+                                        bE.TopPlateInfo.YLocation = S.SingleOrDefault(n => n == "BotChd" || n == "TopChd" || n == "Web" || n=="FillerChd" || n == "BrgBlk" || n == "TieBeam" || n == "Wedge");
                                     }
                                     j = j + 1;
 
@@ -133,10 +133,10 @@ namespace Bearing_Enhancer_CAN
                             double react = bE.TopPlateInfo.Reaction;
                             double bear_W = double.TryParse(bE.TopPlateInfo.BearingWidth, out double resultW) ? resultW : Convert_To_Inch(bE.TopPlateInfo.BearingWidth);
                             double bear_Wrq = double.TryParse(bE.TopPlateInfo.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(bE.TopPlateInfo.RequireWidth);
-                            bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq), 0);
+                            bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq), 1);
 
                             //Get Bearing Solution
-                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit);
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit,language);
                             bE.BearingSolution = bear_Solution;
                             bearingEnhancerItems.Add(bE);
                         }
@@ -147,14 +147,14 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, bool bVertical = false, string contactlength = "0-00")
+        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language, bool bVertical = false, string contactlength = "00")
         {
             List<string> list_Bearing_Solution = new List<string>();
 
             //Check Horizontal Block
             if (bVertical == false)
             {
-                List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit);
+                List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit, language);
                 list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
                 //Check TBE
@@ -167,7 +167,7 @@ namespace Bearing_Enhancer_CAN
             //Check Vertical Block
             if (bVertical == true)
             {
-                List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit, contactlength);
+                List<string> list_Vertical_Block = Check_Vertical_Block(ply, lumSize, lumSpecie, topPlate, unit,language, contactlength);
                 list_Bearing_Solution.AddRange(list_Vertical_Block);
             }
 
@@ -180,9 +180,9 @@ namespace Bearing_Enhancer_CAN
         #endregion
 
         #region Support Methods:
-        List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit)
+        List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language)
         {
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             List<string> list_Horizontal_Block = new List<string>();
             int plies = int.Parse(ply);
             int No_Block = 0;
@@ -256,7 +256,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
@@ -267,7 +267,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -297,7 +297,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                     else//Check Hor_Block on each face with nail if one face is not enough 
@@ -308,7 +308,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -339,7 +339,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -367,7 +367,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -401,7 +401,7 @@ namespace Bearing_Enhancer_CAN
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
-                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                            string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                             list_Horizontal_Block.Add(suggestSolution);
                                         }
                                     }
@@ -429,7 +429,7 @@ namespace Bearing_Enhancer_CAN
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
-                                            string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                            string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                             list_Horizontal_Block.Add(suggestSolution);
                                         }
                                     }
@@ -460,7 +460,7 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -470,7 +470,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block2, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -501,7 +501,7 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -511,7 +511,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block2, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -542,7 +542,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -570,7 +570,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                        string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
                                     }
                                 }
@@ -596,7 +596,7 @@ namespace Bearing_Enhancer_CAN
                             double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
-                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                 list_Horizontal_Block.Add(suggestSolution);
                             }
                         }
@@ -620,7 +620,7 @@ namespace Bearing_Enhancer_CAN
                             double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
-                                string suggestSolution = $"{item.length * iom.miliFactor}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                 list_Horizontal_Block.Add(suggestSolution);
                             }
                         }
@@ -630,15 +630,15 @@ namespace Bearing_Enhancer_CAN
             return list_Horizontal_Block;
         }
 
-        List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string contactLength)
+        List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit,string language, string contactLength)
         {
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             List<string> list_Vertical_Block = new List<string>();
             int plies = int.Parse(ply);
             int No_Block = 0;
             double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
             double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
-            double contactL = double.TryParse(contactLength, out double resultC) ? resultC : Convert_To_Inch(contactLength);
+            double contactL = double.TryParse(contactLength,out double resultL) ? resultL : Convert_To_Inch(contactLength);
             double rqdArea = 1.5 * iom.miliFactor * plies * rqdWidth;
             double brgArea = 1.5 * iom.miliFactor * plies * brgWidth;
 
@@ -702,7 +702,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                        string suggestSolution = $"{Math.Round(l1 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
@@ -714,7 +714,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l1, item);
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                                string suggestSolution = $"{Math.Round(l1 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -746,7 +746,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l1 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                        string suggestSolution = $"{Math.Round(l1 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
@@ -781,7 +781,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                        string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit2 = true;
                                     }
@@ -793,7 +793,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, item);
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                                string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -803,7 +803,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, "SDW22300");
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                                string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -813,7 +813,7 @@ namespace Bearing_Enhancer_CAN
                                             Block_Info VBB2 = new Block_Info(plies, false, No_Block, lumSize, l2, "SDS25300");
                                             if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{l2 * iom.miliFactor} {iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                                string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)} {iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
                                             }
                                         }
@@ -845,7 +845,7 @@ namespace Bearing_Enhancer_CAN
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
-                                        string suggestSolution = $"{l2 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                        string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit2 = true;
                                     }
@@ -876,7 +876,7 @@ namespace Bearing_Enhancer_CAN
                                 double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
-                                    string suggestSolution = $"{l3 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                    string suggestSolution = $"{Math.Round(l3 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                     list_Vertical_Block.Add(suggestSolution);
                                     exit3 = true;
                                 }
@@ -907,7 +907,7 @@ namespace Bearing_Enhancer_CAN
                                 double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
-                                    string suggestSolution = $"{l4 * iom.miliFactor}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
+                                    string suggestSolution = $"{Math.Round(l4 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                     list_Vertical_Block.Add(suggestSolution);
                                     exit4 = true;
                                 }
@@ -1137,10 +1137,10 @@ namespace Bearing_Enhancer_CAN
         }
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             string[] arrKey = chosensolution.Split('-');
             int numberPly = int.Parse(Ply);
-            double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
+            double blockLength = Math.Round(int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) * iom.miliFactor, 0);
             bool vertical = true;
             int numberBlock = int.Parse(arrKey[3]);
             int numberFastener = int.Parse(arrKey[5]);
@@ -1206,10 +1206,10 @@ namespace Bearing_Enhancer_CAN
         }
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             string[] arrKey = chosensolution.Split('-');
             int numberPly = int.Parse(Ply);
-            double blockLength = Math.Round(int.Parse(arrKey[0].Replace("in.", "").Trim()) * iom.miliFactor, 0);
+            int blockLength = int.Parse(arrKey[0].Replace(iom.Text, "").Trim());
             bool vertical = false;
             int numberBlock = int.Parse(arrKey[3]);
             int numberFastener = int.Parse(arrKey[5]);
@@ -1234,11 +1234,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Math.Round(Hor_Block.MinSpacing*iom.miliFactor)}{iom.Text} o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
@@ -1250,11 +1250,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
