@@ -11,7 +11,7 @@ namespace Bearing_Enhancer_CAN
         public string Language = "English";
         public string Truss => Language=="English"? "Truss:": "Ferme:";
         public string Qty => Language == "English" ? "Qty:" : "Qté:";
-        public string BuildingCode => Language == "English" ? "Building Code:" : "Code du bâtiment";
+        public string BuildingCode => Language == "English" ? "Building Code:" : "Code du Bâtiment";
         public string Kd => Language == "English" ? "Kd" : "Kd";
         public string Snow => Language == "English" ? "(Snow)" : "(neige)";
         public string Live => Language == "English" ? "(Live)" : "(Vive)";

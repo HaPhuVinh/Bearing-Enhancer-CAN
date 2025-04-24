@@ -65,6 +65,8 @@ namespace Bearing_Enhancer_CAN
             dataGridView_Table.CellValidating += dataGridView_CellValidating;
             //Đăng kí sự kiện Double_Click
             this.dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
+            //Đăng kí sự kiện Double_RightClick
+            dataGridView_Table.MouseDown += dataGridViewTable_MouseDown;
         }
 
         private void button1_Click(object sender, EventArgs e)// Button Check
@@ -555,7 +557,7 @@ namespace Bearing_Enhancer_CAN
                 hoveredRowIndex = e.RowIndex;
 
                 var row = dataGridView_Table.Rows[e.RowIndex];
-                row.DefaultCellStyle.Font = new Font(dataGridView_Table.Font, FontStyle.Bold);
+                row.DefaultCellStyle.ForeColor = Color.Blue;
             }
         }
 
@@ -563,7 +565,8 @@ namespace Bearing_Enhancer_CAN
         {
             if (e.RowIndex == hoveredRowIndex && e.RowIndex >= 0)
             {
-                ResetRowStyle(hoveredRowIndex);
+                var row = dataGridView_Table.Rows[e.RowIndex];
+                row.DefaultCellStyle.ForeColor = dataGridView_Table.DefaultCellStyle.ForeColor;
                 hoveredRowIndex = -1;
             }
         }
@@ -575,23 +578,32 @@ namespace Bearing_Enhancer_CAN
 
         private void dataGridViewTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 17&& e.RowIndex>=0) // Cột Checked
+            if (e.ColumnIndex == 17) // Cột Checked
             {
-                // Lấy giá trị hiện tại của ô vừa double-click làm mẫu
-                DataGridViewCheckBoxCell clickedCell = (DataGridViewCheckBoxCell)dataGridView_Table.Rows[e.RowIndex].Cells[17];
-                clickedCell.Value = true;
-                bool currentValue = false;
-
-                if (bool.TryParse(clickedCell.Value.ToString(), out currentValue))
+                bool currentValue = true;
+                foreach (DataGridViewRow row in dataGridView_Table.Rows)
                 {
-                    bool newValue = currentValue;
+                    if (!row.IsNewRow)
+                    {
+                        row.Cells[17].Value = currentValue;
+                    }
+                }
+            }
+        }
 
+        private void dataGridViewTable_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && e.Clicks == 2)//Double rightclick
+            {
+                var hit = dataGridView_Table.HitTest(e.X, e.Y);
+                int rowIndex = hit.RowIndex;
+                int colIndex = hit.ColumnIndex;
+                bool currentValue = false;
+                if(colIndex == 17) // Cột Checked
+                {
                     foreach (DataGridViewRow row in dataGridView_Table.Rows)
                     {
-                        if (!row.IsNewRow)
-                        {
-                            row.Cells[17].Value = newValue;
-                        }
+                        row.Cells[17].Value = currentValue;
                     }
                 }
             }
@@ -690,7 +702,80 @@ namespace Bearing_Enhancer_CAN
             }
         }
 
-        
+        private void btn_Add_Note_Click(object sender, EventArgs e)
+        {
+            List<(string TrussName, string JointID, string Note)> listItem = new List<(string TrussName, string JointID, string Note)> ();
+            foreach (DataGridViewRow row in dataGridView_Table.Rows)
+            {
+                bool valueCol17 = Convert.ToBoolean(row.Cells[17].Value);
+                if (!row.IsNewRow && valueCol17)
+                {
+                    (string TrussName, string JointID, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[5].Value?.ToString(), row.Cells[18].Value?.ToString());
+                    if (!string.IsNullOrEmpty(theNoteItem.TrussName)&&!string.IsNullOrEmpty(theNoteItem.Note))
+                    {
+                        listItem.Add(theNoteItem);
+                    }
+                }
+            }
+            if (listItem.Count != 0)
+            {
+                string mssg = "Are you sure? The below trusses will be added:\n";
+                foreach (var item in listItem)
+                {
+                    mssg += $"Truss: {item.TrussName} - Joint: {item.JointID},\n";
+                }
+                DialogResult result = MessageBox.Show(mssg, "Notification", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        foreach (DataGridViewRow row in dataGridView_Table.Rows)
+                        {
+                            bool valueCol17 = Convert.ToBoolean(row.Cells[17].Value);
+                            if (!row.IsNewRow && valueCol17)
+                            {
+                                (string TrussName, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[18].Value?.ToString());
+                                if (!string.IsNullOrEmpty(theNoteItem.TrussName) && !string.IsNullOrEmpty(theNoteItem.Note))
+                                {
+                                    // Gọi hàm thêm vào XML
+                                    Add_Note_ToTruss(textBox_PJNum.Text, theNoteItem);
+                                }
+                            }
+                        }
+                        MessageBox.Show("Add note successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error when adding note: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Not found any items!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        void Add_Note_ToTruss(string path, (string TrussName, string Note) item)
+        {
+            string projectPath = textBox_PJNum.Text;
+            string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
+            string[] arrPath = projectPath.Split('\\');
+            string projectID = arrPath[arrPath.Length - 1];
+            string xmlFilePath = Path.Combine(trussesPath, $"{item.TrussName}.tdlTruss");
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(xmlFilePath);
+            XmlNode rootNode, noteNode;
+            rootNode = xmlDoc.DocumentElement;
+            noteNode = rootNode.SelectSingleNode("//Notes");
+            XmlElement newNote = xmlDoc.CreateElement("Note");
+            newNote.SetAttribute("OutputGroup", "5");
+            newNote.InnerText = item.Note;
+            noteNode.AppendChild(newNote);
+
+            // Lưu lại tài liệu XML
+            xmlDoc.Save(xmlFilePath);
+        }
     }
 
 }
