@@ -94,6 +94,17 @@ namespace Bearing_Enhancer_CAN
 
                                 }
                             }
+                            //Check Wet Service Condition
+                            elementNode = rootNode.SelectSingleNode("//Settings");
+                            XmlNodeList searchNodes = elementNode.ChildNodes;
+                            foreach (XmlNode searchNode in searchNodes)
+                            {
+                                if (searchNode.Name == "OneTrussControlsWetServiceCondition")
+                                {
+                                    bE.TopPlateInfo.WetService = true;
+                                    break;
+                                }
+                            }
                             //Get Data in <LumberResults> Node
                             var keyLumber = Get_Lumber(TP.Value.XLocation, TP.Value.YLocation, rootNode, unit);
                             LumberInventory lumI = new LumberInventory();
@@ -182,6 +193,10 @@ namespace Bearing_Enhancer_CAN
         #region Support Methods:
         List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language)
         {
+            List<double> durationFactors = new List<double>();
+            //durationFactors.Add(topPlate.DOL.DOL_Snow);
+            double durationFactor;
+            double wetserviceFactor = topPlate.WetService ? 0.67 : 1.0;
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             List<string> list_Horizontal_Block = new List<string>();
             int plies = int.Parse(ply);
