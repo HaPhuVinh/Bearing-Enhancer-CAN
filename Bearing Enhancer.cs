@@ -161,7 +161,7 @@ namespace Bearing_Enhancer_CAN
                 bool bCheckTBE = list_Horizontal_Block.Count != 0 ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
                 if (bCheckTBE == false)
                 {
-                    list_Bearing_Solution.AddRange(Check_TBE(ply, topPlate, unit));
+                    list_Bearing_Solution.AddRange(Check_TBE(ply, lumSpecie, topPlate, unit));
                 }
             }
             //Check Vertical Block
@@ -922,7 +922,7 @@ namespace Bearing_Enhancer_CAN
             return list_Vertical_Block;
         }
 
-        List<string> Check_TBE(string ply, Top_Plate_Info topPlate, string unit)//Need to consider Top Plate Species and Lumber Species
+        List<string> Check_TBE(string ply, string lumberSpecie, Top_Plate_Info topPlate, string unit)//Need to consider Top Plate Species and Lumber Species
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             const double alternateFactor = 0.6;
@@ -931,15 +931,23 @@ namespace Bearing_Enhancer_CAN
             double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
             TBE_Info tbe_Data = new TBE_Info(unit);
             List<string> list_TBE = new List<string>();
-            //Check lumber is null
-            //if (lumSize is null || lumSpecie is null)
-            //{
-            //    list_TBE.Add(No_Solution_Enum.Please_check_and_input_relevant_data.ToString());
-            //    return list_TBE;
-            //}
+
+            List<string[]> listMat = new List<string[]>()
+            {
+                new string[] {"HF","405"},
+                new string[] {"SPF","425"},
+                new string[] {"SP","565" },
+                new string[] {"SYP","565" },
+                new string[] {"DFL","625" },
+                new string[] {"DFLN","625" },
+            };
+            int lumberFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == lumberSpecie)[1]);
+            int topPlateFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == topPlate.Material)[1]);
+            string tbeLumSpecie = lumberFcp < topPlateFcp ? lumberSpecie : topPlate.Material;
+
             if (brgWidth >= 3.5 * iom.miliFactor)
             {
-                if (topPlate.Material == "SPF")
+                if (tbeLumSpecie == "SPF")
                 {
                     double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
@@ -947,7 +955,7 @@ namespace Bearing_Enhancer_CAN
                         list_TBE.Add("TBE4");
                     }
                 }
-                if (topPlate.Material == "DFL")
+                if (tbeLumSpecie == "DFL")
                 {
                     double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
@@ -958,7 +966,7 @@ namespace Bearing_Enhancer_CAN
             }
             if (brgWidth >= 5.5 * iom.miliFactor)
             {
-                if (topPlate.Material == "SPF")
+                if (tbeLumSpecie == "SPF")
                 {
                     double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)
@@ -966,7 +974,7 @@ namespace Bearing_Enhancer_CAN
                         list_TBE.Add("TBE6");
                     }
                 }
-                if (topPlate.Material == "DFL")
+                if (tbeLumSpecie == "DFL")
                 {
                     double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
                     if (topPlate.LoadTransfer <= allowableValue)

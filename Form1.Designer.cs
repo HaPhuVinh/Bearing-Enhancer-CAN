@@ -133,7 +133,7 @@
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
-            this.dataGridView_Table.Size = new System.Drawing.Size(1798, 612);
+            this.dataGridView_Table.Size = new System.Drawing.Size(1934, 795);
             this.dataGridView_Table.TabIndex = 3;
             // 
             // Truss_Name
@@ -378,7 +378,7 @@
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1803, 737);
+            this.ClientSize = new System.Drawing.Size(1937, 925);
             this.Controls.Add(this.btn_Add_Note);
             this.Controls.Add(this.btn_export_data);
             this.Controls.Add(this.label_Unit);

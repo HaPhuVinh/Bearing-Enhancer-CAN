@@ -114,9 +114,24 @@ namespace Bearing_Enhancer_CAN
                     i++;
                 }
             }
-            catch (IOException ex)
+            catch (FileNotFoundException ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!");
+            }
+            catch(Exception ex)
+            {
+                if(ex.Message.Contains("Could not find a part of the path"))
+                {
+                    MessageBox.Show("Please check Project Number Path or/and Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!!");
+                }
+                else if(ex.Message.Contains("Index was outside the bounds of the array"))
+                {
+                    MessageBox.Show("Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!");
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
 
 }
