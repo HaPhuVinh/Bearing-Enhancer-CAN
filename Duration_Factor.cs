@@ -8,7 +8,7 @@ namespace Bearing_Enhancer_CAN
 {
     public class Duration_Factor
     {
-        public string DOL_Snow {  get; set; }
+        public string DOL_Snow { get; set; }
         public string DOL_Live { get; set; }
         public string DOL_Wind { get; set; }
     }

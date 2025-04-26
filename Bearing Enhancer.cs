@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Collections;
 using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System.Reflection;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -194,8 +195,17 @@ namespace Bearing_Enhancer_CAN
         List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language)
         {
             List<double> durationFactors = new List<double>();
-            //durationFactors.Add(topPlate.DOL.DOL_Snow);
-            double durationFactor;
+            PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                var value = prop.GetValue(topPlate.DOL);
+                bool bNumber = double.TryParse(value.ToString(), out double isNumber);
+                if (bNumber)
+                {
+                    durationFactors.Add(isNumber);
+                }
+            }
+            double durationFactor = durationFactors.Min();
             double wetserviceFactor = topPlate.WetService ? 0.67 : 1.0;
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             List<string> list_Horizontal_Block = new List<string>();
@@ -267,9 +277,9 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
-                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
-                                    if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
+                                    double latDesignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col])*durationFactor*wetserviceFactor* iom.kNFactor;
+                                    double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDesignValue);
+                                    if (topPlate.LoadTransfer / latDesignValue <= HBB.MaxNumberFastener)
                                     {
                                         string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                         list_Horizontal_Block.Add(suggestSolution);
@@ -280,7 +290,7 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             No_Block = 2;
                                             Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
-                                            if (topPlate.LoadTransfer / latDeignValue <= HBB2.MaxNumberFastener)
+                                            if (topPlate.LoadTransfer / latDesignValue <= HBB2.MaxNumberFastener)
                                             {
                                                 string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
@@ -308,7 +318,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -350,7 +360,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -378,7 +388,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -412,7 +422,7 @@ namespace Bearing_Enhancer_CAN
                                         Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
@@ -440,7 +450,7 @@ namespace Bearing_Enhancer_CAN
                                         Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                         {
@@ -469,7 +479,7 @@ namespace Bearing_Enhancer_CAN
                                         Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (!item.fastener.Contains("Nail"))
                                         {
@@ -510,7 +520,7 @@ namespace Bearing_Enhancer_CAN
                                         Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                         int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                         int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                        double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                         double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                         if (!item.fastener.Contains("Nail"))
                                         {
@@ -553,7 +563,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -581,7 +591,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                                     {
@@ -607,7 +617,7 @@ namespace Bearing_Enhancer_CAN
                             Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                             int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                             int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                            double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                            double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                             double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
@@ -631,7 +641,7 @@ namespace Bearing_Enhancer_CAN
                             Block_Info HBB = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
                             int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item.fastener));
                             int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                            double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                            double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                             double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                             if (topPlate.LoadTransfer / latDeignValue <= HBB.MaxNumberFastener)
                             {
@@ -647,6 +657,19 @@ namespace Bearing_Enhancer_CAN
 
         List<string> Check_Vertical_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit,string language, string contactLength)
         {
+            List<double> durationFactors = new List<double>();
+            PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                var value = prop.GetValue(topPlate.DOL);
+                bool bNumber = double.TryParse(value.ToString(), out double isNumber);
+                if (bNumber)
+                {
+                    durationFactors.Add(isNumber);
+                }
+            }
+            double durationFactor = durationFactors.Min();
+            double wetserviceFactor = topPlate.WetService ? 0.67 : 1.0;
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             List<string> list_Vertical_Block = new List<string>();
             int plies = int.Parse(ply);
@@ -713,7 +736,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l1, item);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
@@ -757,7 +780,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l1, item);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
@@ -792,7 +815,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l2, item);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
@@ -856,7 +879,7 @@ namespace Bearing_Enhancer_CAN
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l2, item);
                                     int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                     int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                    double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                     double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                     if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                     {
@@ -887,7 +910,7 @@ namespace Bearing_Enhancer_CAN
                                 Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l3, item);
                                 int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                 int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                 double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
@@ -918,7 +941,7 @@ namespace Bearing_Enhancer_CAN
                                 Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l4, item);
                                 int row = Fastener_Design_Value.Lateral_Design_Value.FindIndex(n => n.Contains(item));
                                 int col = Array.IndexOf(Fastener_Design_Value.Lateral_Design_Value[0], lumSpecie);
-                                double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * iom.kNFactor;
+                                double latDeignValue = double.Parse(Fastener_Design_Value.Lateral_Design_Value[row][col]) * durationFactor * wetserviceFactor * iom.kNFactor;
                                 double numberFastener = Math.Ceiling(topPlate.LoadTransfer / latDeignValue);
                                 if (topPlate.LoadTransfer / latDeignValue <= VBB.MaxNumberFastener)
                                 {
@@ -937,64 +960,80 @@ namespace Bearing_Enhancer_CAN
             return list_Vertical_Block;
         }
 
-        List<string> Check_TBE(string ply, string lumberSpecie, Top_Plate_Info topPlate, string unit)//Need to consider Top Plate Species and Lumber Species
+        List<string> Check_TBE(string ply, string lumberSpecie, Top_Plate_Info topPlate, string unit)
         {
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
-            const double alternateFactor = 0.6;
-            int plies = int.Parse(ply);
-            double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
-            double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
-            TBE_Info tbe_Data = new TBE_Info(unit);
-            List<string> list_TBE = new List<string>();
-
-            List<string[]> listMat = new List<string[]>()
+            List<double> durationFactors = new List<double>();
+            PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
+            foreach (PropertyInfo prop in props)
             {
+                var value = prop.GetValue(topPlate.DOL);
+                bool bNumber = double.TryParse(value.ToString(), out double isNumber);
+                if (bNumber)
+                {
+                    durationFactors.Add(isNumber);
+                }
+            }
+            double durationFactor = durationFactors.Min();
+            List<string> list_TBE = new List<string>();
+            if (durationFactor == 1.0)
+            {
+                Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+                const double alternateFactor = 0.6;
+                int plies = int.Parse(ply);
+                double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
+                double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
+                TBE_Info tbe_Data = new TBE_Info(unit);
+                
+
+                List<string[]> listMat = new List<string[]>()
+                {
                 new string[] {"HF","405"},
                 new string[] {"SPF","425"},
                 new string[] {"SP","565" },
                 new string[] {"SYP","565" },
                 new string[] {"DFL","625" },
                 new string[] {"DFLN","625" },
-            };
-            int lumberFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == lumberSpecie)[1]);
-            int topPlateFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == topPlate.Material)[1]);
-            string tbeLumSpecie = lumberFcp < topPlateFcp ? lumberSpecie : topPlate.Material;
+                };
+                int lumberFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == lumberSpecie)[1]);
+                int topPlateFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == topPlate.Material)[1]);
+                string tbeLumSpecie = lumberFcp < topPlateFcp ? lumberSpecie : topPlate.Material;
 
-            if (brgWidth >= 3.5 * iom.miliFactor)
-            {
-                if (tbeLumSpecie == "SPF")
+                if (brgWidth >= 3.5 * iom.miliFactor)
                 {
-                    double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
+                    if (tbeLumSpecie == "SPF")
                     {
-                        list_TBE.Add("TBE4");
+                        double allowableValue = tbe_Data.TBE4_SPF[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
+                        if (topPlate.LoadTransfer <= allowableValue)
+                        {
+                            list_TBE.Add("TBE4");
+                        }
+                    }
+                    if (tbeLumSpecie == "DFL")
+                    {
+                        double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
+                        if (topPlate.LoadTransfer <= allowableValue)
+                        {
+                            list_TBE.Add("TBE4");
+                        }
                     }
                 }
-                if (tbeLumSpecie == "DFL")
+                if (brgWidth >= 5.5 * iom.miliFactor)
                 {
-                    double allowableValue = tbe_Data.TBE4_DFL[plies - 1, 1] * (brgWidth > 3.5 * iom.miliFactor ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
+                    if (tbeLumSpecie == "SPF")
                     {
-                        list_TBE.Add("TBE4");
+                        double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
+                        if (topPlate.LoadTransfer <= allowableValue)
+                        {
+                            list_TBE.Add("TBE6");
+                        }
                     }
-                }
-            }
-            if (brgWidth >= 5.5 * iom.miliFactor)
-            {
-                if (tbeLumSpecie == "SPF")
-                {
-                    double allowableValue = tbe_Data.TBE6_SPF[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
+                    if (tbeLumSpecie == "DFL")
                     {
-                        list_TBE.Add("TBE6");
-                    }
-                }
-                if (tbeLumSpecie == "DFL")
-                {
-                    double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
-                    if (topPlate.LoadTransfer <= allowableValue)
-                    {
-                        list_TBE.Add("TBE6");
+                        double allowableValue = tbe_Data.TBE6_DFL[plies - 1, 1] * (brgWidth > 5.5 * iom.miliFactor ? alternateFactor : 1.0);
+                        if (topPlate.LoadTransfer <= allowableValue)
+                        {
+                            list_TBE.Add("TBE6");
+                        }
                     }
                 }
             }
