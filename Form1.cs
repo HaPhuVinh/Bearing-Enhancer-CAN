@@ -123,7 +123,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                MessageBox.Show("The txt file has been created at:\n" + outputTxtFile, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("The txt file has been created at:\n" + outputTxtFile, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
@@ -817,7 +817,7 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                         }
-                        //MessageBox.Show("Add note successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Add note successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
