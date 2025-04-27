@@ -975,7 +975,7 @@ namespace Bearing_Enhancer_CAN
             }
             double durationFactor = durationFactors.Min();
             List<string> list_TBE = new List<string>();
-            if (durationFactor == 1.0)
+            if (durationFactor >= 1.0)
             {
                 Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
                 const double alternateFactor = 0.6;
