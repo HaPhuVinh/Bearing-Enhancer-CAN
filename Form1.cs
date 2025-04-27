@@ -39,7 +39,7 @@ namespace Bearing_Enhancer_CAN
             List<string> list_Ply = new List<string> { "1", "2", "3", "4" };
             List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
             List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
-            List<string> list_DurationFactor = new List<string>() { "1.00", "1.15", "1.25", "1.33", "1.60" };
+            List<string> list_DurationFactor = new List<string>() { "1.00","1.10", "1.15", "1.25", "1.33", "1.60" };
             list_DurationFactor = list_DurationFactor.Distinct().ToList();
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 
@@ -72,69 +72,96 @@ namespace Bearing_Enhancer_CAN
         private void button1_Click(object sender, EventArgs e)// Button Check
         {
             dataGridView_Table.Rows.Clear();
-            //Imperial_Or_Metric convert_Factor = new Imperial_Or_Metric(comboBox_Unit.Text);
-            //TBE_Info tBE_Info = new TBE_Info(comboBox_Unit.Text);
+            string rootFolder = tbx_ProjectNumberPath.Text.Trim();
+
+            if (string.IsNullOrEmpty(rootFolder) || !Directory.Exists(rootFolder))
+            {
+                MessageBox.Show("Please select a valid Project folder.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string attachmentsFolder = Path.Combine(rootFolder, "Attachments");
+            string unsealedFolder = Path.Combine(attachmentsFolder, "Unsealed Engineering");
+            string tempFolder = Path.Combine(rootFolder, "Temp");
+
+            if (!Directory.Exists(unsealedFolder))
+            {
+                MessageBox.Show("The folder 'Attachments/Unsealed Engineering' was not found.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!Directory.Exists(tempFolder))
+                Directory.CreateDirectory(tempFolder);
+
+            var pdfFiles = Directory.GetFiles(unsealedFolder, "*.pdf");
+
+            if (pdfFiles.Length == 0)
+            {
+                MessageBox.Show("No PDF files found in 'Unsealed Engineering' folder.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string folderName = new DirectoryInfo(rootFolder).Name;
+            string outputTxtFile = Path.Combine(tempFolder, folderName + ".txt");
+
             try
             {
-                string projectPath = textBox_PJNum.Text;
-                string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
-                string tempPath = $"{projectPath}\\Temp";
-                string[] arrPath = projectPath.Split('\\');
-                string projectID = arrPath[arrPath.Length - 1];
-                string[] txtPathes = Directory.GetFiles(tempPath, "*.txt");
+                using (StreamWriter writer = new StreamWriter(outputTxtFile))
+                {
+                    foreach (var pdfFile in pdfFiles)
+                    {
+                        using (var reader = new iText.Kernel.Pdf.PdfReader(pdfFile))
+                        using (var pdfDoc = new iText.Kernel.Pdf.PdfDocument(reader))
+                        {
+                            for (int page = 1; page <= pdfDoc.GetNumberOfPages(); page++)
+                            {
+                                var strategy = new iText.Kernel.Pdf.Canvas.Parser.Listener.SimpleTextExtractionStrategy();
+                                string text = iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(page), strategy);
+                                writer.WriteLine(text);
+                            }
+                        }
+                    }
+                }
 
-                string txtName = Path.GetFileNameWithoutExtension(txtPathes[0]);
+                MessageBox.Show("The txt file has been created at:\n" + outputTxtFile, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
-                
-                list_BE = BE.Get_Bearing_Info(txtPathes[0],comboBox_Language.Text, comboBox_Unit.Text);
 
+                list_BE = BE.Get_Bearing_Info(outputTxtFile, comboBox_Language.Text, comboBox_Unit.Text);
                 //LumberInventory lumberI = new LumberInventory();
                 //List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
                 //List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();
                 //List<string> list_LumSize = list_Lumber.Select(x => x.Lumber_Size).Distinct().ToList();
-               //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
+                //List<string> list_Specie = list_Lumber.Select(x => x.Lumber_SpeciesName).Distinct().ToList();
                 //List<string> snow_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Snow).Distinct().ToList();
                 //List<string> live_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Live).Distinct().ToList();
                 //List<string> wind_DurationFactor = list_BE.Select(x => x.TopPlateInfo.DOL.DOL_Wind).Distinct().ToList();
                 //list_DurationFactor.AddRange(snow_DurationFactor);
                 //list_DurationFactor.AddRange(live_DurationFactor);
                 //list_DurationFactor.AddRange(wind_DurationFactor);
-
+                if (list_BE.Count == 0)
+                {
+                    MessageBox.Show("Not found any bearing failure. Please recheck the input data!");
+                }
                 int i = 0;
                 foreach (Bearing_Enhancer be in list_BE)
                 {
                     List<string> list_BearingSolution = be.BearingSolution;
 
-                    dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow,be.TopPlateInfo.WetService,
+                    dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow, be.TopPlateInfo.WetService,
                         be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                         be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer, list_BearingSolution[0]);
                     (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
-                    
+
                     i++;
                 }
             }
-            catch (FileNotFoundException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!");
+                MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch(Exception ex)
-            {
-                if(ex.Message.Contains("Could not find a part of the path"))
-                {
-                    MessageBox.Show("Please check Project Number Path or/and Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!!");
-                }
-                else if(ex.Message.Contains("Index was outside the bounds of the array"))
-                {
-                    MessageBox.Show("Please OpenAll PDF in CSEnginer and Export to a Text file in BlueBeam!");
-                }
-                else
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-
-}
+        }
 
         private void DataGridViewTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
@@ -179,7 +206,7 @@ namespace Bearing_Enhancer_CAN
                                     Imperial_Or_Metric iom = new Imperial_Or_Metric(comboBox_Unit.Text,comboBox_Language.Text);
                                     dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = f2.LumSize;
                                     dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = f2.LumSpecie;
-                                    dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = iom.Unit=="Imperial"? f2.ContactLength: Convert.ToString(Convert_String_Inch(f2.ContactLength)*iom.miliFactor);
+                                    dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = iom.Unit == "Imperial" ? f2.ContactLength : Convert.ToString(Convert_String_Inch(f2.ContactLength)*iom.miliFactor);
 
                                     Bearing_Enhancer BE = new Bearing_Enhancer();
                                     BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
@@ -267,7 +294,7 @@ namespace Bearing_Enhancer_CAN
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells["Load_Transfer"].Value.ToString());
                             BE.TopPlateInfo = topPlate;
 
-                        List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text,comboBox_Language.Text, false);
+                            List<string> listHorBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text,comboBox_Language.Text, false);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listHorBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"].Value = listHorBBlock[0];
                         }
@@ -348,6 +375,7 @@ namespace Bearing_Enhancer_CAN
         }
         private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)//Sự kiện rời khỏi Ô
         {
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(comboBox_Unit.Text, comboBox_Language.Text);
             // Lấy tên cột
             string headerText = dataGridView_Table.Columns[e.ColumnIndex].HeaderText;
 
@@ -424,12 +452,12 @@ namespace Bearing_Enhancer_CAN
             // Kiểm tra cột "Reaction"
             if (headerText.Equals("Reaction"))
             {
-                Regex regexReaction = new Regex(@"^\d+$");
+                Regex regexReaction = new Regex(@"^(?!0+(\.0+)?$)\d+(\.\d+)?$");
                 string input = e.FormattedValue.ToString();
                 if (!regexReaction.IsMatch(input))
                 {
                     // Hiển thị lỗi tại hàng
-                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Reaction as interger!";
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Reaction as Integer or Decimal!";
                     e.Cancel = true;
                 }
                 else
@@ -440,12 +468,12 @@ namespace Bearing_Enhancer_CAN
             // Kiểm tra cột "Bearing-Width"
             if (headerText.Equals("Bearing-Width"))
             {
-                Regex regexBearingWidth = new Regex(@"^\d+(-\d+){1,2}$");
+                Regex regexBearingWidth = iom.Unit == "Imperial" ? new Regex(@"^\d+(-\d+){1,2}$") : new Regex(@"^(?!0+(\.0+)?$)\d+(\.\d+)?$");
                 string input = e.FormattedValue.ToString();
                 if (!regexBearingWidth.IsMatch(input))
                 {
                     // Hiển thị lỗi tại hàng
-                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Bearing-Width as the format: 3-08, 5-08, 1-00-02!";
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = iom.Unit == "Imperial" ? "Please input Bearing-Width as the format: 3-08, 5-08, 1-00-02!" : "Please input Bearing-Width as Integer or Decimal!";
                     e.Cancel = true;
                 }
                 else
@@ -456,12 +484,12 @@ namespace Bearing_Enhancer_CAN
             // Kiểm tra cột "Required-Width"
             if (headerText.Equals("Required-Width"))
             {
-                Regex regexRequiredWidth = new Regex(@"^\d+(-\d+){1,2}$");
+                Regex regexRequiredWidth = iom.Unit == "Imperial" ? new Regex(@"^\d+(-\d+){1,2}$") : new Regex(@"^(?!0+(\.0+)?$)\d+(\.\d+)?$");
                 string input = e.FormattedValue.ToString();
                 if (!regexRequiredWidth.IsMatch(input))
                 {
                     // Hiển thị lỗi tại hàng
-                    dataGridView_Table.Rows[e.RowIndex].ErrorText = "Please input Required-Width as the format: 3-08, 5-08, 1-00-00!";
+                    dataGridView_Table.Rows[e.RowIndex].ErrorText = iom.Unit == "Imperial" ? "Please input Required-Width as the format: 3-08, 5-08, 1-00-00!" : "Please input Required-Width as Integer or Decimal!";
                     e.Cancel = true;
                 }
                 else
@@ -493,7 +521,7 @@ namespace Bearing_Enhancer_CAN
                 // Kiểm tra null / rỗng trước
                 if (!string.IsNullOrWhiteSpace(inputR) && !string.IsNullOrWhiteSpace(inputBW) && !string.IsNullOrWhiteSpace(inputRW))
                 {
-                    Regex regexBearing = new Regex(@"^\d+(-\d+){1,2}$");
+                    Regex regexBearing = iom.Unit == "Imperial" ? new Regex(@"^\d+(-\d+){1,2}$") : new Regex(@"^(?!0+(\.0+)?$)\d+(\.\d+)?$");//-------------------------------------------------------------------------------
                     Regex regexInteger = new Regex(@"^\d+$");
 
                     // Chỉ xử lý nếu Reaction là số nguyên, và BW & RW đúng định dạng
@@ -525,7 +553,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            int[] columnsNumber = { 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 15 };
+            int[] columnsNumber = { 1, 2, 3, 4, 5, 9, 10, 11, 12, 13 };
             bool isColumn = columnsNumber.Any(c => c == e.ColumnIndex);
             if (isColumn && e.RowIndex >= 0) // Cột No.-Ply, Lumber-Spiecie, Lumber-Size, Location-Type, Reaction, Bearing-Width, Required-Width, Material
             {
@@ -551,7 +579,7 @@ namespace Bearing_Enhancer_CAN
                     // Kiểm tra null / rỗng trước
                     if (!string.IsNullOrWhiteSpace(inputR) && !string.IsNullOrWhiteSpace(inputBW) && !string.IsNullOrWhiteSpace(inputRW))
                     {
-                        Regex regexBearing = new Regex(@"^\d+(-\d+){1,2}$");
+                        Regex regexBearing = iom.Unit == "Imperial" ? new Regex(@"^\d+(-\d+){1,2}$") : new Regex(@"^(?!0+(\.0+)?$)\d+(\.\d+)?$");//--------------------------------------------------------------------------
                         Regex regexInteger = new Regex(@"^\d+$");
 
                         // Chỉ xử lý nếu Reaction là số nguyên, và BW & RW đúng định dạng
@@ -624,14 +652,14 @@ namespace Bearing_Enhancer_CAN
 
         private void dataGridViewTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 17) // Cột Checked
+            if (e.ColumnIndex == 18) // Cột Checked
             {
                 bool currentValue = true;
                 foreach (DataGridViewRow row in dataGridView_Table.Rows)
                 {
                     if (!row.IsNewRow)
                     {
-                        row.Cells[17].Value = currentValue;
+                        row.Cells[18].Value = currentValue;
                     }
                 }
             }
@@ -639,17 +667,17 @@ namespace Bearing_Enhancer_CAN
 
         private void dataGridViewTable_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && e.Clicks == 2)//Double rightclick
+            if (e.Button == MouseButtons.Right && e.Clicks == 2)//Double RightClick
             {
                 var hit = dataGridView_Table.HitTest(e.X, e.Y);
                 int rowIndex = hit.RowIndex;
                 int colIndex = hit.ColumnIndex;
                 bool currentValue = false;
-                if(colIndex == 17) // Cột Checked
+                if(colIndex == 18) // Cột Checked
                 {
                     foreach (DataGridViewRow row in dataGridView_Table.Rows)
                     {
-                        row.Cells[17].Value = currentValue;
+                        row.Cells[18].Value = currentValue;
                     }
                 }
             }
@@ -753,10 +781,10 @@ namespace Bearing_Enhancer_CAN
             List<(string TrussName, string JointID, string Note)> listItem = new List<(string TrussName, string JointID, string Note)> ();
             foreach (DataGridViewRow row in dataGridView_Table.Rows)
             {
-                bool valueCol17 = Convert.ToBoolean(row.Cells[17].Value);
-                if (!row.IsNewRow && valueCol17)
+                bool valueCol18 = Convert.ToBoolean(row.Cells[18].Value);
+                if (!row.IsNewRow && valueCol18)
                 {
-                    (string TrussName, string JointID, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[5].Value?.ToString(), row.Cells[18].Value?.ToString());
+                    (string TrussName, string JointID, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[6].Value?.ToString(), row.Cells[19].Value?.ToString());
                     if (!string.IsNullOrEmpty(theNoteItem.TrussName)&&!string.IsNullOrEmpty(theNoteItem.Note))
                     {
                         listItem.Add(theNoteItem);
@@ -778,18 +806,18 @@ namespace Bearing_Enhancer_CAN
                     {
                         foreach (DataGridViewRow row in dataGridView_Table.Rows)
                         {
-                            bool valueCol17 = Convert.ToBoolean(row.Cells[17].Value);
-                            if (!row.IsNewRow && valueCol17)
+                            bool valueCol18 = Convert.ToBoolean(row.Cells[18].Value);
+                            if (!row.IsNewRow && valueCol18)
                             {
-                                (string TrussName, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[18].Value?.ToString());
+                                (string TrussName, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[19].Value?.ToString());
                                 if (!string.IsNullOrEmpty(theNoteItem.TrussName) && !string.IsNullOrEmpty(theNoteItem.Note))
                                 {
                                     // Gọi hàm thêm vào XML
-                                    Add_Note_ToTruss(textBox_PJNum.Text, theNoteItem);
+                                    Add_Note_ToTruss(tbx_ProjectNumberPath.Text, theNoteItem);
                                 }
                             }
                         }
-                        MessageBox.Show("Add note successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        //MessageBox.Show("Add note successful!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
@@ -804,8 +832,8 @@ namespace Bearing_Enhancer_CAN
         }
         void Add_Note_ToTruss(string path, (string TrussName, string Note) item)
         {
-            string projectPath = textBox_PJNum.Text;
-            string trussesPath = $"{textBox_PJNum.Text}\\Trusses";
+            string projectPath = tbx_ProjectNumberPath.Text;
+            string trussesPath = $"{tbx_ProjectNumberPath.Text}\\Trusses";
             string[] arrPath = projectPath.Split('\\');
             string projectID = arrPath[arrPath.Length - 1];
             string xmlFilePath = Path.Combine(trussesPath, $"{item.TrussName}.tdlTruss");
@@ -821,6 +849,27 @@ namespace Bearing_Enhancer_CAN
 
             // Lưu lại tài liệu XML
             xmlDoc.Save(xmlFilePath);
+        }
+
+        private void btn_Browse_Click(object sender, EventArgs e)
+        {
+            string defaultPath = @"C:\SST-EA\Client\Projects";
+
+            using (var folderDialog = new FolderBrowserDialog())
+            {
+                folderDialog.Description = "Select the Project folder (e.g., 255159)";
+
+                // Kiểm tra nếu đường dẫn mặc định tồn tại, sẽ set là đường dẫn mặc định
+                if (Directory.Exists(defaultPath))
+                {
+                    folderDialog.SelectedPath = defaultPath;
+                }
+
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    tbx_ProjectNumberPath.Text = folderDialog.SelectedPath;
+                }
+            }
         }
     }
 

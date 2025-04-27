@@ -48,7 +48,7 @@ namespace Bearing_Enhancer_CAN
                     Array.Resize(ref arrLine, 0);
                     arrLine = line.Split(':');
                     temName = $"{langText.Truss}{arrLine[arrLine.Length - 1]}";
-                    temName = temName.TrimEnd('\r');
+                    temName = temName.Trim();
                     if (temName == $"{langText.Truss}  {trussname}")
                     {
                         thisTruss = true;
@@ -70,8 +70,8 @@ namespace Bearing_Enhancer_CAN
                     if(pickup_Loading)
                     {
                         Array.Resize(ref arrLine2, 0);
-                        string line2 = line.TrimEnd('\r', '\n', '\t');
-                        line2 = Regex.Replace(line, @"\s+", " ");
+                        string line2 = Regex.Replace(line, @"\s+", " ");
+                        line2 = line2.Trim();
                         arrLine2 = line2.Split();
                         if (line.Contains(langText.Kd) && line.Contains(langText.Snow))
                         {
@@ -99,26 +99,26 @@ namespace Bearing_Enhancer_CAN
                     if (pickup_React)
                     {
                         Array.Resize(ref arrLine2, 0);
-                        string line2 = line.TrimEnd('\r', '\n', '\t');
-                        line2 = Regex.Replace(line, @"\s+", " ");
+                        string line2 = Regex.Replace(line, @"\s+", " ");
+                        line2 = line2.Trim();
                         arrLine2 = line2.Split();
                         bool isLine = false;
-                        if (arrLine2.Length == 9)
+                        if (arrLine2.Length == 7)
                         {
-                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF", "USER" }.Any(s => arrLine2[7].Contains(s));
+                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF", "USER" }.Any(s => arrLine2[6].Contains(s));
                         }
                         
-                        if (arrLine2.Length == 9 && isLine)
+                        if (arrLine2.Length == 7 && isLine)
                         {
-                            if (arrLine2[6].Contains(@"**"))
+                            if (arrLine2[5].Contains(@"**"))
                             {
                                 Top_Plate_Info tPI = new Top_Plate_Info();
-                                tPI.JointID = arrLine2[1];
-                                tPI.XLocation = arrLine2[2];
-                                tPI.Reaction = double.Parse(arrLine2[3]);
-                                tPI.BearingWidth = arrLine2[5];
-                                tPI.RequireWidth = arrLine2[6].Trim('*');
-                                tPI.Material = arrLine2[7];
+                                tPI.JointID = arrLine2[0];
+                                tPI.XLocation = arrLine2[1];
+                                tPI.Reaction = double.Parse(arrLine2[2]);
+                                tPI.BearingWidth = arrLine2[4];
+                                tPI.RequireWidth = arrLine2[5].Trim('*');
+                                tPI.Material = arrLine2[6];
                                 tPI.DOL = kD;
                                 dictTopPlate.Add(i, tPI);
                             }

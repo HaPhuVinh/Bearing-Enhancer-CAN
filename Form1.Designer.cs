@@ -31,17 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_BearingEnhacerCAN));
             this.button_Check = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox_PJNum = new System.Windows.Forms.TextBox();
+            this.lbl_ProjectNumberPath = new System.Windows.Forms.Label();
+            this.tbx_ProjectNumberPath = new System.Windows.Forms.TextBox();
             this.dataGridView_Table = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.comboBox_Language = new System.Windows.Forms.ComboBox();
-            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
-            this.label_Language = new System.Windows.Forms.Label();
-            this.label_Unit = new System.Windows.Forms.Label();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.btn_export_data = new System.Windows.Forms.Button();
-            this.btn_Add_Note = new System.Windows.Forms.Button();
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -62,6 +54,15 @@
             this.Contact_Length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox_Language = new System.Windows.Forms.ComboBox();
+            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
+            this.label_Language = new System.Windows.Forms.Label();
+            this.label_Unit = new System.Windows.Forms.Label();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.btn_export_data = new System.Windows.Forms.Button();
+            this.btn_Add_Note = new System.Windows.Forms.Button();
+            this.btn_Browse = new System.Windows.Forms.Button();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -71,37 +72,38 @@
             // button_Check
             // 
             this.button_Check.BackColor = System.Drawing.Color.White;
-            this.button_Check.Font = new System.Drawing.Font("Lucida Console", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_Check.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button_Check.Location = new System.Drawing.Point(833, 17);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button_Check.Location = new System.Drawing.Point(538, 60);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button_Check.Name = "button_Check";
-            this.button_Check.Size = new System.Drawing.Size(168, 60);
+            this.button_Check.Size = new System.Drawing.Size(136, 49);
             this.button_Check.TabIndex = 0;
             this.button_Check.Text = "CHECK";
             this.button_Check.UseVisualStyleBackColor = false;
             this.button_Check.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label1
+            // lbl_ProjectNumberPath
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Arial Black", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 26);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Project Number path";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.lbl_ProjectNumberPath.AutoSize = true;
+            this.lbl_ProjectNumberPath.Font = new System.Drawing.Font("Arial Black", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ProjectNumberPath.Location = new System.Drawing.Point(6, 15);
+            this.lbl_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbl_ProjectNumberPath.Name = "lbl_ProjectNumberPath";
+            this.lbl_ProjectNumberPath.Size = new System.Drawing.Size(182, 22);
+            this.lbl_ProjectNumberPath.TabIndex = 1;
+            this.lbl_ProjectNumberPath.Text = "Project Number path";
+            this.lbl_ProjectNumberPath.Click += new System.EventHandler(this.label1_Click);
             // 
-            // textBox_PJNum
+            // tbx_ProjectNumberPath
             // 
-            this.textBox_PJNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_PJNum.Location = new System.Drawing.Point(276, 18);
-            this.textBox_PJNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox_PJNum.Name = "textBox_PJNum";
-            this.textBox_PJNum.Size = new System.Drawing.Size(508, 28);
-            this.textBox_PJNum.TabIndex = 2;
-            this.textBox_PJNum.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.tbx_ProjectNumberPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbx_ProjectNumberPath.Location = new System.Drawing.Point(207, 15);
+            this.tbx_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbx_ProjectNumberPath.Name = "tbx_ProjectNumberPath";
+            this.tbx_ProjectNumberPath.Size = new System.Drawing.Size(382, 24);
+            this.tbx_ProjectNumberPath.TabIndex = 2;
+            this.tbx_ProjectNumberPath.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // dataGridView_Table
             // 
@@ -129,97 +131,13 @@
             this.Contact_Length,
             this.Checked,
             this.The_Note});
-            this.dataGridView_Table.Location = new System.Drawing.Point(13, 157);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dataGridView_Table.Location = new System.Drawing.Point(10, 128);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
-            this.dataGridView_Table.Size = new System.Drawing.Size(2760, 764);
+            this.dataGridView_Table.Size = new System.Drawing.Size(2070, 621);
             this.dataGridView_Table.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(16, 131);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 24);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Data Table";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // comboBox_Language
-            // 
-            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(276, 64);
-            this.comboBox_Language.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBox_Language.Name = "comboBox_Language";
-            this.comboBox_Language.Size = new System.Drawing.Size(184, 26);
-            this.comboBox_Language.TabIndex = 5;
-            // 
-            // comboBox_Unit
-            // 
-            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(276, 106);
-            this.comboBox_Unit.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBox_Unit.Name = "comboBox_Unit";
-            this.comboBox_Unit.Size = new System.Drawing.Size(184, 26);
-            this.comboBox_Unit.TabIndex = 5;
-            // 
-            // label_Language
-            // 
-            this.label_Language.AutoSize = true;
-            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(167, 65);
-            this.label_Language.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Language.Name = "label_Language";
-            this.label_Language.Size = new System.Drawing.Size(82, 20);
-            this.label_Language.TabIndex = 6;
-            this.label_Language.Text = "Language";
-            // 
-            // label_Unit
-            // 
-            this.label_Unit.AutoSize = true;
-            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(167, 105);
-            this.label_Unit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_Unit.Name = "label_Unit";
-            this.label_Unit.Size = new System.Drawing.Size(39, 20);
-            this.label_Unit.TabIndex = 6;
-            this.label_Unit.Text = "Unit";
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
-            // 
-            // btn_export_data
-            // 
-            this.btn_export_data.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
-            this.btn_export_data.Location = new System.Drawing.Point(1366, 17);
-            this.btn_export_data.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_export_data.Name = "btn_export_data";
-            this.btn_export_data.Size = new System.Drawing.Size(143, 59);
-            this.btn_export_data.TabIndex = 7;
-            this.btn_export_data.Text = "Export Data";
-            this.btn_export_data.UseVisualStyleBackColor = true;
-            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
-            // 
-            // btn_Add_Note
-            // 
-            this.btn_Add_Note.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
-            this.btn_Add_Note.Location = new System.Drawing.Point(1163, 17);
-            this.btn_Add_Note.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_Add_Note.Name = "btn_Add_Note";
-            this.btn_Add_Note.Size = new System.Drawing.Size(136, 60);
-            this.btn_Add_Note.TabIndex = 8;
-            this.btn_Add_Note.Text = "Add Note to TDL";
-            this.btn_Add_Note.UseVisualStyleBackColor = true;
-            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
             // 
             // Truss_Name
             // 
@@ -277,7 +195,7 @@
             this.Wet_Service.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Wet_Service.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Wet_Service.TrueValue = "True";
-            this.Wet_Service.Width = 110;
+            this.Wet_Service.Width = 91;
             // 
             // Joint_ID
             // 
@@ -387,6 +305,97 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.label2.Location = new System.Drawing.Point(12, 105);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 23);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Data Table";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // comboBox_Language
+            // 
+            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Language.FormattingEnabled = true;
+            this.comboBox_Language.Location = new System.Drawing.Point(207, 52);
+            this.comboBox_Language.Name = "comboBox_Language";
+            this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Language.TabIndex = 5;
+            // 
+            // comboBox_Unit
+            // 
+            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Unit.FormattingEnabled = true;
+            this.comboBox_Unit.Location = new System.Drawing.Point(207, 86);
+            this.comboBox_Unit.Name = "comboBox_Unit";
+            this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Unit.TabIndex = 5;
+            // 
+            // label_Language
+            // 
+            this.label_Language.AutoSize = true;
+            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Language.Location = new System.Drawing.Point(125, 53);
+            this.label_Language.Name = "label_Language";
+            this.label_Language.Size = new System.Drawing.Size(72, 17);
+            this.label_Language.TabIndex = 6;
+            this.label_Language.Text = "Language";
+            // 
+            // label_Unit
+            // 
+            this.label_Unit.AutoSize = true;
+            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Unit.Location = new System.Drawing.Point(125, 85);
+            this.label_Unit.Name = "label_Unit";
+            this.label_Unit.Size = new System.Drawing.Size(33, 17);
+            this.label_Unit.TabIndex = 6;
+            this.label_Unit.Text = "Unit";
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // btn_export_data
+            // 
+            this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
+            this.btn_export_data.Location = new System.Drawing.Point(1024, 14);
+            this.btn_export_data.Name = "btn_export_data";
+            this.btn_export_data.Size = new System.Drawing.Size(119, 48);
+            this.btn_export_data.TabIndex = 7;
+            this.btn_export_data.Text = "Export Data";
+            this.btn_export_data.UseVisualStyleBackColor = true;
+            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
+            // 
+            // btn_Add_Note
+            // 
+            this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
+            this.btn_Add_Note.Location = new System.Drawing.Point(854, 14);
+            this.btn_Add_Note.Name = "btn_Add_Note";
+            this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
+            this.btn_Add_Note.TabIndex = 8;
+            this.btn_Add_Note.Text = "Add Note to TDL";
+            this.btn_Add_Note.UseVisualStyleBackColor = true;
+            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
+            // 
+            // btn_Browse
+            // 
+            this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Browse.ForeColor = System.Drawing.Color.Black;
+            this.btn_Browse.Location = new System.Drawing.Point(596, 15);
+            this.btn_Browse.Name = "btn_Browse";
+            this.btn_Browse.Size = new System.Drawing.Size(68, 33);
+            this.btn_Browse.TabIndex = 9;
+            this.btn_Browse.Text = "Browse";
+            this.btn_Browse.UseVisualStyleBackColor = true;
+            this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
+            // 
             // bearingEnhancerBindingSource
             // 
             this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
@@ -394,9 +403,10 @@
             // Form_BearingEnhacerCAN
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2404, 941);
+            this.ClientSize = new System.Drawing.Size(1443, 765);
+            this.Controls.Add(this.btn_Browse);
             this.Controls.Add(this.btn_Add_Note);
             this.Controls.Add(this.btn_export_data);
             this.Controls.Add(this.label_Unit);
@@ -405,12 +415,12 @@
             this.Controls.Add(this.comboBox_Language);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dataGridView_Table);
-            this.Controls.Add(this.textBox_PJNum);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbx_ProjectNumberPath);
+            this.Controls.Add(this.lbl_ProjectNumberPath);
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
@@ -424,8 +434,8 @@
         #endregion
 
         private System.Windows.Forms.Button button_Check;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox_PJNum;
+        private System.Windows.Forms.Label lbl_ProjectNumberPath;
+        private System.Windows.Forms.TextBox tbx_ProjectNumberPath;
         private System.Windows.Forms.DataGridView dataGridView_Table;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.BindingSource bearingEnhancerBindingSource;
@@ -456,6 +466,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Contact_Length;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
+        private System.Windows.Forms.Button btn_Browse;
     }
 }
 

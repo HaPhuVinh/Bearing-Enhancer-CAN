@@ -1227,11 +1227,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. (Stagger rows by 1/2 the nails spacing). Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}\" o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one" : "both")} face(s) of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} (staggered) row(s) of Simpson {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
@@ -1243,11 +1243,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}po c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. (Le décalage des rangées doit être de 1/2 l'espacement). Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}po c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une" : "les deux")} face(s) de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} rangée(s) (décalées) de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {

@@ -13,7 +13,7 @@ namespace Bearing_Enhancer_CAN
         public string Language = "English";
         public double miliFactor => Unit == "Imperial" ? 1 : 25.4;
         public double kNFactor => Unit == "Imperial" ? 1 : 0.00444822;
-        public string Text => Unit == "Imperial" ? (Language=="English"?"in.": "po") : "mm";
+        public string Text => Unit == "Imperial" ? (Language=="English"?"\"": "po") : "mm";
 
         public Imperial_Or_Metric(string unit, string language="English") 
         {
