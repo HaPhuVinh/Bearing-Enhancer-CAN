@@ -94,7 +94,6 @@ namespace Bearing_Enhancer_CAN
                         pickup_React = true;
                         continue;
                     }
-
                     
                     if (pickup_React)
                     {
@@ -129,7 +128,10 @@ namespace Bearing_Enhancer_CAN
                             break;
                         }
                     }
-
+                    if (line.Contains(langText.UnfactoredReactionSummary))
+                    {
+                        break;
+                    }
                 }
 
             }
