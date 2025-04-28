@@ -63,6 +63,7 @@
             this.btn_export_data = new System.Windows.Forms.Button();
             this.btn_Add_Note = new System.Windows.Forms.Button();
             this.btn_Browse = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -75,7 +76,7 @@
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button_Check.Location = new System.Drawing.Point(538, 60);
-            this.button_Check.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(136, 49);
             this.button_Check.TabIndex = 0;
@@ -99,7 +100,7 @@
             // 
             this.tbx_ProjectNumberPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbx_ProjectNumberPath.Location = new System.Drawing.Point(207, 15);
-            this.tbx_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbx_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2);
             this.tbx_ProjectNumberPath.Name = "tbx_ProjectNumberPath";
             this.tbx_ProjectNumberPath.Size = new System.Drawing.Size(382, 24);
             this.tbx_ProjectNumberPath.TabIndex = 2;
@@ -132,7 +133,7 @@
             this.Checked,
             this.The_Note});
             this.dataGridView_Table.Location = new System.Drawing.Point(10, 128);
-            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView_Table.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_Table.Name = "dataGridView_Table";
             this.dataGridView_Table.RowHeadersWidth = 51;
             this.dataGridView_Table.RowTemplate.Height = 24;
@@ -364,7 +365,7 @@
             // 
             this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_export_data.ForeColor = System.Drawing.Color.Black;
-            this.btn_export_data.Location = new System.Drawing.Point(1024, 14);
+            this.btn_export_data.Location = new System.Drawing.Point(1002, 14);
             this.btn_export_data.Name = "btn_export_data";
             this.btn_export_data.Size = new System.Drawing.Size(119, 48);
             this.btn_export_data.TabIndex = 7;
@@ -396,6 +397,15 @@
             this.btn_Browse.UseVisualStyleBackColor = true;
             this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(1144, 14);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(640, 101);
+            this.richTextBox1.TabIndex = 10;
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            // 
             // bearingEnhancerBindingSource
             // 
             this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
@@ -406,6 +416,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1796, 948);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.btn_Browse);
             this.Controls.Add(this.btn_Add_Note);
             this.Controls.Add(this.btn_export_data);
@@ -420,7 +431,7 @@
             this.Controls.Add(this.button_Check);
             this.ForeColor = System.Drawing.Color.OrangeRed;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
@@ -467,6 +478,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
         private System.Windows.Forms.Button btn_Browse;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 

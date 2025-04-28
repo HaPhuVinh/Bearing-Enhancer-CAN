@@ -180,6 +180,14 @@
   <metadata name="errorProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1356, 80</value>
   </metadata>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Instruction:
+1/ Copy project ID and Paste to "Project Number path" textbox or click "Browse" button and select project ID.
+2/ Click "CHECK" button to get data.
+3/ Take a look data on "Data Table", tick checkbox on "Checked" column to get the Bearing Enhancer Note. // Tip: Doble Click to tick all checkboxes ; Double Right Click to untick all checkboxes.
+4/ Click "Add Note to TDL" button to add Bearing Enhancer notes to Trusses checked.
+5/ Click "Export Data" button to get the report.</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
