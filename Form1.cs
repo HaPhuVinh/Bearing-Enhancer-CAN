@@ -757,7 +757,7 @@ namespace Bearing_Enhancer_CAN
                             }
                         }
                         //Tô màu dòng tiêu đề
-                        Excel.Range headerRange = worksheet.get_Range("A1", "S1"); // Giả sử 4 cột
+                        Excel.Range headerRange = worksheet.get_Range("A1", "T1");
                         headerRange.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightGray);
                         //Auto fit cột
                         worksheet.Columns.AutoFit();
