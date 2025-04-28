@@ -606,9 +606,9 @@ namespace Bearing_Enhancer_CAN
                             topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells["Material"].Value?.ToString();
                             topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells["Load_Transfer"].Value.ToString());
                             BE.TopPlateInfo = topPlate;
-                            string contLength = dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value.ToString();
+                            string contLength = dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value?.ToString();
 
-                            bool bVerBlock = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value.ToString());
+                            bool bVerBlock = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value?.ToString());
                             List<string> listBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, comboBox_Language.Text, bVerBlock, contLength);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"].Value = listBBlock[0];
