@@ -39,7 +39,7 @@ namespace Bearing_Enhancer_CAN
             List<string> list_Ply = new List<string> { "1", "2", "3", "4" };
             List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
             List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
-            List<string> list_DurationFactor = new List<string>() { "1.00","1.10", "1.15", "1.25", "1.33", "1.60" };
+            List<string> list_DurationFactor = new List<string>() {"0.90","1.00","1.10", "1.15", "1.25", "1.33", "1.60" };
             list_DurationFactor = list_DurationFactor.Distinct().ToList();
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 
