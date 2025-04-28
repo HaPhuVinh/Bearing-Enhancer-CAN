@@ -559,7 +559,7 @@ namespace Bearing_Enhancer_CAN
             {
                 bool checkNullBS = false;
                 string cellValueBS;
-                foreach (int colName in columnsNumber)
+                foreach (int colName in columnsNumber.Where(x=>x!=5))
                 {
                     cellValueBS = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
                     checkNullBS = string.IsNullOrWhiteSpace(cellValueBS);
