@@ -162,13 +162,13 @@
   <metadata name="Load_Transfer.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="Bearing_Solution.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="Vertical_Block.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="Contact_Length.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Bearing_Solution.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="Checked.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -182,11 +182,12 @@
   </metadata>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Instruction:
-1/ Copy project ID and Paste to "Project Number path" textbox or click "Browse" button and select project ID.
-2/ Click "CHECK" button to get data.
-3/ Take a look data on "Data Table", tick checkbox on "Checked" column to get the Bearing Enhancer Note. // Tip: Doble Click to tick all checkboxes ; Double Right Click to untick all checkboxes.
-4/ Click "Add Note to TDL" button to add Bearing Enhancer notes to Trusses checked.
-5/ Click "Export Data" button to get the report.</value>
+1/ Copy project ID and Paste to "Project Number path" textbox or click "Browse" button and select a project number.
+2/ Select Language and Unit.
+3/ Click "CHECK" button to get data.
+4/ Take a look at data on "Data Table", tick on checkboxes at "Checked" column to get the Bearing Enhancer Note. // Tip: Doble Click to tick all checkboxes ; Double Right Click to untick all checkboxes.
+5/ Click "Add Note to TDL" button to add Bearing Enhancer notes to Trusses checked.
+6/ Click "Export Data" button to get the report.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
