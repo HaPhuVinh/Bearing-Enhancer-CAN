@@ -171,14 +171,14 @@ namespace Bearing_Enhancer_CAN
             
             if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
-                string chordSize="";
-                string chordSpecie="";
+                //string chordSize="";
+                //string chordSpecie="";
                 bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value);
-                if (!isChecked) 
-                {
-                    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value?.ToString();
-                    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value?.ToString();
-                }
+                //if (!isChecked) 
+                //{
+                //    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value?.ToString();
+                //    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value?.ToString();
+                //}
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
                 string[] columnsToCheck = { "No_Ply", "DOL_Column", "Location_Type", "Reaction", "Brg_Width", "Req_Width", "Material" };
                 var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"];
@@ -281,8 +281,8 @@ namespace Bearing_Enhancer_CAN
                     {
                         // Nếu bỏ tick, xóa giá trị trong ô Contact Length và đổi màu dòng về mặc định
                         dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = "";
-                        dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = chordSize;
-                        dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = chordSpecie;
+                        //dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = chordSize;
+                        //dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = chordSpecie;
                         row.DefaultCellStyle.BackColor = default;
 
                         Bearing_Enhancer BE = new Bearing_Enhancer();
