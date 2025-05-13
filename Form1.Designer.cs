@@ -34,17 +34,6 @@
             this.lbl_ProjectNumberPath = new System.Windows.Forms.Label();
             this.tbx_ProjectNumberPath = new System.Windows.Forms.TextBox();
             this.dataGridView_Table = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.comboBox_Language = new System.Windows.Forms.ComboBox();
-            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
-            this.label_Language = new System.Windows.Forms.Label();
-            this.label_Unit = new System.Windows.Forms.Label();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.btn_export_data = new System.Windows.Forms.Button();
-            this.btn_Add_Note = new System.Windows.Forms.Button();
-            this.btn_Browse = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -65,6 +54,17 @@
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox_Language = new System.Windows.Forms.ComboBox();
+            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
+            this.label_Language = new System.Windows.Forms.Label();
+            this.label_Unit = new System.Windows.Forms.Label();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.btn_export_data = new System.Windows.Forms.Button();
+            this.btn_Add_Note = new System.Windows.Forms.Button();
+            this.btn_Browse = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).BeginInit();
@@ -139,111 +139,6 @@
             this.dataGridView_Table.RowTemplate.Height = 24;
             this.dataGridView_Table.Size = new System.Drawing.Size(2070, 809);
             this.dataGridView_Table.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(12, 105);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 23);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Data Table";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // comboBox_Language
-            // 
-            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(207, 52);
-            this.comboBox_Language.Name = "comboBox_Language";
-            this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
-            this.comboBox_Language.TabIndex = 5;
-            // 
-            // comboBox_Unit
-            // 
-            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(207, 86);
-            this.comboBox_Unit.Name = "comboBox_Unit";
-            this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
-            this.comboBox_Unit.TabIndex = 5;
-            // 
-            // label_Language
-            // 
-            this.label_Language.AutoSize = true;
-            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(125, 53);
-            this.label_Language.Name = "label_Language";
-            this.label_Language.Size = new System.Drawing.Size(72, 17);
-            this.label_Language.TabIndex = 6;
-            this.label_Language.Text = "Language";
-            // 
-            // label_Unit
-            // 
-            this.label_Unit.AutoSize = true;
-            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(125, 85);
-            this.label_Unit.Name = "label_Unit";
-            this.label_Unit.Size = new System.Drawing.Size(33, 17);
-            this.label_Unit.TabIndex = 6;
-            this.label_Unit.Text = "Unit";
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
-            // 
-            // btn_export_data
-            // 
-            this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
-            this.btn_export_data.Location = new System.Drawing.Point(1002, 14);
-            this.btn_export_data.Name = "btn_export_data";
-            this.btn_export_data.Size = new System.Drawing.Size(119, 48);
-            this.btn_export_data.TabIndex = 7;
-            this.btn_export_data.Text = "Export Data";
-            this.btn_export_data.UseVisualStyleBackColor = true;
-            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
-            // 
-            // btn_Add_Note
-            // 
-            this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
-            this.btn_Add_Note.Location = new System.Drawing.Point(854, 14);
-            this.btn_Add_Note.Name = "btn_Add_Note";
-            this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
-            this.btn_Add_Note.TabIndex = 8;
-            this.btn_Add_Note.Text = "Add Note to TDL";
-            this.btn_Add_Note.UseVisualStyleBackColor = true;
-            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
-            // 
-            // btn_Browse
-            // 
-            this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Browse.ForeColor = System.Drawing.Color.Black;
-            this.btn_Browse.Location = new System.Drawing.Point(596, 15);
-            this.btn_Browse.Name = "btn_Browse";
-            this.btn_Browse.Size = new System.Drawing.Size(68, 33);
-            this.btn_Browse.TabIndex = 9;
-            this.btn_Browse.Text = "Browse";
-            this.btn_Browse.UseVisualStyleBackColor = true;
-            this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(1144, 14);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(640, 109);
-            this.richTextBox1.TabIndex = 10;
-            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
-            // 
-            // bearingEnhancerBindingSource
-            // 
-            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
             // 
             // Truss_Name
             // 
@@ -411,6 +306,111 @@
             this.The_Note.MinimumWidth = 6;
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.label2.Location = new System.Drawing.Point(12, 105);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 23);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Data Table";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // comboBox_Language
+            // 
+            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Language.FormattingEnabled = true;
+            this.comboBox_Language.Location = new System.Drawing.Point(207, 52);
+            this.comboBox_Language.Name = "comboBox_Language";
+            this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Language.TabIndex = 5;
+            // 
+            // comboBox_Unit
+            // 
+            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Unit.FormattingEnabled = true;
+            this.comboBox_Unit.Location = new System.Drawing.Point(207, 86);
+            this.comboBox_Unit.Name = "comboBox_Unit";
+            this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Unit.TabIndex = 5;
+            // 
+            // label_Language
+            // 
+            this.label_Language.AutoSize = true;
+            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Language.Location = new System.Drawing.Point(125, 53);
+            this.label_Language.Name = "label_Language";
+            this.label_Language.Size = new System.Drawing.Size(72, 17);
+            this.label_Language.TabIndex = 6;
+            this.label_Language.Text = "Language";
+            // 
+            // label_Unit
+            // 
+            this.label_Unit.AutoSize = true;
+            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Unit.Location = new System.Drawing.Point(125, 85);
+            this.label_Unit.Name = "label_Unit";
+            this.label_Unit.Size = new System.Drawing.Size(33, 17);
+            this.label_Unit.TabIndex = 6;
+            this.label_Unit.Text = "Unit";
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // btn_export_data
+            // 
+            this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
+            this.btn_export_data.Location = new System.Drawing.Point(1002, 14);
+            this.btn_export_data.Name = "btn_export_data";
+            this.btn_export_data.Size = new System.Drawing.Size(119, 48);
+            this.btn_export_data.TabIndex = 7;
+            this.btn_export_data.Text = "Export Data";
+            this.btn_export_data.UseVisualStyleBackColor = true;
+            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
+            // 
+            // btn_Add_Note
+            // 
+            this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
+            this.btn_Add_Note.Location = new System.Drawing.Point(854, 14);
+            this.btn_Add_Note.Name = "btn_Add_Note";
+            this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
+            this.btn_Add_Note.TabIndex = 8;
+            this.btn_Add_Note.Text = "Add Note to TDL";
+            this.btn_Add_Note.UseVisualStyleBackColor = true;
+            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
+            // 
+            // btn_Browse
+            // 
+            this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Browse.ForeColor = System.Drawing.Color.Black;
+            this.btn_Browse.Location = new System.Drawing.Point(596, 15);
+            this.btn_Browse.Name = "btn_Browse";
+            this.btn_Browse.Size = new System.Drawing.Size(68, 33);
+            this.btn_Browse.TabIndex = 9;
+            this.btn_Browse.Text = "Browse";
+            this.btn_Browse.UseVisualStyleBackColor = true;
+            this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(1144, 14);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(640, 109);
+            this.richTextBox1.TabIndex = 10;
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            // 
+            // bearingEnhancerBindingSource
+            // 
+            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
             // 
             // Form_BearingEnhacerCAN
             // 

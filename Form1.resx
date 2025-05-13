@@ -185,7 +185,7 @@
 1/ Copy project ID and Paste to "Project Number path" textbox or click "Browse" button and select a project number.
 2/ Select Language and Unit.
 3/ Click "CHECK" button to get data.
-4/ Take a look at data on "Data Table", tick on checkboxes at "Checked" column to get the Bearing Enhancer Note. // Tip: Doble Click to tick all checkboxes ; Double Right Click to untick all checkboxes.
+4/ Take a look at data on "Data Table", tick on checkboxes at "Checked" column to get the Bearing Enhancer Note. // Tip: Double Click to tick all checkboxes ; Double Right Click to untick all checkboxes.
 5/ Click "Add Note to TDL" button to add Bearing Enhancer notes to Trusses checked.
 6/ Click "Export Data" button to get the report.</value>
   </data>

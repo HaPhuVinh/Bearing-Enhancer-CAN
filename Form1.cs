@@ -18,8 +18,7 @@ namespace Bearing_Enhancer_CAN
 {
     public partial class Form_BearingEnhacerCAN : Form
     {
-        public List<Bearing_Enhancer> list_Original_Bearing { get; set; }
-        
+        public List<Bearing_Enhancer> list_Original_Bearing;
         public Form_BearingEnhacerCAN()
         {
             InitializeComponent();
@@ -72,6 +71,7 @@ namespace Bearing_Enhancer_CAN
 
         private void button1_Click(object sender, EventArgs e)// Button Check
         {
+            list_Original_Bearing?.Clear();
             dataGridView_Table.Rows.Clear();
             string rootFolder = tbx_ProjectNumberPath.Text.Trim();
 
@@ -124,8 +124,6 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                //MessageBox.Show("The txt file has been created at:\n" + outputTxtFile, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
 
@@ -165,20 +163,14 @@ namespace Bearing_Enhancer_CAN
                 MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        
         private void DataGridViewTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
             
             if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
-                //string chordSize="";
-                //string chordSpecie="";
+                
                 bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value);
-                //if (!isChecked) 
-                //{
-                //    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value?.ToString();
-                //    chordSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value?.ToString();
-                //}
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
                 string[] columnsToCheck = { "No_Ply", "DOL_Column", "Location_Type", "Reaction", "Brg_Width", "Req_Width", "Material" };
                 var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"];
@@ -259,7 +251,7 @@ namespace Bearing_Enhancer_CAN
                     }
 
                 }
-                else
+                else // Nếu bỏ tick 
                 {
                     bool checkNull = false;
                     string cellValue;
@@ -279,11 +271,17 @@ namespace Bearing_Enhancer_CAN
                     }
                     else
                     {
-                        // Nếu bỏ tick, xóa giá trị trong ô Contact Length và đổi màu dòng về mặc định
-                        dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = "";
-                        //dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = chordSize;
-                        //dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = chordSpecie;
-                        row.DefaultCellStyle.BackColor = default;
+                        string chordSize = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex)?.LumSize; //Lấy lại giá trị ban đầu nếu bỏ tick Vertical-Block
+                        string chordSpecie = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex)?.LumSpecie;
+
+                        if(chordSize!=null)
+                        dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = chordSize;
+
+                        if(chordSpecie != null)
+                        dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = chordSpecie;
+
+                        dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = ""; //Xóa giá trị trong ô Contact Length
+                        row.DefaultCellStyle.BackColor = default; //Đổi màu dòng về mặc định
 
                         Bearing_Enhancer BE = new Bearing_Enhancer();
                         BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
