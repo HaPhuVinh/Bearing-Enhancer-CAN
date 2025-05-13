@@ -1348,4 +1348,25 @@ namespace Bearing_Enhancer_CAN
             return theNote;
         }
     }
+    public class Bearing_Enhancer_BuildingDesigner : Bearing_Enhancer
+    {
+        public string Chosen_Solution { get; set; }
+        public Bearing_Enhancer_BuildingDesigner(string chosensolution)
+        {
+            Chosen_Solution = chosensolution;
+        }
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        {
+            string theNote = "";
+            if (language == "English")
+            {
+                theNote = $"Building Designer to provide adequate bearing size or enhancement.";
+            }
+            else
+            {
+                theNote = $"L’ingénieur concepteur doit fournir un appui adéquat ou un détail de renfort.";
+            }
+            return theNote;
+        }
+    }
 }

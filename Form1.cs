@@ -348,7 +348,7 @@ namespace Bearing_Enhancer_CAN
                         }
                         else
                         {
-                            return;
+                            beItem = new Bearing_Enhancer_BuildingDesigner(chosenSolution);
                         }
 
                         beItem.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
@@ -373,7 +373,7 @@ namespace Bearing_Enhancer_CAN
                         string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value?.ToString();
 
 
-                        string theNote = $"Jnt_{beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text)}";
+                        string theNote = $"Jnt {beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text)}";
                         row.Cells["The_Note"].Value = theNote;
                     }
                 }
