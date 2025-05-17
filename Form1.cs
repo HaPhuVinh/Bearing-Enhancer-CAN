@@ -39,7 +39,7 @@ namespace Bearing_Enhancer_CAN
             List<string> list_Ply = new List<string> { "1", "2", "3", "4" };
             List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
             List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
-            List<string> list_DurationFactor = new List<string>() {"0.90","1.00","1.10", "1.15", "1.25", "1.33", "1.60" };
+            List<string> list_DurationFactor = new List<string>() {"0.90","1.00", "1.05","1.10", "1.15", "1.25", "1.33", "1.60" };
             list_DurationFactor = list_DurationFactor.Distinct().ToList();
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
 
@@ -143,17 +143,35 @@ namespace Bearing_Enhancer_CAN
                 {
                     MessageBox.Show("Not found any bearing failure. Please recheck the input data!");
                 }
-                int i = 0;
-                foreach (Bearing_Enhancer be in list_BE)
+                else
                 {
-                    List<string> list_BearingSolution = be.BearingSolution;
+                    List<double> durationFactors = new List<double>();
+                    PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
+                    string durationFactor;
 
-                    dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, be.TopPlateInfo.DOL.DOL_Snow, be.TopPlateInfo.WetService,
-                        be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
-                        be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer,false,"", list_BearingSolution[0]);
-                    (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
+                    int i = 0;
+                    foreach (Bearing_Enhancer be in list_BE)
+                    {
+                        foreach (PropertyInfo prop in props)
+                        {
+                            var value = prop.GetValue(be.TopPlateInfo.DOL);
+                            bool bNumber = double.TryParse(value.ToString(), out double isNumber);
+                            if (bNumber)
+                            {
+                                durationFactors.Add(isNumber);
+                            }
+                        }
+                        durationFactor = durationFactors.Min().ToString("F2");
 
-                    i++;
+                        List<string> list_BearingSolution = be.BearingSolution;
+
+                        dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, durationFactor, be.TopPlateInfo.WetService,
+                            be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
+                            be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer, false, "", list_BearingSolution[0]);
+                        (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
+
+                        i++;
+                    }
                 }
 
                 list_Original_Bearing = list_BE;
