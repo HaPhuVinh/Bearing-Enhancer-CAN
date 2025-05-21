@@ -744,17 +744,20 @@ namespace Bearing_Enhancer_CAN
                                         list_Vertical_Block.Add(suggestSolution);
                                         exit1 = true;
                                     }
-                                    if (l1 > 24 && exit1)//Check Ver_Block on each face with Nail
+                                    if (l1 >= 24 && exit1)//Check Ver_Block on each face with Nail
                                     {
                                         if (item.Contains("Nail"))
                                         {
                                             int No_Block2 = 2;
-                                            int l2 = l1-6;
-                                            Block_Info VBB2 = new Block_Info(plies, false, No_Block2, lumSize, l2, item);
-                                            if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                            for (int l2 = 12; l2<=l1-6; l2 += 6)
                                             {
-                                                string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
-                                                list_Vertical_Block.Add(suggestSolution);
+                                                Block_Info VBB2 = new Block_Info(plies, true, No_Block2, lumSize, l2, item);
+                                                if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                                {
+                                                    string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
+                                                    list_Vertical_Block.Add(suggestSolution);
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -765,7 +768,7 @@ namespace Bearing_Enhancer_CAN
                         else//No_Block = 2
                         {
                             int l1 = 12;
-                            bool exit1 = false;
+                            bool exit2 = false;
                             List<string> listFasUsed1 = new List<string>()
                             {
                                 ("Box10dNail"),
@@ -775,7 +778,7 @@ namespace Bearing_Enhancer_CAN
                             foreach (string item in listFasUsed1)
                             {
                                 l1 = 12;
-                                exit1 = false;
+                                exit2 = false;
                                 do
                                 {
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l1, item);
@@ -787,11 +790,11 @@ namespace Bearing_Enhancer_CAN
                                     {
                                         string suggestSolution = $"{Math.Round(l1 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                         list_Vertical_Block.Add(suggestSolution);
-                                        exit1 = true;
+                                        exit2 = true;
                                     }
 
                                     l1 += 6;
-                                } while (exit1 == false);
+                                } while (exit2 == false);
                             }
                         }
 
@@ -800,7 +803,7 @@ namespace Bearing_Enhancer_CAN
                         if (No_Block == 1)
                         {
                             int l2 = 12;
-                            bool exit2 = false;
+                            bool exit1 = false;
                             List<string> listFasUsed2 = new List<string>()
                             {
                                 ("Box10dNail"),
@@ -810,7 +813,7 @@ namespace Bearing_Enhancer_CAN
                             foreach (string item in listFasUsed2)
                             {
                                 l2 = 12;
-                                exit2 = false;
+                                exit1 = false;
                                 do
                                 {
                                     Block_Info VBB = new Block_Info(plies, true, No_Block, lumSize, l2, item);
@@ -824,7 +827,7 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                             list_Vertical_Block.Add(suggestSolution);
-                                            exit2 = true;
+                                            exit1 = true;
                                         }
                                     }
                                     else
@@ -835,47 +838,52 @@ namespace Bearing_Enhancer_CAN
                                             {
                                                 string suggestSolution = $"{Math.Round(l2 * iom.miliFactor)}{iom.Text}-{(VBB.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item}";
                                                 list_Vertical_Block.Add(suggestSolution);
-                                                exit2 = true;
+                                                exit1 = true;
                                             }
                                         }
                                         else
-                                            exit2 = true;
+                                            exit1 = true;
                                     }
 
-                                    if (l2 > 24 && exit2)//Check Ver_Block on each face if one face is not enough
+                                    if (l2 >= 24 && exit1)//Check Ver_Block on each face if one face is not enough
                                     {
                                         int No_Block2 = 2;
-                                        int l22 = l2-6;
-                                        if (item.Contains("Nail"))
+                                        for(int l22 = 12; l22 <= l2 - 6; l22 += 6)
                                         {
-                                            Block_Info VBB2 = new Block_Info(plies, false, No_Block2, lumSize, l22, item);
-                                            if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                            if (item.Contains("Nail"))
                                             {
-                                                string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
-                                                list_Vertical_Block.Add(suggestSolution);
+                                                Block_Info VBB2 = new Block_Info(plies, true, No_Block2, lumSize, l22, item);
+                                                if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                                {
+                                                    string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
+                                                    list_Vertical_Block.Add(suggestSolution);
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if (item == "SDW22458")
-                                        {
-                                            Block_Info VBB2 = new Block_Info(plies, false, No_Block2, lumSize, l22, "SDW22300");
-                                            if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                            if (item == "SDW22458")
                                             {
-                                                string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
-                                                list_Vertical_Block.Add(suggestSolution);
+                                                Block_Info VBB2 = new Block_Info(plies, true, No_Block2, lumSize, l22, "SDW22300");
+                                                if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                                {
+                                                    string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)}{iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-SDW22300";
+                                                    list_Vertical_Block.Add(suggestSolution);
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if (item == "SDS25412")
-                                        {
-                                            Block_Info VBB2 = new Block_Info(plies, false, No_Block2, lumSize, l22, "SDS25300");
-                                            if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                            if (item == "SDS25412")
                                             {
-                                                string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)} {iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item}";
-                                                list_Vertical_Block.Add(suggestSolution);
+                                                Block_Info VBB2 = new Block_Info(plies, true, No_Block2, lumSize, l22, "SDS25300");
+                                                if (topPlate.LoadTransfer / latDeignValue <= VBB2.MaxNumberFastener)
+                                                {
+                                                    string suggestSolution = $"{Math.Round(l22 * iom.miliFactor)} {iom.Text}-{(VBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-SDS25300";
+                                                    list_Vertical_Block.Add(suggestSolution);
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                     l2 += 6;
-                                } while (exit2 == false);
+                                } while (exit1 == false);
                             }
                         }
                         else//No_Block = 2
