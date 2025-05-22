@@ -95,15 +95,20 @@ namespace Bearing_Enhancer_CAN
 
                                 }
                             }
-                            //Check Wet Service Condition
+                            //Check Wet Service Condition and Green Lumber condition
                             elementNode = rootNode.SelectSingleNode("//Settings");
                             XmlNodeList searchNodes = elementNode.ChildNodes;
                             foreach (XmlNode searchNode in searchNodes)
                             {
-                                if (searchNode.Name == "OneTrussControlsWetServiceCondition")
+                                if (searchNode.Name == "OneTrussControlsWetServiceCondition" && searchNode.Attributes["Value"].Value == "true")
                                 {
                                     bE.TopPlateInfo.WetService = true;
-                                    break;
+                                    //break;
+                                }
+                                if (searchNode.Name == "OneTrussControlsGreenLumber" && searchNode.Attributes["Value"].Value == "true")
+                                {
+                                    bE.TopPlateInfo.GreenLumber = true;
+                                    //break;
                                 }
                             }
                             //Get Data in <LumberResults> Node
@@ -206,7 +211,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
             double durationFactor = durationFactors.Min();
-            double wetserviceFactor = topPlate.WetService ? 0.67 : 1.0;
+            double wetserviceFactor = new WetServiceFactor(topPlate.WetService,topPlate.GreenLumber).Ksf;
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             List<string> list_Horizontal_Block = new List<string>();
             int plies = int.Parse(ply);
@@ -669,7 +674,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
             double durationFactor = durationFactors.Min();
-            double wetserviceFactor = topPlate.WetService ? 0.67 : 1.0;
+            double wetserviceFactor = new WetServiceFactor(topPlate.WetService, topPlate.GreenLumber).Ksf;
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             List<string> list_Vertical_Block = new List<string>();
             int plies = int.Parse(ply);

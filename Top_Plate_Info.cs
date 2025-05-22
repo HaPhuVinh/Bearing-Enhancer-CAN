@@ -14,6 +14,7 @@ namespace Bearing_Enhancer_CAN
     public class Top_Plate_Info
     {
         public Duration_Factor DOL {  get; set; }
+        public bool GreenLumber { get; set; } = false;
         public bool WetService { get; set; } = false;
         public string JointID { get; set; }
         public string XLocation { get; set; }
