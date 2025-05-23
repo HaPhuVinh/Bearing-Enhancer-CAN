@@ -44,7 +44,6 @@
             this.btn_Add_Note = new System.Windows.Forms.Button();
             this.btn_Browse = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -66,6 +65,7 @@
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).BeginInit();
@@ -243,10 +243,6 @@
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
-            // bearingEnhancerBindingSource
-            // 
-            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
-            // 
             // Truss_Name
             // 
             this.Truss_Name.DataPropertyName = "TrussName";
@@ -421,6 +417,10 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
             // 
+            // bearingEnhancerBindingSource
+            // 
+            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
+            // 
             // Form_BearingEnhacerCAN
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
@@ -444,7 +444,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
-            this.Text = "Bearing Enhancer CAN v1.1";
+            this.Text = "Bearing Enhancer CAN v1.2";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).EndInit();
