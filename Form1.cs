@@ -334,7 +334,7 @@ namespace Bearing_Enhancer_CAN
 
             if (e.ColumnIndex == 19 || e.ColumnIndex == 18 || e.ColumnIndex == 16 && e.RowIndex >= 0) // Cột Checked || Bearing-Solution || Vertical-Block 
             {
-                bool isChecked18 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[18].Value);
+                bool isChecked18 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[19].Value);
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
                 var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
                 if (isChecked18)
