@@ -165,7 +165,7 @@ namespace Bearing_Enhancer_CAN
 
                         List<string> list_BearingSolution = be.BearingSolution;
 
-                        dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, durationFactor, be.TopPlateInfo.WetService,
+                        dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, durationFactor, be.TopPlateInfo.WetService,be.TopPlateInfo.GreenLumber,
                             be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                             be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer, false, "", list_BearingSolution[0]);
                         (dataGridView_Table.Rows[i].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = list_BearingSolution;
@@ -185,7 +185,7 @@ namespace Bearing_Enhancer_CAN
         private void DataGridViewTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
             
-            if (e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
+            if (e.ColumnIndex == 16 && e.RowIndex >= 0) // Cột Vertical_Block CheckBox
             {
                 
                 bool isChecked = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value);
@@ -240,6 +240,7 @@ namespace Bearing_Enhancer_CAN
                                 topPlate.DOL.DOL_Live = "N/A";
                                 topPlate.DOL.DOL_Wind = "N/A";
                                 topPlate.WetService = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Wet_Service"].Value);
+                                topPlate.GreenLumber = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Green_Lumber"].Value);
                                 topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells["Joint_ID"].Value?.ToString();
                                 topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells["X_Location"].Value?.ToString();
                                 topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value?.ToString();
@@ -312,6 +313,7 @@ namespace Bearing_Enhancer_CAN
                         topPlate.DOL.DOL_Live = "N/A";
                         topPlate.DOL.DOL_Wind = "N/A";
                         topPlate.WetService = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Wet_Service"].Value);
+                        topPlate.GreenLumber = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Green_Lumber"].Value);
                         topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells["Joint_ID"].Value?.ToString();
                         topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells["X_Location"].Value?.ToString();
                         topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value?.ToString();
@@ -330,7 +332,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            if (e.ColumnIndex == 18 || e.ColumnIndex == 17 || e.ColumnIndex == 15 && e.RowIndex >= 0) // Cột Checked || Bearing-Solution || Vertical-Block 
+            if (e.ColumnIndex == 19 || e.ColumnIndex == 18 || e.ColumnIndex == 16 && e.RowIndex >= 0) // Cột Checked || Bearing-Solution || Vertical-Block 
             {
                 bool isChecked18 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[18].Value);
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
@@ -541,7 +543,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            if ((e.ColumnIndex == 10 || e.ColumnIndex == 11 || e.ColumnIndex == 12) && e.RowIndex >= 0)// Cột Reaction||Bearing-Width||Required-Width
+            if ((e.ColumnIndex == 11 || e.ColumnIndex == 12 || e.ColumnIndex == 13) && e.RowIndex >= 0)// Cột Reaction||Bearing-Width||Required-Width
             {
                 string inputR = dataGridView_Table.Rows[e.RowIndex].Cells["Reaction"].Value?.ToString();
                 string inputBW = dataGridView_Table.Rows[e.RowIndex].Cells["Brg_Width"].Value?.ToString();
@@ -582,13 +584,13 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            int[] columnsNumber = { 1, 2, 3, 4, 5, 9, 10, 11, 12, 13 };
+            int[] columnsNumber = { 1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 14 };
             bool isColumn = columnsNumber.Any(c => c == e.ColumnIndex);
-            if (isColumn && e.RowIndex >= 0) // Cột No.-Ply, Lumber-Spiecie, Lumber-Size, D-O-L, Wet-Servive, Location-Type, Reaction, Bearing-Width, Required-Width, Material
+            if (isColumn && e.RowIndex >= 0) // Cột No.-Ply, Lumber-Spiecie, Lumber-Size, D-O-L, Wet-Servive, Green-Lumber, Location-Type, Reaction, Bearing-Width, Required-Width, Material
             {
                 bool checkNullBS = false;
                 string cellValueBS;
-                foreach (int colName in columnsNumber.Where(x=>x!=5))
+                foreach (int colName in columnsNumber.Where(x=>x!=5 || x!=6))
                 {
                     cellValueBS = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
                     checkNullBS = string.IsNullOrWhiteSpace(cellValueBS);
@@ -625,6 +627,7 @@ namespace Bearing_Enhancer_CAN
                             topPlate.DOL.DOL_Live = "N/A";
                             topPlate.DOL.DOL_Wind = "N/A";
                             topPlate.WetService = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Wet_Service"].Value);
+                            topPlate.GreenLumber = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Green_Lumber"].Value);
                             topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells["Joint_ID"].Value?.ToString();
                             topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells["X_Location"].Value?.ToString();
                             topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value?.ToString();
