@@ -202,105 +202,105 @@ namespace Bearing_Enhancer_CAN
                 if (FastenerType.Contains("Nail"))
                 {
                     if (BlockSize == "2x4")
-                      return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowNail*(NumberBlock<3?NumberBlock:1);
+                      return (Math.Truncate((BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowNail*(NumberBlock<3?NumberBlock:1);
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.Nail.EndDistance * 2) / Fastener_Spacing_Info.Nail.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowNail * (NumberBlock < 3 ? NumberBlock : 1);
                     else
                         return 0;
                 }
                 else if(FastenerType.Contains("SDW22300"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW*(Ply==2&&NumberBlock<3?NumberBlock:1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW*(Ply==2&&NumberBlock<3?NumberBlock:1);
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else
                         return 0;
                 }
                 else if (FastenerType.Contains("SDS25300"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS * (Ply == 2 && NumberBlock < 3 ? NumberBlock : 1);
                     else
                         return 0;
                 }
                 else if (FastenerType.Contains("SDW22458"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW;
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW;
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW;
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW;
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW;
                     else
                         return 0;
                 }
                 else if (FastenerType.Contains("SDS25412"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS;
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS;
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS;
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS;
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS;
                     else
                         return 0;
                 }
                 else if (FastenerType.Contains("SDW22638"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDW;
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDW;
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDW;
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDW;
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDW.EndDistance * 2) / Fastener_Spacing_Info.SDW.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDW;
                     else
                         return 0;
                 }
                 else if (FastenerType.Contains("SDS25600"))
                 {
                     if (BlockSize == "2x4")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x4.MaxrowSDS;
                     else if (BlockSize == "2x6")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x6.MaxrowSDS;
                     else if (BlockSize == "2x8")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x8.MaxrowSDS;
                     else if (BlockSize == "2x10")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x10.MaxrowSDS;
                     else if (BlockSize == "2x12")
-                        return (BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS;
+                        return (Math.Truncate((BlockLength - Fastener_Spacing_Info.SDS.EndDistance * 2) / Fastener_Spacing_Info.SDS.MinSpacing) + 1) * Fastener_Rows_Infor.Lumber_2x12.MaxrowSDS;
                     else
                         return 0;
                 }

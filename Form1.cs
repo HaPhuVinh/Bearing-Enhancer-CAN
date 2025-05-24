@@ -686,14 +686,14 @@ namespace Bearing_Enhancer_CAN
 
         private void dataGridViewTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 18) // Cột Checked
+            if (e.ColumnIndex == 19) // Cột Checked
             {
                 bool currentValue = true;
                 foreach (DataGridViewRow row in dataGridView_Table.Rows)
                 {
                     if (!row.IsNewRow)
                     {
-                        row.Cells[18].Value = currentValue;
+                        row.Cells[19].Value = currentValue;
                     }
                 }
             }
@@ -707,11 +707,11 @@ namespace Bearing_Enhancer_CAN
                 int rowIndex = hit.RowIndex;
                 int colIndex = hit.ColumnIndex;
                 bool currentValue = false;
-                if(colIndex == 18) // Cột Checked
+                if(colIndex == 19) // Cột Checked
                 {
                     foreach (DataGridViewRow row in dataGridView_Table.Rows)
                     {
-                        row.Cells[18].Value = currentValue;
+                        row.Cells[19].Value = currentValue;
                     }
                 }
             }

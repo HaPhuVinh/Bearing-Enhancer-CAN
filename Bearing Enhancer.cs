@@ -293,11 +293,11 @@ namespace Bearing_Enhancer_CAN
                                     {
                                         if (item.fastener.Contains("Nail"))
                                         {
-                                            No_Block = 2;
-                                            Block_Info HBB2 = new Block_Info(plies, false, No_Block, lumSize, item.length, item.fastener);
+                                            int No_Block2 = 2;
+                                            Block_Info HBB2 = new Block_Info(plies, false, No_Block2, lumSize, item.length, item.fastener);
                                             if (topPlate.LoadTransfer / latDesignValue <= HBB2.MaxNumberFastener)
                                             {
-                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block}-Face-{numberFastener}-{item.fastener}";
+                                                string suggestSolution = $"{Math.Round(item.length * iom.miliFactor)}{iom.Text}-{(HBB2.Vertical == false ? "Hor-Block" : "Ver-Block")}-{No_Block2}-Face-{numberFastener}-{item.fastener}";
                                                 list_Horizontal_Block.Add(suggestSolution);
                                             }
                                         }
@@ -930,7 +930,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                         (No_Block==1?"SDW22638":"SDW22458"),
                                         (No_Block==1?"SDS25600":"SDS25412"),
-                                        (No_Block==1?"SDW22638":"SDW22458"),
+                                        
                             };
                         foreach (string item in listFasUsed3)
                         {
@@ -961,7 +961,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                         ("SDW22638"),
                                         ("SDS25600"),
-                                        ("SDW22638"),
+                                        
                             };
                         foreach (string item in listFasUsed4)
                         {
