@@ -48,13 +48,21 @@ namespace Bearing_Enhancer_CAN
             string fileName = @"";
             string extName = @"";
             int j = 0;
-            List<string> subListTrussName = new List<string>();
+            //List<string> subListTrussName = new List<string>();
             List<string> mainListTrussName = new List<string>();
             List<Bearing_Enhancer> bearingEnhancerItems = new List<Bearing_Enhancer>();
             Dictionary<int, Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             Top_Plate_Info tpi = new Top_Plate_Info();
             mainListTrussName = Directory.GetFiles(trussesPath).ToList();
-            //orderListTrussName = PickUp_TrussName(txtPath, language);
+            Dictionary<string, int> orderDicTrussName = PickUp_TrussName(txtPath, language);
+
+            mainListTrussName.Sort((a, b) =>
+            {
+                int indexA = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(a)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(a)] : int.MaxValue;
+                int indexB = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(b)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(b)] : int.MaxValue;
+                return indexA.CompareTo(indexB);
+            }); //Sort trusses
+
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
             foreach (string Item in mainListTrussName)
@@ -1202,8 +1210,9 @@ namespace Bearing_Enhancer_CAN
             return q;
         }
 
-        List<string> PickUp_TrussName(string txtPath, string language)
+        Dictionary<string, int> PickUp_TrussName(string txtPath, string language)
         {
+            Dictionary<string, int> dictTrussName = new Dictionary<string, int>();
             List<string> listTrussName = new List<string>();
             string content = File.ReadAllText(txtPath);
             string[] arrFile = content.Split('\n');
@@ -1222,7 +1231,13 @@ namespace Bearing_Enhancer_CAN
                 }
             }
             listTrussName = listTrussName.Distinct().ToList();
-         return listTrussName;
+
+            for (int i = 0; i < listTrussName.Count; i++)
+            {
+                dictTrussName.Add(listTrussName[i], i);
+            }
+
+            return dictTrussName;
         }
         #endregion
     }

@@ -334,15 +334,15 @@ namespace Bearing_Enhancer_CAN
 
             if (e.ColumnIndex == 19 || e.ColumnIndex == 18 || e.ColumnIndex == 16 && e.RowIndex >= 0) // Cột Checked || Bearing-Solution || Vertical-Block 
             {
-                bool isChecked18 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells[19].Value);
+                bool isChecked19 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Checked"].Value);
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
                 var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
-                if (isChecked18)
+                if (isChecked19)
                 {
                     if (string.IsNullOrWhiteSpace(cell.FormattedValue.ToString()))
                     {
                         MessageBox.Show("Please check and input relevant data!");
-                        row.Cells[18].Value = false;
+                        row.Cells["Checked"].Value = false;
                     }
                     else
                     {
@@ -791,7 +791,7 @@ namespace Bearing_Enhancer_CAN
                             }
                         }
                         //Tô màu dòng tiêu đề
-                        Excel.Range headerRange = worksheet.get_Range("A1", "T1");
+                        Excel.Range headerRange = worksheet.get_Range("A1", "U1");
                         headerRange.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightGray);
                         //Auto fit cột
                         worksheet.Columns.AutoFit();
@@ -815,10 +815,10 @@ namespace Bearing_Enhancer_CAN
             List<(string TrussName, string JointID, string Note)> listItem = new List<(string TrussName, string JointID, string Note)> ();
             foreach (DataGridViewRow row in dataGridView_Table.Rows)
             {
-                bool valueCol18 = Convert.ToBoolean(row.Cells[18].Value);
-                if (!row.IsNewRow && valueCol18)
+                bool valueCol19 = Convert.ToBoolean(row.Cells[19].Value);
+                if (!row.IsNewRow && valueCol19)
                 {
-                    (string TrussName, string JointID, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[6].Value?.ToString(), row.Cells[19].Value?.ToString());
+                    (string TrussName, string JointID, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[7].Value?.ToString(), row.Cells[20].Value?.ToString());
                     if (!string.IsNullOrEmpty(theNoteItem.TrussName)&&!string.IsNullOrEmpty(theNoteItem.Note))
                     {
                         listItem.Add(theNoteItem);
@@ -840,10 +840,10 @@ namespace Bearing_Enhancer_CAN
                     {
                         foreach (DataGridViewRow row in dataGridView_Table.Rows)
                         {
-                            bool valueCol18 = Convert.ToBoolean(row.Cells[18].Value);
-                            if (!row.IsNewRow && valueCol18)
+                            bool valueCol19 = Convert.ToBoolean(row.Cells[19].Value);
+                            if (!row.IsNewRow && valueCol19)
                             {
-                                (string TrussName, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[19].Value?.ToString());
+                                (string TrussName, string Note) theNoteItem = (row.Cells[0].Value?.ToString(), row.Cells[20].Value?.ToString());
                                 if (!string.IsNullOrEmpty(theNoteItem.TrussName) && !string.IsNullOrEmpty(theNoteItem.Note))
                                 {
                                     // Gọi hàm thêm vào XML
