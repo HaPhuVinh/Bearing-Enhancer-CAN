@@ -11,6 +11,8 @@ using System.Collections;
 using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using System.Reflection;
+using iText.Layout.Element;
+using Microsoft.Office.Interop.Excel;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -52,6 +54,7 @@ namespace Bearing_Enhancer_CAN
             Dictionary<int, Top_Plate_Info> dictTopPlate = new Dictionary<int, Top_Plate_Info>();
             Top_Plate_Info tpi = new Top_Plate_Info();
             mainListTrussName = Directory.GetFiles(trussesPath).ToList();
+            //orderListTrussName = PickUp_TrussName(txtPath, language);
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
             foreach (string Item in mainListTrussName)
@@ -1197,6 +1200,29 @@ namespace Bearing_Enhancer_CAN
             }
 
             return q;
+        }
+
+        List<string> PickUp_TrussName(string txtPath, string language)
+        {
+            List<string> listTrussName = new List<string>();
+            string content = File.ReadAllText(txtPath);
+            string[] arrFile = content.Split('\n');
+            string[] arrLine = { };
+            string trussName;
+            English_Or_French langText = new English_Or_French(language);
+
+            foreach (string line in arrFile)//Pick up Loading and Reaction Summary
+            {
+                if (line.Contains(langText.Truss) && line.Contains(langText.Qty))
+                {
+                    Array.Resize(ref arrLine, 0);
+                    arrLine = line.Split(':');
+                    trussName = arrLine[arrLine.Length - 1].Trim();
+                    listTrussName.Add(trussName);
+                }
+            }
+            listTrussName = listTrussName.Distinct().ToList();
+         return listTrussName;
         }
         #endregion
     }
