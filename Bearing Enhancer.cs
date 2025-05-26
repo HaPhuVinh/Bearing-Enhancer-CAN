@@ -61,7 +61,7 @@ namespace Bearing_Enhancer_CAN
                 int indexA = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(a)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(a)] : int.MaxValue;
                 int indexB = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(b)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(b)] : int.MaxValue;
                 return indexA.CompareTo(indexB);
-            }); //Sort trusses
+            }); //Order by Comp Review list
 
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
@@ -1220,7 +1220,7 @@ namespace Bearing_Enhancer_CAN
             string trussName;
             English_Or_French langText = new English_Or_French(language);
 
-            foreach (string line in arrFile)//Pick up Loading and Reaction Summary
+            foreach (string line in arrFile)
             {
                 if (line.Contains(langText.Truss) && line.Contains(langText.Qty))
                 {
