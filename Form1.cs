@@ -139,13 +139,17 @@ namespace Bearing_Enhancer_CAN
                 //list_DurationFactor.AddRange(snow_DurationFactor);
                 //list_DurationFactor.AddRange(live_DurationFactor);
                 //list_DurationFactor.AddRange(wind_DurationFactor);
+                //List<string> list_DurationFactor = new List<string>() { "0.90", "1.00", "1.05", "1.10", "1.15", "1.25", "1.33", "1.60" };
+
                 if (list_BE.Count == 0)
                 {
                     MessageBox.Show("Not found any bearing failure. Please recheck the input data!");
                 }
                 else
                 {
+                    List<double> DurationFactors = new List<double>() { 0.90, 1.00, 1.05, 1.10, 1.15, 1.25, 1.33, 1.60 };
                     List<double> durationFactors = new List<double>();
+
                     PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
                     string durationFactor;
 
@@ -161,10 +165,13 @@ namespace Bearing_Enhancer_CAN
                                 durationFactors.Add(isNumber);
                             }
                         }
-                        durationFactor = durationFactors.Min().ToString("F2");
+                        durationFactors = durationFactors.Distinct().ToList();
+                        DurationFactors.AddRange(durationFactors);
 
+                        durationFactor = durationFactors.Min().ToString("F2");
                         List<string> list_BearingSolution = be.BearingSolution;
 
+                        (dataGridView_Table.Rows[i].Cells["DOL_Column"] as DataGridViewComboBoxCell).DataSource = durationFactors;
                         dataGridView_Table.Rows.Add(be.TrussName, be.Ply, be.LumSpecie, be.LumSize, durationFactor, be.TopPlateInfo.WetService,be.TopPlateInfo.GreenLumber,
                             be.TopPlateInfo.JointID, be.TopPlateInfo.XLocation, be.TopPlateInfo.YLocation, be.TopPlateInfo.Location_Type, be.TopPlateInfo.Reaction, be.TopPlateInfo.BearingWidth,
                             be.TopPlateInfo.RequireWidth, be.TopPlateInfo.Material, be.TopPlateInfo.LoadTransfer, false, "", list_BearingSolution[0]);
@@ -172,6 +179,10 @@ namespace Bearing_Enhancer_CAN
 
                         i++;
                     }
+                    DurationFactors = DurationFactors.Distinct().ToList();
+                    DurationFactors.Sort();
+                    List<string> list_DurationFactor = DurationFactors.Select(x => x.ToString("F2")).ToList();
+                    DOL_Column.DataSource = list_DurationFactor;
                 }
 
                 list_Original_Bearing = list_BE;
