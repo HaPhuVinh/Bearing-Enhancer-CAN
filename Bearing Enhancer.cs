@@ -1281,7 +1281,8 @@ namespace Bearing_Enhancer_CAN
             string fastenerType = arrKey[6];
 
             Block_Info Hor_Block = new Block_Info(numberPly, vertical, numberBlock, LumSize, blockLength, fastenerType);
-            double row = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1)/numberBlock);
+            double row_Calculate = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1)/numberBlock);
+            double row = row_Calculate <= Hor_Block.MinRow ? Hor_Block.MinRow : row_Calculate;
             string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e => e.ToString() == fastenerType).GetDescription();
 
             List<string[]> LumberSizeUnit = new List<string[]>()
@@ -1299,11 +1300,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "staggered rows" : "row")} of {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. {(row > 1 ? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. {(row > 1 ? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
@@ -1315,11 +1316,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
@@ -1350,7 +1351,8 @@ namespace Bearing_Enhancer_CAN
             string fastenerType = arrKey[6];
 
             Block_Info Hor_Block = new Block_Info(numberPly, vertical, numberBlock, LumSize, blockLength, fastenerType);
-            double row = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1)/numberBlock);
+            double row_Calculate = Math.Ceiling(numberFastener / ((blockLength - 2 * Hor_Block.EndDistance) / Hor_Block.MinSpacing + 1)/numberBlock);
+            double row = row_Calculate <= Hor_Block.MinRow ? Hor_Block.MinRow : row_Calculate;
             string fasDescription = Enum.GetValues(typeof(eFastenerName)).Cast<eFastenerName>().FirstOrDefault(e => e.ToString() == fastenerType).GetDescription();
 
             List<string[]> LumberSizeUnit = new List<string[]>()
@@ -1368,11 +1370,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row>1 ? "staggered rows" : "row")} of {fasDescription} @ {Math.Round(Hor_Block.MinSpacing*iom.miliFactor)}{iom.Text} o.c. {(row>1? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the bottom chord w/ {(row)} {(row>1 ? "staggered rows" : "row")} of {fasDescription} @ {Math.Round(Hor_Block.MinSpacing*iom.miliFactor)}{iom.Text} o.c. {(row>1? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the bottom chord w/ {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the bottom chord w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
@@ -1384,11 +1386,11 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row>1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. {(row>1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la MI avec {(row)} {(row>1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. {(row>1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la MI avec {(row <= Hor_Block.MinRow ? Hor_Block.MinRow : row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la MI avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Math.Round(Hor_Block.MinSpacing * iom.miliFactor)}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {

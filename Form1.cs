@@ -67,6 +67,9 @@ namespace Bearing_Enhancer_CAN
             this.dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
             //Đăng kí sự kiện Double_RightClick
             dataGridView_Table.MouseDown += dataGridViewTable_MouseDown;
+
+            //Đăng kí sự kiện Đóng Form
+            this.FormClosing += Form_BearingEnhacerCAN_FormClosing;
         }
 
         private void button1_Click(object sender, EventArgs e)// Button Check
@@ -769,10 +772,13 @@ namespace Bearing_Enhancer_CAN
 
         private void ExportToExcel(DataGridView dgv)
         {
+            string compReviewPath = Path.Combine(tbx_ProjectNumberPath.Text, "Attachments", "CompReview");
+            string projectPath = tbx_ProjectNumberPath.Text;
             using (SaveFileDialog sfd = new SaveFileDialog()
             {
                 Filter = "Excel Workbook|*.xlsx",
-                FileName = "Bearing Enhancer Report.xlsx"
+                FileName = "Bearing Enhancer Report.xlsx",
+                InitialDirectory = ((Directory.Exists(compReviewPath)) ? compReviewPath : projectPath)
             })
             {
                 if (sfd.ShowDialog() == DialogResult.OK)
@@ -920,6 +926,37 @@ namespace Bearing_Enhancer_CAN
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form_BearingEnhacerCAN_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Check if there is any data (excluding the new row)
+            bool hasData = dataGridView_Table.Rows
+                .Cast<DataGridViewRow>()
+                .Any(row => !row.IsNewRow && row.Cells.Cast<DataGridViewCell>().Any(cell => cell.Value != null && !string.IsNullOrWhiteSpace(cell.Value.ToString())));
+
+            if (hasData)
+            {
+                var result = MessageBox.Show(
+                    "Data exists in the table. Do you want to export before closing?",
+                    "Confirm Export",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    ExportToExcel(dataGridView_Table);
+                    // Allow closing after export
+                }
+                else if (result == DialogResult.No)
+                {
+                    // Allow closing without export
+                }
+                else // Cancel
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 
