@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +20,11 @@ namespace Bearing_Enhancer_CAN
         //public int Lumber_Sequence { get; set; }
 
 
-        public List<LumberInventory> Get_Lumber_Inv(string PJN)
+        public List<LumberInventory> Get_Lumber_Inv(string PJP)
         {
             List<LumberInventory> lumber_inv = new List<LumberInventory>();
 
-            string projectNumber = PJN;
-            string path = "C:\\SST-EA\\Client\\Projects\\" + projectNumber + "\\Presets\\TrussStudio\\LumberInventory.xml";
+            string path = Path.Combine(PJP,"Presets","TrussStudio","LumberInventory.xml");
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
 

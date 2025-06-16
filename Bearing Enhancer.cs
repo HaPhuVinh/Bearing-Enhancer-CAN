@@ -42,9 +42,9 @@ namespace Bearing_Enhancer_CAN
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             string txtPath = txtpath;
             string projectPath = Path.GetDirectoryName(Path.GetDirectoryName(txtPath));
-            string trussesPath = $"{projectPath}\\Trusses";
-            string[] arrPath = trussesPath.Split('\\');
-            string projectID = arrPath[arrPath.Length - 2];
+            string trussesPath = Path.Combine(projectPath,"Trusses");
+            //string[] arrPath = trussesPath.Split('\\');
+            //string projectID = arrPath[arrPath.Length - 2];
             string fileName = @"";
             string extName = @"";
             int j = 0;
@@ -125,7 +125,7 @@ namespace Bearing_Enhancer_CAN
                             //Get Data in <LumberResults> Node
                             var keyLumber = Get_Lumber(TP.Value.XLocation, TP.Value.YLocation, rootNode, unit);
                             LumberInventory lumI = new LumberInventory();
-                            List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectID);
+                            List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectPath);
 
                             if (keyLumber.key == "")
                             {
