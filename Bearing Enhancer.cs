@@ -1346,6 +1346,29 @@ namespace Bearing_Enhancer_CAN
         }
         #endregion
     }
+    public class Bearing_Enhancer_CP : Bearing_Enhancer
+    {
+        public string Chosen_Solution { get; set; }
+        public Bearing_Enhancer_CP (string chosensolution)
+        {
+            Chosen_Solution = chosensolution;
+        }
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        {
+            string crushPlate = chosensolution.Split('&')[0].Trim();
+            string theNote = "";
+
+            if (language == "English")
+            {
+                theNote = $"Simpson {crushPlate} may be used as a bearing enhancer. See the latest Simpson Strong-Tie Construction Connectors catalog for installation instructions.";
+            }
+            else
+            {
+                theNote = $"Le renfort d'appuis {crushPlate} de Simpson peut être utilisé. Consultez le plus récent catalogue des connecteurs de Simpson Strong-Tie pour les instructions d’installation.";
+            }
+            return theNote;
+        }
+    }
     public class Bearing_Enhancer_TBE : Bearing_Enhancer
     {
         public string Chosen_Solution { get; set; }

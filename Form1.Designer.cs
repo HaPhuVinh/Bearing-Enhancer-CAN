@@ -55,7 +55,7 @@
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbl_DataTable = new System.Windows.Forms.Label();
             this.comboBox_Language = new System.Windows.Forms.ComboBox();
             this.comboBox_Unit = new System.Windows.Forms.ComboBox();
             this.label_Language = new System.Windows.Forms.Label();
@@ -89,7 +89,7 @@
             // 
             this.lbl_ProjectNumberPath.AutoSize = true;
             this.lbl_ProjectNumberPath.Font = new System.Drawing.Font("Arial Black", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ProjectNumberPath.Location = new System.Drawing.Point(6, 15);
+            this.lbl_ProjectNumberPath.Location = new System.Drawing.Point(6, 14);
             this.lbl_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbl_ProjectNumberPath.Name = "lbl_ProjectNumberPath";
             this.lbl_ProjectNumberPath.Size = new System.Drawing.Size(182, 22);
@@ -316,18 +316,18 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
             // 
-            // label2
+            // lbl_DataTable
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.label2.Location = new System.Drawing.Point(12, 105);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 23);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Data Table";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
+            this.lbl_DataTable.AutoSize = true;
+            this.lbl_DataTable.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_DataTable.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.lbl_DataTable.Location = new System.Drawing.Point(12, 105);
+            this.lbl_DataTable.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbl_DataTable.Name = "lbl_DataTable";
+            this.lbl_DataTable.Size = new System.Drawing.Size(105, 23);
+            this.lbl_DataTable.TabIndex = 4;
+            this.lbl_DataTable.Text = "Data Table";
+            this.lbl_DataTable.Click += new System.EventHandler(this.label2_Click);
             // 
             // comboBox_Language
             // 
@@ -435,7 +435,7 @@
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
             this.Controls.Add(this.comboBox_Language);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbl_DataTable);
             this.Controls.Add(this.dataGridView_Table);
             this.Controls.Add(this.tbx_ProjectNumberPath);
             this.Controls.Add(this.lbl_ProjectNumberPath);
@@ -444,7 +444,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
-            this.Text = "Bearing Enhancer CAN v1.5.1";
+            this.Text = "Bearing Enhancer CAN v1.6";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).EndInit();
@@ -459,7 +459,7 @@
         private System.Windows.Forms.Label lbl_ProjectNumberPath;
         private System.Windows.Forms.TextBox tbx_ProjectNumberPath;
         private System.Windows.Forms.DataGridView dataGridView_Table;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbl_DataTable;
         private System.Windows.Forms.BindingSource bearingEnhancerBindingSource;
         private System.Windows.Forms.ComboBox comboBox_Language;
         private System.Windows.Forms.ComboBox comboBox_Unit;

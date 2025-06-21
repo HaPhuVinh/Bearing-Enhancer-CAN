@@ -18,6 +18,7 @@ namespace Bearing_Enhancer_CAN
 {
     public partial class Form_BearingEnhacerCAN : Form
     {
+
         public List<Bearing_Enhancer> list_Original_Bearing;
         public Form_BearingEnhacerCAN()
         {
@@ -27,6 +28,8 @@ namespace Bearing_Enhancer_CAN
         
         private void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
         {
+            
+
             comboBox_Language.Items.Add("English");
             comboBox_Language.Items.Add("French");
             comboBox_Language.Text = "English";
@@ -67,6 +70,9 @@ namespace Bearing_Enhancer_CAN
             this.dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
             //Đăng kí sự kiện Double_RightClick
             dataGridView_Table.MouseDown += dataGridViewTable_MouseDown;
+
+            //Gắn sự kiện EditingControlShowing
+            dataGridView_Table.EditingControlShowing += dataGridView_Table_EditingControlShowing;
 
             //Đăng kí sự kiện Đóng Form
             this.FormClosing += Form_BearingEnhacerCAN_FormClosing;
@@ -379,6 +385,10 @@ namespace Bearing_Enhancer_CAN
                         else if (chosenSolution.Contains("TBE"))
                         {
                             beItem = new Bearing_Enhancer_TBE(chosenSolution);
+                        }
+                        else if(chosenSolution.Contains("CP"))
+                        {
+                            beItem = new Bearing_Enhancer_CP(chosenSolution);
                         }
                         else
                         {
@@ -955,6 +965,61 @@ namespace Bearing_Enhancer_CAN
                 else // Cancel
                 {
                     e.Cancel = true;
+                }
+            }
+        }
+
+        ComboBox currentComboBox = null;
+        ToolTip warningToolTip = new ToolTip
+        {
+            IsBalloon = true,
+            ToolTipIcon = ToolTipIcon.Warning,
+            ToolTipTitle = "Warning",
+            UseFading = true,
+            UseAnimation = true,
+            AutoPopDelay = 0,
+            InitialDelay = 0,
+            ReshowDelay = 0,
+            ShowAlways = true
+        };
+
+        private void dataGridView_Table_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            int columnIndex = dataGridView_Table.Columns["Bearing_Solution"].Index;
+
+            if (dataGridView_Table.CurrentCell.ColumnIndex == columnIndex && e.Control is ComboBox comboBox)
+            {
+                if (currentComboBox != null)
+                {
+                    currentComboBox.SelectionChangeCommitted -= ComboBox_SelectionChangeCommitted;
+                }
+
+                currentComboBox = comboBox;
+                currentComboBox.SelectionChangeCommitted += ComboBox_SelectionChangeCommitted;
+            }
+        }
+
+        private void ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                string selectedValue = comboBox.SelectedItem?.ToString();
+
+                if (!string.IsNullOrEmpty(selectedValue) && selectedValue.Contains("FlushPlate"))
+                {
+                    Point cursorPos = Cursor.Position;
+                    //Point relativePos = this.PointToClient(cursorPos);
+
+                    warningToolTip.Show("Flush Plate needs to be considered in Truss Studio!",
+                                        this,
+                                        cursorPos.X-550,
+                                        cursorPos.Y,
+                                        3000); // Show in 3 seconds
+                    //MessageBox.Show(comboBox.SelectedItem?.ToString());
+                }
+                else
+                {
+                    warningToolTip.Hide(dataGridView_Table); // Ẩn nếu không khớp
                 }
             }
         }
