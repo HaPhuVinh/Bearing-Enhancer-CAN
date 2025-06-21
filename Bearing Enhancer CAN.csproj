@@ -133,6 +133,8 @@
   <ItemGroup>
     <Compile Include="Bearing Enhancer.cs" />
     <Compile Include="Block_Info.cs" />
+    <Compile Include="CrushPlatesAndFlushPlate_Info.cs" />
+    <Compile Include="CrushPlates_Info.cs" />
     <Compile Include="Duration_Factor.cs" />
     <Compile Include="English_Or_French.cs" />
     <Compile Include="Fastener_Info.cs" />

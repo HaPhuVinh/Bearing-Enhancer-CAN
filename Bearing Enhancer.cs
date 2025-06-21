@@ -185,13 +185,15 @@ namespace Bearing_Enhancer_CAN
                 List<string> list_Horizontal_Block = Check_Horizontal_Block(ply, lumSize, lumSpecie, topPlate, unit, language);
                 list_Bearing_Solution.AddRange(list_Horizontal_Block);
 
-                //Check TBE
-                bool bCheckTBE = list_Horizontal_Block.Count != 0 ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
-                if (bCheckTBE == false)
+                //Check TBE and Crush Plate
+                bool bCheck_TBECP = list_Horizontal_Block.Count != 0 ? Enum.GetValues(typeof(No_Solution_Enum)).Cast<No_Solution_Enum>().Any(s => s.GetDescription() == list_Horizontal_Block[0]) : false;
+                if (bCheck_TBECP == false)
                 {
                     list_Bearing_Solution.AddRange(Check_TBE(ply, lumSpecie, topPlate, unit));
+                    list_Bearing_Solution.AddRange(Check_Crush_Plate(ply, lumSpecie, topPlate, unit));
                 }
             }
+
             //Check Vertical Block
             if (bVertical == true)
             {
@@ -1081,6 +1083,109 @@ namespace Bearing_Enhancer_CAN
             }
 
             return list_TBE;
+        }
+
+        List<string> Check_Crush_Plate(string ply, string lumberSpecie, Top_Plate_Info topPlate, string unit)
+        {
+            List<double> durationFactors = new List<double>();
+            PropertyInfo[] props = typeof(Duration_Factor).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                var value = prop.GetValue(topPlate.DOL);
+                bool bNumber = double.TryParse(value.ToString(), out double isNumber);
+                if (bNumber)
+                {
+                    durationFactors.Add(isNumber);
+                }
+            }
+            double durationFactor = durationFactors.Min();
+            List<string> list_CPn = new List<string>();
+            if (durationFactor >= 1.0)
+            {
+                Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
+                int plies = int.Parse(ply);
+                double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
+                double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
+                CrushPlates_Info cp_Data = new CrushPlates_Info(unit);
+                CrushPlatesAndFlushPlate_Info cpf_Data = new CrushPlatesAndFlushPlate_Info(unit);
+
+                List<string[]> listMat = new List<string[]>()
+                {
+                new string[] {"HF","405"},
+                new string[] {"SPF","425"},
+                new string[] {"SP","565" },
+                new string[] {"SYP","565" },
+                new string[] {"DFL","625" },
+                new string[] {"DFLN","625" },
+                };
+                int lumberFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == lumberSpecie)[1]);
+                int topPlateFcp = int.Parse(listMat.FirstOrDefault(x => x[0] == topPlate.Material)[1]);
+                string cpLumSpecie = lumberFcp < topPlateFcp ? lumberSpecie : topPlate.Material;
+
+                if (brgWidth == 3.5 * iom.miliFactor)
+                {
+                    if (cpLumSpecie == "SPF")
+                    {
+                        double cp_allowableValue = cp_Data.CP4_DFL_SPF[plies - 1, 2];
+                        double cpf_allowableValue = cpf_Data.CP4_DFL_SPF[plies - 1, 2];
+                        if (topPlate.Reaction <= cp_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-4");
+                        }
+                        else if (topPlate.Reaction <= cpf_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-4 & FlushPlate");
+                        }
+                    }
+
+                    if (cpLumSpecie == "DFL")
+                    {
+                        double cp_allowableValue = cp_Data.CP4_DFL_SPF[plies - 1, 1];
+                        double cpf_allowableValue = cpf_Data.CP4_DFL_SPF[plies - 1, 1];
+                        if (topPlate.Reaction <= cp_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-4");
+                        }
+                        else if (topPlate.Reaction <= cpf_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-4 & FlushPlate");
+                        }
+                    }
+                }
+
+                if (brgWidth == 5.5 * iom.miliFactor)
+                {
+                    if (cpLumSpecie == "SPF")
+                    {
+                        double cp_allowableValue = cp_Data.CP6_DFL_SPF[plies - 1, 2];
+                        double cpf_allowableValue = cpf_Data.CP6_DFL_SPF[plies - 1, 2];
+                        if (topPlate.Reaction <= cp_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-6");
+                        }
+                        else if (topPlate.Reaction <= cpf_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-6 & FlushPlate");
+                        }
+                    }
+
+                    if (cpLumSpecie == "DFL")
+                    {
+                        double cp_allowableValue = cp_Data.CP6_DFL_SPF[plies - 1, 1];
+                        double cpf_allowableValue = cpf_Data.CP6_DFL_SPF[plies - 1, 1];
+                        if (topPlate.Reaction <= cp_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-6");
+                        }
+                        else if (topPlate.Reaction <= cpf_allowableValue)
+                        {
+                            list_CPn.Add($"CP{plies}-6 & FlushPlate");
+                        }
+                    }
+                }
+            }
+
+            return list_CPn;
         }
 
         (string key, string x_leftend, string x_rightend) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
