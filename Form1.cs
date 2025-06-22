@@ -18,6 +18,19 @@ namespace Bearing_Enhancer_CAN
 {
     public partial class Form_BearingEnhacerCAN : Form
     {
+        ComboBox currentComboBox = null;
+        ToolTip warningToolTip = new ToolTip
+        {
+            IsBalloon = true,
+            ToolTipIcon = ToolTipIcon.Warning,
+            ToolTipTitle = "Warning",
+            UseFading = true,
+            UseAnimation = true,
+            AutoPopDelay = 0,
+            InitialDelay = 0,
+            ReshowDelay = 0,
+            ShowAlways = true
+        };
 
         public List<Bearing_Enhancer> list_Original_Bearing;
         public Form_BearingEnhacerCAN()
@@ -282,7 +295,7 @@ namespace Bearing_Enhancer_CAN
                             else
                             {
                                 // Nếu người dùng đóng form mà không nhập, bỏ tick
-                                dataGridView_Table.Rows[e.RowIndex].Cells[15].Value = false;
+                                dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value = false;
 
                             }
                         }
@@ -614,7 +627,7 @@ namespace Bearing_Enhancer_CAN
             {
                 bool checkNullBS = false;
                 string cellValueBS;
-                foreach (int colName in columnsNumber.Where(x=>x!=5 || x!=6))
+                foreach (int colName in columnsNumber.Where(x=>x!=5 && x!=6))
                 {
                     cellValueBS = dataGridView_Table.Rows[e.RowIndex].Cells[colName].Value?.ToString();
                     checkNullBS = string.IsNullOrWhiteSpace(cellValueBS);
@@ -969,19 +982,7 @@ namespace Bearing_Enhancer_CAN
             }
         }
 
-        ComboBox currentComboBox = null;
-        ToolTip warningToolTip = new ToolTip
-        {
-            IsBalloon = true,
-            ToolTipIcon = ToolTipIcon.Warning,
-            ToolTipTitle = "Warning",
-            UseFading = true,
-            UseAnimation = true,
-            AutoPopDelay = 0,
-            InitialDelay = 0,
-            ReshowDelay = 0,
-            ShowAlways = true
-        };
+        
 
         private void dataGridView_Table_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
@@ -1007,19 +1008,27 @@ namespace Bearing_Enhancer_CAN
 
                 if (!string.IsNullOrEmpty(selectedValue) && selectedValue.Contains("FlushPlate"))
                 {
+                    var currentRow = dataGridView_Table.CurrentRow;
+                    string trussName = currentRow.Cells["Truss_Name"].Value?.ToString();
+                    string jointID = currentRow.Cells["Joint_ID"].Value?.ToString();
+                    currentRow.DefaultCellStyle.BackColor = Color.Silver;
+
                     Point cursorPos = Cursor.Position;
                     //Point relativePos = this.PointToClient(cursorPos);
 
-                    warningToolTip.Show("Flush Plate needs to be considered in Truss Studio!",
+                    warningToolTip.Show($"Truss {trussName}-Jnt {jointID}: Flush Plate needs to be considered in Truss Studio!",
                                         this,
                                         cursorPos.X-550,
                                         cursorPos.Y,
-                                        3000); // Show in 3 seconds
+                                        5000); // Show in 3 seconds
                     //MessageBox.Show(comboBox.SelectedItem?.ToString());
                 }
                 else
                 {
+                    var currentRow = dataGridView_Table.CurrentRow;
+                    currentRow.DefaultCellStyle.BackColor = dataGridView_Table.DefaultCellStyle.BackColor;
                     warningToolTip.Hide(dataGridView_Table); // Ẩn nếu không khớp
+                    
                 }
             }
         }
