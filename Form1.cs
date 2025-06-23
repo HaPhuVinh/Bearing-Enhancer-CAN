@@ -1016,7 +1016,7 @@ namespace Bearing_Enhancer_CAN
                     Point cursorPos = Cursor.Position;
                     //Point relativePos = this.PointToClient(cursorPos);
 
-                    warningToolTip.Show($"Truss {trussName}-Jnt {jointID}: Flush Plate needs to be considered in Truss Studio!",
+                    warningToolTip.Show($"Truss {trussName}-Jnt {jointID}: Flush Plate needs to be considered in Truss Studio!\nSee detail TD-BRG-0005 for more.",
                                         this,
                                         cursorPos.X-550,
                                         cursorPos.Y,
@@ -1026,7 +1026,11 @@ namespace Bearing_Enhancer_CAN
                 else
                 {
                     var currentRow = dataGridView_Table.CurrentRow;
+                    bool bVerticalBlock = bool.Parse(currentRow.Cells["Vertical_Block"].Value?.ToString());
+
+                    if (!bVerticalBlock)
                     currentRow.DefaultCellStyle.BackColor = dataGridView_Table.DefaultCellStyle.BackColor;
+
                     warningToolTip.Hide(dataGridView_Table); // Ẩn nếu không khớp
                     
                 }
