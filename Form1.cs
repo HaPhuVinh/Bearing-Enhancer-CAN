@@ -1026,7 +1026,7 @@ namespace Bearing_Enhancer_CAN
                 else
                 {
                     var currentRow = dataGridView_Table.CurrentRow;
-                    bool bVerticalBlock = bool.Parse(currentRow.Cells["Vertical_Block"].Value?.ToString());
+                    bool bVerticalBlock = Convert.ToBoolean(currentRow.Cells["Vertical_Block"].Value?.ToString());
 
                     if (!bVerticalBlock)
                     currentRow.DefaultCellStyle.BackColor = dataGridView_Table.DefaultCellStyle.BackColor;
