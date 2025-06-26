@@ -21,7 +21,7 @@ namespace Bearing_Enhancer_CAN
         ComboBox currentComboBox = null;
         ToolTip warningToolTip = new ToolTip
         {
-            IsBalloon = true,
+            IsBalloon = false,
             ToolTipIcon = ToolTipIcon.Warning,
             ToolTipTitle = "Warning",
             UseFading = true,
