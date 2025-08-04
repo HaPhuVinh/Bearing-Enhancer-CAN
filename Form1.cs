@@ -1018,9 +1018,9 @@ namespace Bearing_Enhancer_CAN
 
                     warningToolTip.Show($"Truss {trussName}-Jnt {jointID}: Flush Plate needs to be considered in Truss Studio!",
                                         this,
-                                        cursorPos.X-550,
-                                        cursorPos.Y,
-                                        5000); // Show in 3 seconds
+                                        cursorPos.X-500,
+                                        cursorPos.Y-50,
+                                        3000); // Show in 3 seconds
                     //MessageBox.Show(comboBox.SelectedItem?.ToString());
                 }
                 else
