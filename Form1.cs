@@ -136,9 +136,29 @@ namespace Bearing_Enhancer_CAN
 
                 // Gọi Updater.exe
                 string updaterPath = Path.Combine(appDirectory, "Updater.exe");
+
+                //if (!File.Exists(updaterPath))
+                //{
+                //    MessageBox.Show("Không tìm thấy Updater.exe tại: " + updaterPath);
+                //}
+
                 string mainExePath = Application.ExecutablePath;
-                string arguments = $"\"{tempFile}\" \"{appDirectory}\" \"{mainExePath}\"";
-                System.Diagnostics.Process.Start(updaterPath, arguments);
+                string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
+                string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
+
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = updaterPath,
+                    Arguments = arguments,
+                    UseShellExecute = true,
+                    Verb = "runas" // yêu cầu quyền admin
+                };
+
+                //MessageBox.Show(arguments);
+                //MessageBox.Show($"Updater Path: {updaterPath}\nArguments: {arguments}");
+                //MessageBox.Show($"tempFile: {tempFile}\nappDirectory: {appDirectory}\nmainExePath: {mainExePath}");
+
+                System.Diagnostics.Process.Start(startInfo);
 
                 Application.Exit();
             }
