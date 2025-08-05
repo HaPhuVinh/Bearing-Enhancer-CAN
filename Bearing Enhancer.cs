@@ -1019,11 +1019,13 @@ namespace Bearing_Enhancer_CAN
             }
             double durationFactor = durationFactors.Min();
             List<string> list_TBE = new List<string>();
-            if (durationFactor >= 1.0)
+
+            int plies = int.Parse(ply);
+            if (durationFactor >= 1.0 && plies < 5)
             {
                 Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
                 const double alternateFactor = 0.6;
-                int plies = int.Parse(ply);
+                
                 double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
                 double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
                 TBE_Info tbe_Data = new TBE_Info(unit);
@@ -1100,10 +1102,12 @@ namespace Bearing_Enhancer_CAN
             }
             double durationFactor = durationFactors.Min();
             List<string> list_CPn = new List<string>();
-            if (durationFactor >= 1.0)
+
+            int plies = int.Parse(ply);
+            if (durationFactor >= 1.0 && plies < 5)
             {
                 Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
-                int plies = int.Parse(ply);
+                
                 double brgWidth = double.TryParse(topPlate.BearingWidth, out double resultB) ? resultB : Convert_To_Inch(topPlate.BearingWidth);
                 double rqdWidth = double.TryParse(topPlate.RequireWidth, out double resultR) ? resultR : Convert_To_Inch(topPlate.RequireWidth);
                 CrushPlates_Info cp_Data = new CrushPlates_Info(unit);

@@ -41,7 +41,7 @@ namespace Bearing_Enhancer_CAN
         
         private void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
         {
-            
+            this.Text = $"Bearing Enhancer CAN {Application.ProductVersion}";
 
             comboBox_Language.Items.Add("English");
             comboBox_Language.Items.Add("French");
@@ -52,7 +52,7 @@ namespace Bearing_Enhancer_CAN
             comboBox_Unit.Text = "Imperial";
             
             List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
-            List<string> list_Ply = new List<string> { "1", "2", "3", "4" };
+            List<string> list_Ply = new List<string> { "1", "2", "3", "4", "5", "6" };
             List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
             List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
             List<string> list_DurationFactor = new List<string>() {"0.90","1.00", "1.05","1.10", "1.15", "1.25", "1.33", "1.60" };
@@ -89,6 +89,63 @@ namespace Bearing_Enhancer_CAN
 
             //Đăng kí sự kiện Đóng Form
             this.FormClosing += Form_BearingEnhacerCAN_FormClosing;
+
+            //Kiểm tra cập nhật phiên bản
+            try
+            {
+                string currentVersion = Application.ProductVersion;
+                using (var client = new System.Net.WebClient())
+                {
+                    string latestVersion = client.DownloadString(@"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
+                    if (new Version(currentVersion) < new Version(latestVersion))
+                    {
+                        var result = MessageBox.Show(
+                        $"A new version ({latestVersion}) is available. Do you want to update now?",
+                        "Update Available",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            // Gọi hàm tải và cập nhật
+                            DownloadAndUpdate();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DownloadAndUpdate()
+        {
+            try
+            {
+                string updateUrl = @"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
+                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var file = new FileInfo(appDirectory);
+                string tempFile = Path.Combine(file.Directory.Parent.FullName, "Bearing Enhancer CAN.zip");
+
+                // Tải file zip về thư mục tạm
+                using (var client = new System.Net.WebClient())
+                {
+                    client.DownloadFile(updateUrl, tempFile);
+                }
+
+                // Gọi Updater.exe
+                string updaterPath = Path.Combine(appDirectory, "Updater.exe");
+                string mainExePath = Application.ExecutablePath;
+                string arguments = $"\"{tempFile}\" \"{appDirectory}\" \"{mainExePath}\"";
+                System.Diagnostics.Process.Start(updaterPath, arguments);
+
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Update failed: " + ex.Message);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)// Button Check

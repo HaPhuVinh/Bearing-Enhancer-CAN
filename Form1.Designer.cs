@@ -444,7 +444,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
-            this.Text = "Bearing Enhancer CAN v1.6";
+            this.Text = "Bearing Enhancer CAN";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).EndInit();
