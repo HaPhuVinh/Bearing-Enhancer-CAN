@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -107,8 +108,33 @@ namespace Bearing_Enhancer_CAN
 
                         if (result == DialogResult.Yes)
                         {
-                            // Gọi hàm tải và cập nhật
-                            DownloadAndUpdate();
+                            string updateUrl = @"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
+                            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                            var file = new FileInfo(appDirectory);
+                            string tempFile = Path.Combine(file.Directory.Parent.FullName, "Bearing Enhancer CAN.zip");
+
+                            // Tải file zip về thư mục tạm
+                            using (var client1 = new System.Net.WebClient())
+                            {
+                                client1.DownloadFile(updateUrl, tempFile);
+                            }
+
+                            // Gọi FormUpdater.exe
+                            string updaterPath = Path.Combine(appDirectory, "FormUpdater.exe");
+                            string mainExePath = Application.ExecutablePath;
+                            string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
+                            string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
+
+                            var startInfo = new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = updaterPath,
+                                Arguments = arguments,
+                                UseShellExecute = true,
+                                //Verb = "runas" // yêu cầu quyền admin
+                            };
+
+                            Process.Start(startInfo);
+                            Application.Exit(); // thoát app chính để cập nhật
                         }
                     }
                 }
@@ -151,7 +177,7 @@ namespace Bearing_Enhancer_CAN
                     FileName = updaterPath,
                     Arguments = arguments,
                     UseShellExecute = true,
-                    Verb = "runas" // yêu cầu quyền admin
+                    //Verb = "runas" // yêu cầu quyền admin
                 };
 
                 //MessageBox.Show(arguments);
