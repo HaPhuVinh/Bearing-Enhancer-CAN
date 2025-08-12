@@ -110,8 +110,12 @@ namespace Bearing_Enhancer_CAN
                         {
                             string updateUrl = @"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
                             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                            var file = new FileInfo(appDirectory);
-                            string tempFile = Path.Combine(file.Directory.Parent.FullName, "Bearing Enhancer CAN.zip");
+                            string temDir = @"C:\Temp"; // Thư mục tạm để lưu file zip
+                            if (!Directory.Exists(temDir))
+                            {
+                                Directory.CreateDirectory(temDir);
+                            }
+                            string tempFile = Path.Combine(temDir, "Bearing Enhancer CAN.zip");
 
                             // Tải file zip về thư mục tạm
                             using (var client1 = new System.Net.WebClient())
@@ -120,7 +124,7 @@ namespace Bearing_Enhancer_CAN
                             }
 
                             // Gọi FormUpdater.exe
-                            string updaterPath = Path.Combine(appDirectory, "FormUpdater.exe");
+                            string updaterPath = Path.Combine(appDirectory, @"Form Updater\FormUpdater.exe");
                             string mainExePath = Application.ExecutablePath;
                             string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
                             string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
