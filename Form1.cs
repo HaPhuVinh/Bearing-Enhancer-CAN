@@ -97,7 +97,7 @@ namespace Bearing_Enhancer_CAN
                 string currentVersion = Application.ProductVersion;
                 using (var client = new System.Net.WebClient())
                 {
-                    string latestVersion = client.DownloadString(@"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
+                    string latestVersion = client.DownloadString(@"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
                     if (new Version(currentVersion) < new Version(latestVersion))
                     {
                         var result = MessageBox.Show(
@@ -108,7 +108,7 @@ namespace Bearing_Enhancer_CAN
 
                         if (result == DialogResult.Yes)
                         {
-                            string updateUrl = @"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
+                            string updateUrl = @"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
                             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
                             string temDir = @"C:\Temp"; // Thư mục tạm để lưu file zip
                             if (!Directory.Exists(temDir))
