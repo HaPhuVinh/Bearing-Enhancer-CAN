@@ -24,6 +24,8 @@ namespace Bearing_Enhancer_CAN
         public string LumSize { get; set; }
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
+        public string[] LumCoordinates_Left { get; set; }
+        public string[] LumCoordinates_Right { get; set; }
         public Top_Plate_Info TopPlateInfo { get; set; }
         public List<string> BearingSolution { get; set; }
 
@@ -141,13 +143,15 @@ namespace Bearing_Enhancer_CAN
                                         bE.LumSize = LI.Lumber_Size;
                                         bE.LumWidth = LI.Lumber_Width;
                                         bE.LumThick = LI.Lumber_Thickness;
+                                        bE.LumCoordinates_Left = keyLumber.Cordinates_LeftEnd;
+                                        bE.LumCoordinates_Right = keyLumber.Cordinates_RightEnd;
                                     }
                                 }
                             }
                             //Check Interior or Extorior Bearing
                             double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
-                            double xleftend = double.Parse(keyLumber.x_leftend);
-                            double xrightend = double.Parse(keyLumber.x_rightend);
+                            double xleftend = double.Parse(keyLumber.Cordinates_LeftEnd[0].ToString());
+                            double xrightend = double.Parse(keyLumber.Cordinates_RightEnd[keyLumber.Cordinates_RightEnd.Length-3]);
                             if (xloc > xleftend + 8 && xloc < xrightend - 8)
                             {
                                 bE.TopPlateInfo.Location_Type = "Interior";
@@ -1192,11 +1196,13 @@ namespace Bearing_Enhancer_CAN
             return list_CPn;
         }
 
-        (string key, string x_leftend, string x_rightend) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
+        (string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             int i = 0;
             string[] S, A;
+            string[] Left_Cordinates = Array.Empty<string>();
+            string[] Right_Cordinates = Array.Empty<string>();
             string s;
             string keyLumber = "";
             List<ArrayList> listArrList = new List<ArrayList>();
@@ -1237,6 +1243,10 @@ namespace Bearing_Enhancer_CAN
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
                             arrList.Add(ssr[ssr.Length - 3]);
+
+                            Left_Cordinates = ssl;
+                            Right_Cordinates = ssr;
+                            break;
                         }
                     }
                     listArrList.Add(arrList);
@@ -1273,6 +1283,10 @@ namespace Bearing_Enhancer_CAN
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
                             arrList.Add(ssr[ssr.Length - 3]);
+
+                            Left_Cordinates = ssl;
+                            Right_Cordinates = ssr;
+                            break;
                         }
                     }
                     listArrList.Add(arrList);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
@@ -1295,7 +1309,7 @@ namespace Bearing_Enhancer_CAN
                     keyLumber = al[2].ToString();
                 }
             }
-            return listArrList.Count > 0 ? (keyLumber, listArrList[0][3].ToString(), listArrList[listArrList.Count - 1][4].ToString()) : ("", "0", "0");
+            return (keyLumber, Left_Cordinates, Right_Cordinates);
         }
 
         double Convert_To_Inch(string xxx)
