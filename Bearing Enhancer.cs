@@ -38,6 +38,10 @@ namespace Bearing_Enhancer_CAN
         {
             return "";
         }
+        public virtual string Generate_Draw_Script(string[] rightCordinates, string[] leftCodinates,string bearingSolution, Top_Plate_Info topPlateInfo)
+        {
+            return "";
+        }
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
             //Get Data from tdlTruss file
@@ -1196,16 +1200,15 @@ namespace Bearing_Enhancer_CAN
             return list_CPn;
         }
 
-        (string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
+        (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             int i = 0;
             string[] S, A;
-            string[] Left_Cordinates = Array.Empty<string>();
-            string[] Right_Cordinates = Array.Empty<string>();
             string s;
-            string keyLumber = "";
-            List<ArrayList> listArrList = new List<ArrayList>();
+            var keyLumber = (0, "", "", Left_Cordinates:Array.Empty<string>(), Right_Cordinates: Array.Empty<string>());
+            (int No_, string Name, string Key, string[] Left_Cordinates, string[] Right_Cordinates) lumberPiece = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
+            List<(int, string, string, string[], string[])> listSpieces = new List<(int, string, string, string[], string[])>();
             XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
             A = elementNode.InnerText.Split('\n');
             foreach (string I in A)
@@ -1223,9 +1226,9 @@ namespace Bearing_Enhancer_CAN
                     {
                         S = s.Split(' ');
 
-                        arrList.Add(i);
-                        arrList.Add(S[0]);
-                        arrList.Add(S[1]);
+                        lumberPiece.No_ = i;
+                        lumberPiece.Name = S[0];
+                        lumberPiece.Key = S[1];
                     }
                     XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
                     int j = 0;
@@ -1237,19 +1240,18 @@ namespace Bearing_Enhancer_CAN
                             string sl = N.Attributes["L"].Value;
                             sl = sl.Trim();
                             string[] ssl = sl.Split();
-                            arrList.Add(ssl[0]);
+                            //arrList.Add(ssl[0]);
+                            lumberPiece.Left_Cordinates = ssl;
 
                             string sr = N.Attributes["R"].Value;
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
-                            arrList.Add(ssr[ssr.Length - 3]);
-
-                            Left_Cordinates = ssl;
-                            Right_Cordinates = ssr;
+                            //arrList.Add(ssr[ssr.Length - 3]);
+                            lumberPiece.Right_Cordinates = ssr;
                             break;
                         }
                     }
-                    listArrList.Add(arrList);
+                    listSpieces.Add(lumberPiece);
                 }
                 if (y == "TopChd")
                 {
@@ -1263,9 +1265,9 @@ namespace Bearing_Enhancer_CAN
                     {
                         S = s.Split(' ');
 
-                        arrList.Add(i);
-                        arrList.Add(S[0]);
-                        arrList.Add(S[1]);
+                        lumberPiece.No_ = i;
+                        lumberPiece.Name = S[0];
+                        lumberPiece.Key = S[1];
                     }
                     XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
                     int j = 0;
@@ -1277,39 +1279,38 @@ namespace Bearing_Enhancer_CAN
                             string sl = N.Attributes["L"].Value;
                             sl = sl.Trim();
                             string[] ssl = sl.Split();
-                            arrList.Add(ssl[0]);
+                            //arrList.Add(ssl[0]);
+                            lumberPiece.Left_Cordinates = ssl;
 
                             string sr = N.Attributes["R"].Value;
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
-                            arrList.Add(ssr[ssr.Length - 3]);
-
-                            Left_Cordinates = ssl;
-                            Right_Cordinates = ssr;
-                            break;
+                            //arrList.Add(ssr[ssr.Length - 3]);
+                            lumberPiece.Right_Cordinates = ssr;
                         }
                     }
-                    listArrList.Add(arrList);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
+                    listSpieces.Add(lumberPiece);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
                 }
 
             }
             double xloc = double.TryParse(x, out double result) ? result / iom.miliFactor : Convert_To_Inch(x);
 
-            foreach (ArrayList al in listArrList)
+            foreach (var spiece in listSpieces)
             {
-                double rightEndLoc = Double.Parse(al[3].ToString());
+                string rightEnd = spiece.Item5[spiece.Item5.Length - 3];
+                double rightEndLoc = Double.Parse(rightEnd);
 
                 if (xloc <= rightEndLoc)
                 {
-                    keyLumber = al[2].ToString();
+                    keyLumber = spiece;
                     break;
                 }
                 else
                 {
-                    keyLumber = al[2].ToString();
+                    keyLumber = spiece;
                 }
             }
-            return (keyLumber, Left_Cordinates, Right_Cordinates);
+            return keyLumber;
         }
 
         double Convert_To_Inch(string xxx)
@@ -1362,6 +1363,27 @@ namespace Bearing_Enhancer_CAN
 
             return dictTrussName;
         }
+        List<string[]> Create_PolyWorkLine(List<string> cordinates)
+        {
+            List<string[]> polyLine = new List<string[]>();
+            List<string[]> Cordinates = new List<string[]>();
+
+
+            return polyLine;
+        }
+
+        string Equation_Line(string[] A, string[] B)
+        {
+            //y = mx + b
+            double x1 = double.Parse(A[0]);
+            double y1 = double.Parse(A[1]);
+            double x2 = double.Parse(B[0]);
+            double y2 = double.Parse(B[1]);
+            double m = (y2 - y1) / (x2 - x1);
+            double b = y1 - m * x1;
+            return $"y = {m}x + {b}";
+        }
+
         #endregion
     }
     public class Bearing_Enhancer_CP : Bearing_Enhancer
@@ -1462,15 +1484,15 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
                 }
                 else { theNote = ""; }
             }
@@ -1545,6 +1567,37 @@ namespace Bearing_Enhancer_CAN
                 else { theNote = ""; }
             }
             return theNote;
+        }
+        public override string Generate_Draw_Script(string[] rightCordinates, string[] leftCordinates, string chosenSolution, Top_Plate_Info topPlateInfo)
+        {
+            string drawScript = "";
+            List<string[]> polyLine = new List<string[]>();
+            List<string[]> Cordinates = new List<string[]>();
+
+            for (int i = 0; i < leftCordinates.Length; i += 3)
+            {
+                string[] L = new string[] { leftCordinates[i].Trim(), leftCordinates[i + 1].Trim(), leftCordinates[i + 2].Trim() };
+                leftCordinates[i] = leftCordinates[i].Trim();
+                Cordinates.Add(L);
+            }
+            for (int j = 0; j < rightCordinates.Length; j += 3)
+            {
+                string[] R = new string[] { rightCordinates[j].Trim(), rightCordinates[j + 1].Trim(), rightCordinates[j + 2].Trim() };
+                rightCordinates[j] = rightCordinates[j].Trim();
+                Cordinates.Add(R);
+            }
+
+
+            if (topPlateInfo.Location_Type == "Exterior")
+            {
+
+            }
+            else if (topPlateInfo.Location_Type == "Interior")
+            {
+
+            }
+
+            return drawScript;
         }
     }
     public class Bearing_Enhancer_5Percent : Bearing_Enhancer
