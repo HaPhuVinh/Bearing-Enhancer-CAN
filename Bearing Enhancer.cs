@@ -1372,18 +1372,81 @@ namespace Bearing_Enhancer_CAN
             return polyLine;
         }
 
-        string Equation_Line(string[] A, string[] B)
+        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
         {
-            //y = mx + b
-            double x1 = double.Parse(A[0]);
-            double y1 = double.Parse(A[1]);
-            double x2 = double.Parse(B[0]);
-            double y2 = double.Parse(B[1]);
-            double m = (y2 - y1) / (x2 - x1);
-            double b = y1 - m * x1;
-            return $"y = {m}x + {b}";
-        }
+            //Ax+By+C=0
+            double x1 = double.Parse(P[0]);
+            double y1 = double.Parse(P[1]);
+            double x2 = double.Parse(Q[0]);
+            double y2 = double.Parse(Q[1]);
 
+            double A = y1 - y2;
+            double B = x2 - x1;
+            double C = x1 * y2 - x2 * y1;
+
+            return (A, B, C);
+        }
+        (double X, double Y) Intersection_Point((double A1, double B1, double C1) line1, (double A2, double B2, double C2) line2)
+        {
+            double A1 = line1.A1;
+            double B1 = line1.B1;
+            double C1 = line1.C1;
+            double A2 = line2.A2;
+            double B2 = line2.B2;
+            double C2 = line2.C2;
+            double D = A1 * B2 - A2 * B1;
+            double Dx = -C1 * B2 + C2 * B1;
+            double Dy = -A1 * C2 + A2 * C1;
+            double x = Dx / D;
+            double y = Dy / D;
+            return (x, y);
+        }
+        (double A, double B, double C) PerpendicularLineAtX(string[] p1, string[] p2, double x0)
+        {
+            // Parse 2 điểm
+            double x1 = double.Parse(p1[0]);
+            double y1 = double.Parse(p1[1]);
+            double x2 = double.Parse(p2[0]);
+            double y2 = double.Parse(p2[1]);
+
+            // Trường hợp đường gốc thẳng đứng
+            //if (x1 == x2)
+            //{
+            //    // Đường vuông góc là đường nằm ngang y = y0
+            //    double y0_vert = y1; // vì x0 = x1
+            //    return (0, 1, -y0_vert); // 0x + 1y - y0 = 0
+            //}
+
+            // Tính t và y0 tại x0
+            double t = (x0 - x1) / (x2 - x1);
+            double y0 = y1 + t * (y2 - y1);
+
+            // Vector chỉ phương đường gốc
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+
+            // Vector chỉ phương đường vuông góc
+            double A = -dx; // hệ số A của phương trình tổng quát
+            double B = -dy; // hệ số B
+            double C = -(A * x0 + B * y0);
+
+            return (A, B, C);
+        }
+        (double[] line1, double[] line2) OffsetTwoLines(double A, double B, double C, double d)
+        {
+            // Độ dài pháp tuyến
+            double norm = Math.Sqrt(A * A + B * B);
+
+            // Hai giá trị C mới cho hai đường offset
+            double C1 = C + d * norm;
+            double C2 = C - d * norm;
+
+            // Mỗi đường thẳng trả về dạng [A, B, C]
+            double[] line1 = new double[] { A, B, C1 };
+            double[] line2 = new double[] { A, B, C2 };
+
+            return (line1, line2);
+        }
         #endregion
     }
     public class Bearing_Enhancer_CP : Bearing_Enhancer
