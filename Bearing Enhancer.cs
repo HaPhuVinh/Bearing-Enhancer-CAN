@@ -38,7 +38,7 @@ namespace Bearing_Enhancer_CAN
         {
             return "";
         }
-        public virtual string Generate_Draw_Script(string[] rightCordinates, string[] leftCodinates,string bearingSolution, Top_Plate_Info topPlateInfo)
+        public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates)
         {
             return "";
         }
@@ -112,6 +112,18 @@ namespace Bearing_Enhancer_CAN
 
                                 }
                             }
+
+                            if(rootNode.SelectSingleNode("//LoadTransfer").ChildNodes.Count > 1)
+                            {
+                                XmlNodeList xmlReactionList = rootNode.SelectSingleNode("//LoadTransfer").ChildNodes;
+                                TP.Value.YLocation = xmlReactionList[TP.Key].Attributes["WhereBrgAttached"].Value;
+                            }
+                            
+                            XmlNodeList xmlBearingList = rootNode.SelectSingleNode("//Bearings").ChildNodes;
+                            string[] sXLocLeft = xmlBearingList[TP.Key].Attributes["L"].Value.Trim().Split();
+                            string[] sXLocRight = xmlBearingList[TP.Key].Attributes["R"].Value.Trim().Split();
+                            TP.Value.XLocation_Physical = (double.Parse(sXLocLeft[0]) + double.Parse(sXLocRight[0]))/2;
+
                             //Check Wet Service Condition and Green Lumber condition
                             elementNode = rootNode.SelectSingleNode("//Settings");
                             XmlNodeList searchNodes = elementNode.ChildNodes;
@@ -129,7 +141,125 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Get Data in <LumberResults> Node
-                            var keyLumber = Get_Lumber(TP.Value.XLocation, TP.Value.YLocation, rootNode, unit);
+                            var listPieces = Get_Lumber(TP.Value.YLocation, rootNode, unit);
+                            (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) keyLumber = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
+                            //double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
+                            double xloc = TP.Value.XLocation_Physical;
+                            int index = 0;
+                            bool leftEnd_Step = true;
+                            bool rightEnd_Step = true;
+                            foreach (var piece in listPieces)
+                            {
+                                string X_leftEnd = piece.Item4[0];
+                                double X_leftEndLoc = Double.Parse(X_leftEnd);
+                                string X_rightEnd = piece.Item5[piece.Item5.Length - 3];
+                                double X_rightEndLoc = Double.Parse(X_rightEnd);
+
+                                if (listPieces.Count == 1)
+                                {
+                                    if (xloc > X_leftEndLoc + 8 && xloc < X_rightEndLoc - 8)
+                                    {
+                                        bE.TopPlateInfo.Location_Type = "Interior";
+                                    }
+                                    else
+                                    {
+                                        bE.TopPlateInfo.Location_Type = "Exterior";
+                                    }
+                                }
+                                else if (index < listPieces.Count-1)//&& listPieces.Count > 1
+                                {
+                                    string Y_rightEnd = listPieces.ElementAt(index).Cordinates_LeftEnd[1];
+                                    double Y_rightEndLoc = Double.Parse(Y_rightEnd);
+                                    string Y_leftEndAfter = listPieces.ElementAt(index+1).Cordinates_LeftEnd[1];
+                                    double Y_leftEndLocAfter = Double.Parse(Y_leftEndAfter);
+
+
+                                    if (Y_rightEndLoc == Y_leftEndLocAfter)
+                                    {
+                                        rightEnd_Step = false;
+                                    }
+                                    else//Y_rightEndLoc != Y_leftEndLocAfter
+                                    {
+                                        rightEnd_Step = true;
+                                    }
+
+                                    if (leftEnd_Step == true && rightEnd_Step == true)
+                                    {
+                                        if (xloc <= X_leftEndLoc + 8 || xloc >= X_rightEndLoc - 8)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                        }
+                                        else
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                        }
+                                    }
+                                    else if (leftEnd_Step == true && rightEnd_Step == false)
+                                    {
+                                        if (xloc <= X_leftEndLoc + 8)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                        }
+                                        else
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                        }
+                                    }
+                                    else if (leftEnd_Step == false && rightEnd_Step == true)
+                                    {
+                                        if (xloc >= X_rightEndLoc - 8)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                        }
+                                        else
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                        }
+                                    }
+                                    else//leftEnd_Step == false && rightEnd_Step == false
+                                    {
+                                        bE.TopPlateInfo.Location_Type = "Interior";
+                                    }
+                                }
+                                else// index == listPieces.Count && listPieces.Count > 1
+                                {
+                                    if(leftEnd_Step == true)
+                                    {
+                                        if (xloc <= X_leftEndLoc + 8 || xloc >= X_rightEndLoc - 8)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                        }
+                                        else
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                        }
+                                    }
+                                    else//leftEnd_Step == false
+                                    {
+                                        if( xloc >= X_rightEndLoc - 8)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                        }
+                                        else
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                        }
+                                    }
+                                }
+
+                                if (xloc <= X_rightEndLoc)
+                                {
+                                    keyLumber = piece;
+                                    break;
+                                }
+                                else
+                                {
+                                    keyLumber = piece;
+                                }
+
+                                leftEnd_Step = rightEnd_Step;
+                                index = index + 1;
+                            }
                             LumberInventory lumI = new LumberInventory();
                             List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectPath);
 
@@ -153,17 +283,17 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Check Interior or Extorior Bearing
-                            double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
-                            double xleftend = double.Parse(keyLumber.Cordinates_LeftEnd[0].ToString());
-                            double xrightend = double.Parse(keyLumber.Cordinates_RightEnd[keyLumber.Cordinates_RightEnd.Length-3]);
-                            if (xloc > xleftend + 8 && xloc < xrightend - 8)
-                            {
-                                bE.TopPlateInfo.Location_Type = "Interior";
-                            }
-                            else
-                            {
-                                bE.TopPlateInfo.Location_Type = "Exterior";
-                            }
+                            //double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
+                            //double xleftend = double.Parse(keyLumber.Cordinates_LeftEnd[0].ToString());
+                            //double xrightend = double.Parse(keyLumber.Cordinates_RightEnd[keyLumber.Cordinates_RightEnd.Length-3]);
+                            //if (xloc > xleftend + 8 && xloc < xrightend - 8)
+                            //{
+                            //    bE.TopPlateInfo.Location_Type = "Interior";
+                            //}
+                            //else
+                            //{
+                            //    bE.TopPlateInfo.Location_Type = "Exterior";
+                            //}
 
                             //Calculate Load Transfer load
                             double react = bE.TopPlateInfo.Reaction;
@@ -215,6 +345,8 @@ namespace Bearing_Enhancer_CAN
             }
             return list_Bearing_Solution;
         }
+
+        
         #endregion
 
         #region Support Methods:
@@ -1200,21 +1332,21 @@ namespace Bearing_Enhancer_CAN
             return list_CPn;
         }
 
-        (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Get_Lumber(string x, string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
+        List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> Get_Lumber(string y, XmlNode rootNode, string unit)//Get keyLumber grade and lumber size at Xlocation of the bearing
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
             int i = 0;
             string[] S, A;
             string s;
-            var keyLumber = (0, "", "", Left_Cordinates:Array.Empty<string>(), Right_Cordinates: Array.Empty<string>());
+            //var keyLumber = (0, "", "", Left_Cordinates:Array.Empty<string>(), Right_Cordinates: Array.Empty<string>());
             (int No_, string Name, string Key, string[] Left_Cordinates, string[] Right_Cordinates) lumberPiece = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
-            List<(int, string, string, string[], string[])> listSpieces = new List<(int, string, string, string[], string[])>();
+            List<(int, string, string, string[], string[])> listPieces = new List<(int, string, string, string[], string[])>();
             XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
             A = elementNode.InnerText.Split('\n');
             foreach (string I in A)
             {
                 i++;
-                if (y == "BotChd")
+                if (y == "BotChd" || y == "BottomChord")
                 {
                     if (!I.Contains("BC"))
                     {
@@ -1251,9 +1383,9 @@ namespace Bearing_Enhancer_CAN
                             break;
                         }
                     }
-                    listSpieces.Add(lumberPiece);
+                    listPieces.Add(lumberPiece);
                 }
-                if (y == "TopChd")
+                if (y == "TopChd" || y == "TopChord")
                 {
                     if (!I.Contains("TC"))
                     {
@@ -1289,28 +1421,29 @@ namespace Bearing_Enhancer_CAN
                             lumberPiece.Right_Cordinates = ssr;
                         }
                     }
-                    listSpieces.Add(lumberPiece);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
+                    listPieces.Add(lumberPiece);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
                 }
 
             }
-            double xloc = double.TryParse(x, out double result) ? result / iom.miliFactor : Convert_To_Inch(x);
 
-            foreach (var spiece in listSpieces)
-            {
-                string rightEnd = spiece.Item5[spiece.Item5.Length - 3];
-                double rightEndLoc = Double.Parse(rightEnd);
+            //double xloc = double.TryParse(x, out double result) ? result / iom.miliFactor : Convert_To_Inch(x);
 
-                if (xloc <= rightEndLoc)
-                {
-                    keyLumber = spiece;
-                    break;
-                }
-                else
-                {
-                    keyLumber = spiece;
-                }
-            }
-            return keyLumber;
+            //foreach (var piece in listPieces)
+            //{
+            //    string rightEnd = piece.Item5[piece.Item5.Length - 3];
+            //    double rightEndLoc = Double.Parse(rightEnd);
+
+            //    if (xloc <= rightEndLoc)
+            //    {
+            //        keyLumber = piece;
+            //        break;
+            //    }
+            //    else
+            //    {
+            //        keyLumber = piece;
+            //    }
+            //}
+            return listPieces;
         }
 
         double Convert_To_Inch(string xxx)
@@ -1363,90 +1496,7 @@ namespace Bearing_Enhancer_CAN
 
             return dictTrussName;
         }
-        List<string[]> Create_PolyWorkLine(List<string> cordinates)
-        {
-            List<string[]> polyLine = new List<string[]>();
-            List<string[]> Cordinates = new List<string[]>();
-
-
-            return polyLine;
-        }
-
-        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
-        {
-            //Ax+By+C=0
-            double x1 = double.Parse(P[0]);
-            double y1 = double.Parse(P[1]);
-            double x2 = double.Parse(Q[0]);
-            double y2 = double.Parse(Q[1]);
-
-            double A = y1 - y2;
-            double B = x2 - x1;
-            double C = x1 * y2 - x2 * y1;
-
-            return (A, B, C);
-        }
-        (double X, double Y) Intersection_Point((double A1, double B1, double C1) line1, (double A2, double B2, double C2) line2)
-        {
-            double A1 = line1.A1;
-            double B1 = line1.B1;
-            double C1 = line1.C1;
-            double A2 = line2.A2;
-            double B2 = line2.B2;
-            double C2 = line2.C2;
-            double D = A1 * B2 - A2 * B1;
-            double Dx = -C1 * B2 + C2 * B1;
-            double Dy = -A1 * C2 + A2 * C1;
-            double x = Dx / D;
-            double y = Dy / D;
-            return (x, y);
-        }
-        (double A, double B, double C) PerpendicularLineAtX(string[] p1, string[] p2, double x0)
-        {
-            // Parse 2 điểm
-            double x1 = double.Parse(p1[0]);
-            double y1 = double.Parse(p1[1]);
-            double x2 = double.Parse(p2[0]);
-            double y2 = double.Parse(p2[1]);
-
-            // Trường hợp đường gốc thẳng đứng
-            //if (x1 == x2)
-            //{
-            //    // Đường vuông góc là đường nằm ngang y = y0
-            //    double y0_vert = y1; // vì x0 = x1
-            //    return (0, 1, -y0_vert); // 0x + 1y - y0 = 0
-            //}
-
-            // Tính t và y0 tại x0
-            double t = (x0 - x1) / (x2 - x1);
-            double y0 = y1 + t * (y2 - y1);
-
-            // Vector chỉ phương đường gốc
-            double dx = x2 - x1;
-            double dy = y2 - y1;
-
-            // Vector chỉ phương đường vuông góc
-            double A = -dx; // hệ số A của phương trình tổng quát
-            double B = -dy; // hệ số B
-            double C = -(A * x0 + B * y0);
-
-            return (A, B, C);
-        }
-        (double[] line1, double[] line2) OffsetTwoLines(double A, double B, double C, double d)
-        {
-            // Độ dài pháp tuyến
-            double norm = Math.Sqrt(A * A + B * B);
-
-            // Hai giá trị C mới cho hai đường offset
-            double C1 = C + d * norm;
-            double C2 = C - d * norm;
-
-            // Mỗi đường thẳng trả về dạng [A, B, C]
-            double[] line1 = new double[] { A, B, C1 };
-            double[] line2 = new double[] { A, B, C2 };
-
-            return (line1, line2);
-        }
+        
         #endregion
     }
     public class Bearing_Enhancer_CP : Bearing_Enhancer
@@ -1631,36 +1681,159 @@ namespace Bearing_Enhancer_CAN
             }
             return theNote;
         }
-        public override string Generate_Draw_Script(string[] rightCordinates, string[] leftCordinates, string chosenSolution, Top_Plate_Info topPlateInfo)
+        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates)
         {
             string drawScript = "";
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
+            string[] arrKey = chosenSolution.Split('-');
+            int numberPly = int.Parse(Ply);
+            double blockLength = Math.Round((unit=="Imperial"? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim())/iom.miliFactor));
             List<string[]> polyLine = new List<string[]>();
-            List<string[]> Cordinates = new List<string[]>();
+            List<string[]> LeftCordinates = new List<string[]>();
+            List<string[]> RightCordinates = new List<string[]>();
 
             for (int i = 0; i < leftCordinates.Length; i += 3)
             {
                 string[] L = new string[] { leftCordinates[i].Trim(), leftCordinates[i + 1].Trim(), leftCordinates[i + 2].Trim() };
-                leftCordinates[i] = leftCordinates[i].Trim();
-                Cordinates.Add(L);
+                LeftCordinates.Add(L);
             }
             for (int j = 0; j < rightCordinates.Length; j += 3)
             {
                 string[] R = new string[] { rightCordinates[j].Trim(), rightCordinates[j + 1].Trim(), rightCordinates[j + 2].Trim() };
-                rightCordinates[j] = rightCordinates[j].Trim();
-                Cordinates.Add(R);
+                RightCordinates.Add(R);
             }
 
-
+            double leftRef = double.Parse(leftCordinates[0]);
+            double rightRef = double.Parse(rightCordinates[rightCordinates.Length - 3]);
+            string bearingType = topPlateInfo.Location_Type;
             if (topPlateInfo.Location_Type == "Exterior")
             {
-
+                bearingType = topPlateInfo.XLocation_Physical < (leftRef + rightRef) / 2 ? "Exterior_Left" : "Exterior_Right";
             }
-            else if (topPlateInfo.Location_Type == "Interior")
+            
+
+            return drawScript;
+        }
+
+        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
+        {
+            //Ax+By+C=0
+            double x1 = double.Parse(P[0]);
+            double y1 = double.Parse(P[1]);
+            double x2 = double.Parse(Q[0]);
+            double y2 = double.Parse(Q[1]);
+
+            double A = y1 - y2;
+            double B = x2 - x1;
+            double C = x1 * y2 - x2 * y1;
+
+            return (A, B, C);
+        }
+        string[] Intersection_Point((double A1, double B1, double C1) line1, (double A2, double B2, double C2) line2)
+        {
+            string z = "0";
+            double A1 = line1.A1;
+            double B1 = line1.B1;
+            double C1 = line1.C1;
+            double A2 = line2.A2;
+            double B2 = line2.B2;
+            double C2 = line2.C2;
+            double D = A1 * B2 - A2 * B1;
+            double Dx = -C1 * B2 + C2 * B1;
+            double Dy = -A1 * C2 + A2 * C1;
+            double x = Math.Round(Dx / D, 5);
+            double y = Math.Round(Dy / D, 5);
+            string[] intersectionPoint = {x.ToString(), y.ToString(), z};
+            return intersectionPoint;
+        }
+        (double A, double B, double C) PerpendicularLineAtX(string[] p1, string[] p2, double x0)
+        {
+            // Parse 2 điểm
+            double x1 = double.Parse(p1[0]);
+            double y1 = double.Parse(p1[1]);
+            double x2 = double.Parse(p2[0]);
+            double y2 = double.Parse(p2[1]);
+
+            // Trường hợp đường gốc thẳng đứng
+            if (x1 == x2)
+            {
+                // Đường vuông góc là đường nằm ngang y = y0
+                double y0_vert = y1; // vì x0 = x1
+                return (0, 1, -y0_vert); // 0x + 1y - y0 = 0
+            }
+
+            // Tính t và y0 tại x0
+            double t = (x0 - x1) / (x2 - x1);
+            double y0 = y1 + t * (y2 - y1);
+
+            // Vector chỉ phương đường gốc
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+
+            // Vector chỉ phương đường vuông góc
+            double A = -dx; // hệ số A của phương trình tổng quát
+            double B = -dy; // hệ số B
+            double C = -(A * x0 + B * y0);
+
+            return (A, B, C);
+        }
+        ((double, double, double) line1 ,(double, double, double) line2) OffsetTwoLines(double A, double B, double C, double d)
+        {
+            // Độ dài pháp tuyến
+            double norm = Math.Sqrt(A * A + B * B);
+
+            // Hai giá trị C mới cho hai đường offset
+            double C1 = C + d * norm;
+            double C2 = C - d * norm;
+
+            // Mỗi đường thẳng trả về dạng [A, B, C]
+            (double A1, double B1, double C1) line1 = ( A, B, C1 );
+            (double A1, double B1, double C1) line2 = (A, B, C2);
+
+            return (line1, line2);
+        }
+        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength)
+        {
+            string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
+            List<string> polyLine = new List<string>();
+            List<string[]> Cordinates = new List<string[]>();
+            Cordinates.AddRange(leftcordinates);
+
+            (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);
+            (double A, double B, double C) baseLineTop = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);
+
+            if (bearingtype == "Exterior_Left")
+            {
+                //for(int i = 0; i < cordinates[0].Length-1; i += 3)
+                //{
+
+                //}
+                string[] basePoint = leftcordinates[0];
+                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], xlocation);
+                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
+                
+                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item2);
+                Cordinates.Add(intersectionBot);
+                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item2);
+                Cordinates.Add(intersectionTop);
+
+                for (int i = 0; i < Cordinates.Count-1; i++)
+                {
+                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{ Cordinates[i+1][2]} {Cordinates[i+1][2]} " + "0.00000";
+                    polyLine.Add(workline);
+                }
+                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count-1][2]} {Cordinates[Cordinates.Count - 1][2]} " + "0.00000";
+                polyLine.Add(workline);
+            }
+            else if (bearingtype == "Exterior_Right")
             {
 
             }
+            else
+            {
 
-            return drawScript;
+            }
+            return polyLine;
         }
     }
     public class Bearing_Enhancer_5Percent : Bearing_Enhancer

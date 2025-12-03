@@ -18,6 +18,7 @@ namespace Bearing_Enhancer_CAN
         public bool WetService { get; set; } = false;
         public string JointID { get; set; }
         public string XLocation { get; set; }
+        public double XLocation_Physical { get; set; }
         public string YLocation { get; set; }
         public string Location_Type { get; set; }
         public double Reaction { get; set; }
