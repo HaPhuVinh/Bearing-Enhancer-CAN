@@ -257,6 +257,7 @@ namespace Bearing_Enhancer_CAN
                 Bearing_Enhancer BE = new Bearing_Enhancer();
 
                 list_BE = BE.Get_Bearing_Info(outputTxtFile, comboBox_Language.Text, comboBox_Unit.Text);
+
                 //LumberInventory lumberI = new LumberInventory();
                 //List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
                 //List<string> list_Mat = list_BE.Select(x => x.TopPlateInfo.Material).Distinct().ToList();

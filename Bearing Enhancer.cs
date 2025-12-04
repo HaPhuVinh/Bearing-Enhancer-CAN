@@ -1711,6 +1711,7 @@ namespace Bearing_Enhancer_CAN
                 bearingType = topPlateInfo.XLocation_Physical < (leftRef + rightRef) / 2 ? "Exterior_Left" : "Exterior_Right";
             }
             
+            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength);
 
             return drawScript;
         }
@@ -1804,12 +1805,8 @@ namespace Bearing_Enhancer_CAN
 
             if (bearingtype == "Exterior_Left")
             {
-                //for(int i = 0; i < cordinates[0].Length-1; i += 3)
-                //{
-
-                //}
                 string[] basePoint = leftcordinates[0];
-                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], xlocation);
+                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
                 
                 string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item2);
@@ -1819,19 +1816,50 @@ namespace Bearing_Enhancer_CAN
 
                 for (int i = 0; i < Cordinates.Count-1; i++)
                 {
-                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{ Cordinates[i+1][2]} {Cordinates[i+1][2]} " + "0.00000";
+                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{ Cordinates[i+1][0]} {Cordinates[i+1][1]} " + "0.00000";
                     polyLine.Add(workline);
                 }
-                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count-1][2]} {Cordinates[Cordinates.Count - 1][2]} " + "0.00000";
+                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count-1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
             else if (bearingtype == "Exterior_Right")
             {
+                string[] basePoint = rightcordinates[rightcordinates.Count-1];
+                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
+                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
 
+                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item1);
+                Cordinates.Add(intersectionTop);
+                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
+                Cordinates.Add(intersectionBot);
+
+                for (int i = 0; i < Cordinates.Count - 1; i++)
+                {
+                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
+                    polyLine.Add(workline);
+                }
+                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count - 1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                polyLine.Add(workline);
             }
             else
             {
+                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], xlocation);
+                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
 
+                string[] intersectionBotLeft = Intersection_Point(baseLineBot, offsetLines.Item1);
+                Cordinates.Add(intersectionBotLeft);
+                string[] intersectionTopLeft = Intersection_Point(baseLineTop, offsetLines.Item1);
+                Cordinates.Add(intersectionTopLeft);
+                string[] intersectionTopRight = Intersection_Point(baseLineTop, offsetLines.Item2);
+                Cordinates.Add(intersectionTopRight);
+                string[] intersectionBotRight = Intersection_Point(baseLineBot, offsetLines.Item2);
+                Cordinates.Add(intersectionBotRight);
+                for (int i = 0; i < Cordinates.Count - 1; i++)
+                {
+                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
+                    polyLine.Add(workline);
+                }
+                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count - 1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
             }
             return polyLine;
         }
