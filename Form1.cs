@@ -540,7 +540,11 @@ namespace Bearing_Enhancer_CAN
 
                         string theNote = $"Jnt {beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text)}";
                         row.Cells["The_Note"].Value = theNote;
+
+                        string polyWorkLine = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right);
+
                     }
+
                 }
                 else
                 {

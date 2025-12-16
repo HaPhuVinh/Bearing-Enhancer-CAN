@@ -28,6 +28,7 @@ namespace Bearing_Enhancer_CAN
         public string[] LumCoordinates_Right { get; set; }
         public Top_Plate_Info TopPlateInfo { get; set; }
         public List<string> BearingSolution { get; set; }
+        public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
 
         public Bearing_Enhancer()
         {
@@ -38,7 +39,7 @@ namespace Bearing_Enhancer_CAN
         {
             return "";
         }
-        public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates)
+        public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
         {
             return "";
         }
@@ -141,6 +142,8 @@ namespace Bearing_Enhancer_CAN
                                 }
                             }
                             //Get Data in <LumberResults> Node
+                            bE.List_LumberPieces = Get_LumberPeices(rootNode);
+
                             var listPieces = Get_Lumber(TP.Value.YLocation, rootNode, unit);
                             (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) keyLumber = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
                             //double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
@@ -1338,10 +1341,10 @@ namespace Bearing_Enhancer_CAN
             int i = 0;
             string[] S, A;
             string s;
-            //var keyLumber = (0, "", "", Left_Cordinates:Array.Empty<string>(), Right_Cordinates: Array.Empty<string>());
             (int No_, string Name, string Key, string[] Left_Cordinates, string[] Right_Cordinates) lumberPiece = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
             List<(int, string, string, string[], string[])> listPieces = new List<(int, string, string, string[], string[])>();
             XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
+            XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
             A = elementNode.InnerText.Split('\n');
             foreach (string I in A)
             {
@@ -1362,7 +1365,7 @@ namespace Bearing_Enhancer_CAN
                         lumberPiece.Name = S[0];
                         lumberPiece.Key = S[1];
                     }
-                    XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
+                    
                     int j = 0;
                     foreach (XmlNode N in nodeList)
                     {
@@ -1372,13 +1375,11 @@ namespace Bearing_Enhancer_CAN
                             string sl = N.Attributes["L"].Value;
                             sl = sl.Trim();
                             string[] ssl = sl.Split();
-                            //arrList.Add(ssl[0]);
                             lumberPiece.Left_Cordinates = ssl;
 
                             string sr = N.Attributes["R"].Value;
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
-                            //arrList.Add(ssr[ssr.Length - 3]);
                             lumberPiece.Right_Cordinates = ssr;
                             break;
                         }
@@ -1401,7 +1402,6 @@ namespace Bearing_Enhancer_CAN
                         lumberPiece.Name = S[0];
                         lumberPiece.Key = S[1];
                     }
-                    XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
                     int j = 0;
                     foreach (XmlNode N in nodeList)
                     {
@@ -1411,41 +1411,67 @@ namespace Bearing_Enhancer_CAN
                             string sl = N.Attributes["L"].Value;
                             sl = sl.Trim();
                             string[] ssl = sl.Split();
-                            //arrList.Add(ssl[0]);
                             lumberPiece.Left_Cordinates = ssl;
 
                             string sr = N.Attributes["R"].Value;
                             sr = sr.Trim();
                             string[] ssr = sr.Split();
-                            //arrList.Add(ssr[ssr.Length - 3]);
                             lumberPiece.Right_Cordinates = ssr;
                         }
                     }
                     listPieces.Add(lumberPiece);//{id, YLocation, Lumber ID, XLocation at the left of member, XLocation at the right of member}
                 }
-
             }
-
-            //double xloc = double.TryParse(x, out double result) ? result / iom.miliFactor : Convert_To_Inch(x);
-
-            //foreach (var piece in listPieces)
-            //{
-            //    string rightEnd = piece.Item5[piece.Item5.Length - 3];
-            //    double rightEndLoc = Double.Parse(rightEnd);
-
-            //    if (xloc <= rightEndLoc)
-            //    {
-            //        keyLumber = piece;
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        keyLumber = piece;
-            //    }
-            //}
             return listPieces;
         }
+        List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> Get_LumberPeices( XmlNode rootNode)//Get all lumber peices
+        {
+            int i = 0;
+            string[] S, A;
+            string s;
+            (int No_, string Name, string Key, string[] Left_Cordinates, string[] Right_Cordinates) lumberPiece = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
+            List<(int, string, string, string[], string[])> listPieces = new List<(int, string, string, string[], string[])>();
+            XmlNode elementNode = rootNode.SelectSingleNode("//LumberResults");
+            XmlNodeList nodeList = rootNode.SelectSingleNode("//Members").ChildNodes;
+            A = elementNode.InnerText.Split('\n');
+            foreach (string I in A)
+            {
+                i++;
+                if (i > nodeList.Count)
+                {
+                    break;
+                }
+                ArrayList arrList = new ArrayList();
+                s = I.Trim('\r');
+                S = s.Split(' ');
 
+                lumberPiece.No_ = i;
+                lumberPiece.Name = S[0];
+                lumberPiece.Key = S[1];
+
+                int j = 0;
+                foreach (XmlNode N in nodeList)
+                {
+                    j++;
+                    if (j == i)
+                    {
+                        string sl = N.Attributes["L"].Value;
+                        sl = sl.Trim();
+                        string[] ssl = sl.Split();
+                        lumberPiece.Left_Cordinates = ssl;
+
+                        string sr = N.Attributes["R"].Value;
+                        sr = sr.Trim();
+                        string[] ssr = sr.Split();
+                        lumberPiece.Right_Cordinates = ssr;
+                        break;
+                    }
+                }
+                listPieces.Add(lumberPiece);
+            }
+
+            return listPieces;
+        }
         double Convert_To_Inch(string xxx)
         {
             string s = xxx.Trim();
@@ -1681,17 +1707,27 @@ namespace Bearing_Enhancer_CAN
             }
             return theNote;
         }
-        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates)
+        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
         {
             string drawScript = "";
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             string[] arrKey = chosenSolution.Split('-');
-            int numberPly = int.Parse(Ply);
+            //int numberPly = int.Parse(Ply);
             double blockLength = Math.Round((unit=="Imperial"? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim())/iom.miliFactor));
-            List<string[]> polyLine = new List<string[]>();
             List<string[]> LeftCordinates = new List<string[]>();
             List<string[]> RightCordinates = new List<string[]>();
 
+            List<string[]> LLTopchordCordinates = new List<string[]>();
+            List<string[]> LRTopchordCordinates = new List<string[]>();
+            List<string[]> RLTopchordCordinates = new List<string[]>();
+            List<string[]> RRTopchordCordinates = new List<string[]>();
+            List<List<string[]>> TopchordCordinates = new List<List<string[]>>();
+
+            List<(int, string, string ,string[], string[])> TopchordPieces = listlumberpieces.Where(x => x.Name.Contains("TC")).ToList();
+            (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) LeftTopchordPiece = TopchordPieces[0];
+            (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) RightTopchordPiece= TopchordPieces[TopchordPieces.Count - 1];
+
+            //Get Bottomchord Cordinates
             for (int i = 0; i < leftCordinates.Length; i += 3)
             {
                 string[] L = new string[] { leftCordinates[i].Trim(), leftCordinates[i + 1].Trim(), leftCordinates[i + 2].Trim() };
@@ -1710,8 +1746,37 @@ namespace Bearing_Enhancer_CAN
             {
                 bearingType = topPlateInfo.XLocation_Physical < (leftRef + rightRef) / 2 ? "Exterior_Left" : "Exterior_Right";
             }
-            
-            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength);
+
+            //Get Topchord Cordinates of member at the left end and the right end
+            for (int i = 0; i < LeftTopchordPiece.Lcordinate.Length; i += 3)
+            {
+                string[] LL = new string[] { LeftTopchordPiece.Lcordinate[i].Trim(), LeftTopchordPiece.Lcordinate[i + 1].Trim(), LeftTopchordPiece.Lcordinate[i + 2].Trim() };
+                LLTopchordCordinates.Add(LL);
+            }
+            TopchordCordinates.Add(LLTopchordCordinates);
+
+            for (int i = 0; i < LeftTopchordPiece.Rcordinate.Length; i += 3)
+            {
+                string[] LR = new string[] { LeftTopchordPiece.Rcordinate[i].Trim(), LeftTopchordPiece.Rcordinate[i + 1].Trim(), LeftTopchordPiece.Rcordinate[i + 2].Trim() };
+                LRTopchordCordinates.Add(LR);
+            }
+            TopchordCordinates.Add(LRTopchordCordinates);
+
+            for (int i = 0; i < RightTopchordPiece.Lcordinate.Length; i += 3)
+            {
+                string[] RL = new string[] { RightTopchordPiece.Lcordinate[i].Trim(), RightTopchordPiece.Lcordinate[i + 1].Trim(), RightTopchordPiece.Lcordinate[i + 2].Trim() };
+                RLTopchordCordinates.Add(RL);
+            }
+            TopchordCordinates.Add(RLTopchordCordinates);
+
+            for (int i = 0; i < RightTopchordPiece.Rcordinate.Length; i += 3)
+            {
+                string[] RR = new string[] { RightTopchordPiece.Rcordinate[i].Trim(), RightTopchordPiece.Rcordinate[i + 1].Trim(), RightTopchordPiece.Rcordinate[i + 2].Trim() };
+                RRTopchordCordinates.Add(RR);
+            }
+            TopchordCordinates.Add(RRTopchordCordinates);
+
+            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates);
 
             return drawScript;
         }
@@ -1793,7 +1858,7 @@ namespace Bearing_Enhancer_CAN
 
             return (line1, line2);
         }
-        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength)
+        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates)
         {
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
             List<string> polyLine = new List<string>();
