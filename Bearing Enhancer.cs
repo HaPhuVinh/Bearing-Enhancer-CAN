@@ -1866,11 +1866,24 @@ namespace Bearing_Enhancer_CAN
             Cordinates.AddRange(leftcordinates);
 
             (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);
-            (double A, double B, double C) baseLineTop = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);
 
             if (bearingtype == "Exterior_Left")
             {
                 string[] basePoint = leftcordinates[0];
+
+                (double A, double B, double C) baseLineTop;
+                (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);
+                (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);
+                string[] refPoint = Intersection_Point(refLineBot,refLineTop);
+                if (double.Parse(refPoint[0])< double.Parse(basePoint[0]))
+                {
+                    baseLineTop = refLineTop;
+                }
+                else
+                {
+                    baseLineTop = refLineBot;
+                }
+
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
                 
@@ -1890,6 +1903,20 @@ namespace Bearing_Enhancer_CAN
             else if (bearingtype == "Exterior_Right")
             {
                 string[] basePoint = rightcordinates[rightcordinates.Count-1];
+
+                (double A, double B, double C) baseLineTop;
+                (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
+                (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[2][topchordcordinates[2].Count - 1], topchordcordinates[3][0]);
+                string[] refPoint = Intersection_Point(refLineBot, refLineTop);
+                if (double.Parse(refPoint[0]) > double.Parse(basePoint[0]))
+                {
+                    baseLineTop = refLineTop;
+                }
+                else
+                {
+                    baseLineTop = refLineBot;
+                }
+
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
 
@@ -1908,6 +1935,8 @@ namespace Bearing_Enhancer_CAN
             }
             else
             {
+                (double A, double B, double C) baseLineTop = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
+
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], xlocation);
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
 
@@ -1925,6 +1954,7 @@ namespace Bearing_Enhancer_CAN
                     polyLine.Add(workline);
                 }
                 workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count - 1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                polyLine.Add(workline);
             }
             return polyLine;
         }
