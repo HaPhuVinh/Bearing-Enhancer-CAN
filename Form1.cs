@@ -149,55 +149,7 @@ namespace Bearing_Enhancer_CAN
             }
         }
 
-        private void DownloadAndUpdate()
-        {
-            try
-            {
-                string updateUrl = @"S:\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
-                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                var file = new FileInfo(appDirectory);
-                string tempFile = Path.Combine(file.Directory.Parent.FullName, "Bearing Enhancer CAN.zip");
-
-                // Tải file zip về thư mục tạm
-                using (var client = new System.Net.WebClient())
-                {
-                    client.DownloadFile(updateUrl, tempFile);
-                }
-
-                // Gọi Updater.exe
-                string updaterPath = Path.Combine(appDirectory, "Updater.exe");
-
-                //if (!File.Exists(updaterPath))
-                //{
-                //    MessageBox.Show("Không tìm thấy Updater.exe tại: " + updaterPath);
-                //}
-
-                string mainExePath = Application.ExecutablePath;
-                string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
-                string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
-
-                var startInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = updaterPath,
-                    Arguments = arguments,
-                    UseShellExecute = true,
-                    //Verb = "runas" // yêu cầu quyền admin
-                };
-
-                //MessageBox.Show(arguments);
-                //MessageBox.Show($"Updater Path: {updaterPath}\nArguments: {arguments}");
-                //MessageBox.Show($"tempFile: {tempFile}\nappDirectory: {appDirectory}\nmainExePath: {mainExePath}");
-
-                System.Diagnostics.Process.Start(startInfo);
-
-                Application.Exit();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Update failed: " + ex.Message);
-            }
-        }
-
+        
         private void button1_Click(object sender, EventArgs e)// Button Check
         {
             list_Original_Bearing?.Clear();
@@ -1147,6 +1099,12 @@ namespace Bearing_Enhancer_CAN
 
                 }
             }
+        }
+
+        private void bnt_Draw_BearingBlock_Click(object sender, EventArgs e)
+        {
+            Form_CAD_Markup formCADMarkup = new Form_CAD_Markup();
+            formCADMarkup.ShowDialog();
         }
     }
 
