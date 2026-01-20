@@ -43,7 +43,7 @@
             this.Green_Lumber = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Joint_ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.X_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Y_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Y_Location = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Location_Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Reaction = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Brg_Width = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -65,8 +65,8 @@
             this.btn_Add_Note = new System.Windows.Forms.Button();
             this.btn_Browse = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bnt_Draw_BearingBlock = new System.Windows.Forms.Button();
+            this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).BeginInit();
@@ -228,6 +228,8 @@
             this.Y_Location.HeaderText = "Y-Location";
             this.Y_Location.MinimumWidth = 6;
             this.Y_Location.Name = "Y_Location";
+            this.Y_Location.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Y_Location.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Y_Location.Width = 83;
             // 
             // Location_Type
@@ -418,10 +420,6 @@
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
-            // bearingEnhancerBindingSource
-            // 
-            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
-            // 
             // bnt_Draw_BearingBlock
             // 
             this.bnt_Draw_BearingBlock.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -433,6 +431,10 @@
             this.bnt_Draw_BearingBlock.Text = "Draw Bearing Block";
             this.bnt_Draw_BearingBlock.UseVisualStyleBackColor = true;
             this.bnt_Draw_BearingBlock.Click += new System.EventHandler(this.bnt_Draw_BearingBlock_Click);
+            // 
+            // bearingEnhancerBindingSource
+            // 
+            this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
             // 
             // Form_BearingEnhacerCAN
             // 
@@ -484,6 +486,7 @@
         private System.Windows.Forms.Button btn_Add_Note;
         private System.Windows.Forms.Button btn_Browse;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button bnt_Draw_BearingBlock;
         private System.Windows.Forms.DataGridViewTextBoxColumn Truss_Name;
         private System.Windows.Forms.DataGridViewComboBoxColumn No_Ply;
         private System.Windows.Forms.DataGridViewComboBoxColumn Lumber_Specie;
@@ -493,7 +496,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Green_Lumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn Joint_ID;
         private System.Windows.Forms.DataGridViewTextBoxColumn X_Location;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Y_Location;
+        private System.Windows.Forms.DataGridViewComboBoxColumn Y_Location;
         private System.Windows.Forms.DataGridViewComboBoxColumn Location_Type;
         private System.Windows.Forms.DataGridViewTextBoxColumn Reaction;
         private System.Windows.Forms.DataGridViewTextBoxColumn Brg_Width;
@@ -505,7 +508,6 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Solution;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
-        private System.Windows.Forms.Button bnt_Draw_BearingBlock;
     }
 }
 

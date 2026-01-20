@@ -59,6 +59,7 @@ namespace Bearing_Enhancer_CAN
             List<string> list_DurationFactor = new List<string>() {"0.90","1.00", "1.05","1.10", "1.15", "1.25", "1.33", "1.60" };
             list_DurationFactor = list_DurationFactor.Distinct().ToList();
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
+            List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", ""};
 
             No_Ply.DataSource = list_Ply;
             Lumber_Specie.DataSource = list_Specie;
@@ -66,6 +67,7 @@ namespace Bearing_Enhancer_CAN
             DOL_Column.DataSource = list_DurationFactor;
             Location_Type.DataSource = list_LocationType;
             Material.DataSource = list_Mat;
+            Y_Location.DataSource = list_YLocation;
 
             // Đăng ký sự kiện thay đổi trạng thái ô
             dataGridView_Table.CellValueChanged += DataGridViewTable_CellValueChanged;
@@ -304,6 +306,7 @@ namespace Bearing_Enhancer_CAN
                     if (checkNull)
                     {
                         MessageBox.Show("Please check and input data into columns: No.-Ply, D-O-L, Location-Type, Reaction, Bearing-Width, Required-Width, Material");
+                        dataGridView_Table.Rows[e.RowIndex].Cells["Vertical_Block"].Value = false;
                     }
                     else
                     {
@@ -318,6 +321,7 @@ namespace Bearing_Enhancer_CAN
                             if (f2.ShowDialog() == DialogResult.OK)
                             {
                                 Imperial_Or_Metric iom = new Imperial_Or_Metric(comboBox_Unit.Text, comboBox_Language.Text);
+                                dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value = "Web";
                                 dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = f2.LumSize;
                                 dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = f2.LumSpecie;
                                 dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = iom.Unit == "Imperial" ? f2.ContactLength : Convert.ToString(Convert_String_Inch(f2.ContactLength) * iom.miliFactor);
@@ -385,12 +389,16 @@ namespace Bearing_Enhancer_CAN
                     {
                         string chordSize = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex)?.LumSize; //Lấy lại giá trị ban đầu nếu bỏ tick Vertical-Block
                         string chordSpecie = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex)?.LumSpecie;
+                        string yLocation = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex)?.TopPlateInfo.YLocation;
 
-                        if(chordSize!=null)
+                        if (chordSize!=null)
                         dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = chordSize;
 
                         if(chordSpecie != null)
                         dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = chordSpecie;
+
+                        if (yLocation != null)
+                            dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value = yLocation;
 
                         dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = ""; //Xóa giá trị trong ô Contact Length
                         row.DefaultCellStyle.BackColor = default; //Đổi màu dòng về mặc định
@@ -1104,6 +1112,38 @@ namespace Bearing_Enhancer_CAN
         private void bnt_Draw_BearingBlock_Click(object sender, EventArgs e)
         {
             Form_CAD_Markup formCADMarkup = new Form_CAD_Markup();
+            foreach (DataGridViewRow row in dataGridView_Table.Rows) 
+            {
+                string trussName = row.Cells["Truss_Name"].Value?.ToString();
+                bool valueCol19 = Convert.ToBoolean(row.Cells["Checked"].Value);
+                string chosenSolution = row.Cells["Bearing_Solution"].Value?.ToString();
+                if (!string.IsNullOrEmpty(trussName) && valueCol19 && chosenSolution.Contains("Block"))
+                {
+                    Bearing_Enhancer beItem = new Bearing_Enhancer();
+                    beItem.TrussName = row.Cells["Truss_Name"].Value?.ToString();
+                    beItem.Ply = row.Cells["No_Ply"].Value?.ToString();
+                    beItem.LumSpecie = row.Cells["Lumber_Specie"].Value?.ToString();
+                    beItem.LumSize = row.Cells["Lumber_Size"].Value?.ToString();
+                    Top_Plate_Info topPlate = new Top_Plate_Info();
+                    topPlate.DOL = new Duration_Factor();
+                    topPlate.DOL.DOL_Snow = row.Cells["DOL_Column"].Value?.ToString();
+                    topPlate.DOL.DOL_Live = "N/A";
+                    topPlate.DOL.DOL_Wind = "N/A";
+                    topPlate.JointID = row.Cells["Joint_ID"].Value?.ToString();
+                    topPlate.XLocation = row.Cells["X_Location"].Value?.ToString();
+                    topPlate.YLocation = chosenSolution.Contains("Ver")? "Web" : row.Cells["Y_Location"].Value?.ToString();
+                    topPlate.Location_Type = row.Cells["Location_Type"].Value?.ToString();
+                    topPlate.Reaction = double.Parse(row.Cells["Reaction"].Value?.ToString());
+                    topPlate.BearingWidth = row.Cells["Brg_Width"].Value?.ToString();
+                    topPlate.RequireWidth = row.Cells["Req_Width"].Value?.ToString();
+                    topPlate.Material = row.Cells["Material"].Value?.ToString();
+                    topPlate.LoadTransfer = Convert.ToDouble(row.Cells["Load_Transfer"].Value?.ToString());
+                    beItem.TopPlateInfo = topPlate;
+                    beItem.Chosen_Solution = chosenSolution;
+                    formCADMarkup.listBearingEnhancers.Add(beItem);
+
+                }
+            }
             formCADMarkup.ShowDialog();
         }
     }

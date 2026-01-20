@@ -28,6 +28,7 @@ namespace Bearing_Enhancer_CAN
         public string[] LumCoordinates_Right { get; set; }
         public Top_Plate_Info TopPlateInfo { get; set; }
         public List<string> BearingSolution { get; set; }
+        public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
 
         public Bearing_Enhancer()
@@ -117,7 +118,34 @@ namespace Bearing_Enhancer_CAN
                             if(rootNode.SelectSingleNode("//LoadTransfer").ChildNodes.Count > 1)
                             {
                                 XmlNodeList xmlReactionList = rootNode.SelectSingleNode("//LoadTransfer").ChildNodes;
-                                TP.Value.YLocation = xmlReactionList[TP.Key].Attributes["WhereBrgAttached"].Value;
+                                string ylocation = xmlReactionList[TP.Key].Attributes["WhereBrgAttached"].Value;
+                                switch(ylocation)
+                                {
+                                    case "TopChord":
+                                        TP.Value.YLocation = "TopChd";
+                                        break;
+                                    case "BottomChord":
+                                        TP.Value.YLocation = "BotChd";
+                                        break;
+                                    case "Web":
+                                        TP.Value.YLocation = "Web";
+                                        break;
+                                    case "FillerChord":
+                                        TP.Value.YLocation = "";
+                                        break;
+                                    case "BrgBlock":
+                                        TP.Value.YLocation = "";
+                                        break;
+                                    case "TieBeam":
+                                        TP.Value.YLocation = "";
+                                        break;
+                                    case "Wedge":
+                                        TP.Value.YLocation = "";
+                                        break;
+                                    default:
+                                        TP.Value.YLocation = "";
+                                        break;
+                                }
                             }
                             
                             XmlNodeList xmlBearingList = rootNode.SelectSingleNode("//Bearings").ChildNodes;
@@ -1527,7 +1555,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_CP : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
         public Bearing_Enhancer_CP (string chosensolution)
         {
             Chosen_Solution = chosensolution;
@@ -1550,7 +1577,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_TBE : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
         public Bearing_Enhancer_TBE(string chosensolution)
         {
             Chosen_Solution = chosensolution;
@@ -1571,7 +1597,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_VerBlock : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
         public Bearing_Enhancer_VerBlock(string chosensolution)
         {
             Chosen_Solution = chosensolution;
@@ -1640,7 +1665,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_HorBlock : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
 
         public Bearing_Enhancer_HorBlock(string chosensolution)
         {
@@ -1961,7 +1985,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_5Percent : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
         public Bearing_Enhancer_5Percent(string chosensolution)
         {
             Chosen_Solution = chosensolution;
@@ -1982,7 +2005,6 @@ namespace Bearing_Enhancer_CAN
     }
     public class Bearing_Enhancer_BuildingDesigner : Bearing_Enhancer
     {
-        public string Chosen_Solution { get; set; }
         public Bearing_Enhancer_BuildingDesigner(string chosensolution)
         {
             Chosen_Solution = chosensolution;
