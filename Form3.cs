@@ -16,12 +16,20 @@ namespace Bearing_Enhancer_CAN
         public Form_CAD_Markup()
         {
             InitializeComponent();
+            // Đăng ký sự kiện thay đổi trạng thái ô
+            dataGridView_CADMarkup.CellValueChanged += DataGridViewCellValueChanged;
+            dataGridView_CADMarkup.CurrentCellDirtyStateChanged += (s, ev) =>
+            {
+                if (dataGridView_CADMarkup.IsCurrentCellDirty)
+                    dataGridView_CADMarkup.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            };
         }
 
         private void Form3_Load(object sender, EventArgs e)
         {
+
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
-            List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", ""};
+            List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", "" };
 
             Bearing_Type.DataSource = list_LocationType;
             Y_Location.DataSource = list_YLocation;
@@ -38,6 +46,22 @@ namespace Bearing_Enhancer_CAN
                     dataGridView_CADMarkup.Rows[i].Cells["Y_Location"].Value = listBearingEnhancers[i].TopPlateInfo.YLocation;
                     dataGridView_CADMarkup.Rows[i].Cells["X_Location"].Value = listBearingEnhancers[i].TopPlateInfo.XLocation;
                     dataGridView_CADMarkup.Rows[i].Cells["Chosen_Solution"].Value = listBearingEnhancers[i].Chosen_Solution;
+                }
+            }
+        }
+        private void DataGridViewCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > 0 && e.ColumnIndex == 6)
+            {
+                DataGridViewRow row = dataGridView_CADMarkup.Rows[e.RowIndex];
+                bool isChecked = Convert.ToBoolean(row.Cells["Get_Script_Note"].Value);
+                if(isChecked)
+                {
+                    row.Cells["The_Script_Note"].Value = "The_Script_Note";
+                }
+                else
+                {
+                    row.Cells["The_Script_Note"].Value = "";
                 }
             }
         }

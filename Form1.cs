@@ -1114,12 +1114,22 @@ namespace Bearing_Enhancer_CAN
             Form_CAD_Markup formCADMarkup = new Form_CAD_Markup();
             foreach (DataGridViewRow row in dataGridView_Table.Rows) 
             {
+                Bearing_Enhancer beItem;
                 string trussName = row.Cells["Truss_Name"].Value?.ToString();
                 bool valueCol19 = Convert.ToBoolean(row.Cells["Checked"].Value);
                 string chosenSolution = row.Cells["Bearing_Solution"].Value?.ToString();
+                if (chosenSolution.Contains("Hor"))
+                {
+                    beItem = new Bearing_Enhancer_HorBlock(chosenSolution);
+                }
+                else
+                {
+                    beItem = new Bearing_Enhancer_VerBlock(chosenSolution);
+                }
+
                 if (!string.IsNullOrEmpty(trussName) && valueCol19 && chosenSolution.Contains("Block"))
                 {
-                    Bearing_Enhancer beItem = new Bearing_Enhancer();
+
                     beItem.TrussName = row.Cells["Truss_Name"].Value?.ToString();
                     beItem.Ply = row.Cells["No_Ply"].Value?.ToString();
                     beItem.LumSpecie = row.Cells["Lumber_Specie"].Value?.ToString();
@@ -1131,7 +1141,7 @@ namespace Bearing_Enhancer_CAN
                     topPlate.DOL.DOL_Wind = "N/A";
                     topPlate.JointID = row.Cells["Joint_ID"].Value?.ToString();
                     topPlate.XLocation = row.Cells["X_Location"].Value?.ToString();
-                    topPlate.YLocation = chosenSolution.Contains("Ver")? "Web" : row.Cells["Y_Location"].Value?.ToString();
+                    topPlate.YLocation = chosenSolution.Contains("Ver") ? "Web" : row.Cells["Y_Location"].Value?.ToString();
                     topPlate.Location_Type = row.Cells["Location_Type"].Value?.ToString();
                     topPlate.Reaction = double.Parse(row.Cells["Reaction"].Value?.ToString());
                     topPlate.BearingWidth = row.Cells["Brg_Width"].Value?.ToString();
