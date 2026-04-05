@@ -31,6 +31,8 @@ namespace Bearing_Enhancer_CAN
         public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
 
+        public string block_Draw_Script = "";
+
         public Bearing_Enhancer()
         {
         }
@@ -1918,10 +1920,10 @@ namespace Bearing_Enhancer_CAN
 
                 for (int i = 0; i < Cordinates.Count-1; i++)
                 {
-                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{ Cordinates[i+1][0]} {Cordinates[i+1][1]} " + "0.00000";
+                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000 " + $"{ Cordinates[i+1][0]} {Cordinates[i+1][1]} " + "0.00000";
                     polyLine.Add(workline);
                 }
-                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count-1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000 " + $"{Cordinates[Cordinates.Count-1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
             else if (bearingtype == "Exterior_Right")

@@ -1114,17 +1114,26 @@ namespace Bearing_Enhancer_CAN
             Form_CAD_Markup formCADMarkup = new Form_CAD_Markup();
             foreach (DataGridViewRow row in dataGridView_Table.Rows) 
             {
+                string chosenSolution;
                 Bearing_Enhancer beItem;
                 string trussName = row.Cells["Truss_Name"].Value?.ToString();
                 bool valueCol19 = Convert.ToBoolean(row.Cells["Checked"].Value);
-                string chosenSolution = row.Cells["Bearing_Solution"].Value?.ToString();
+                chosenSolution = row.Cells["Bearing_Solution"].Value?.ToString();
+                if(chosenSolution == null)
+                {
+                    continue;
+                }
                 if (chosenSolution.Contains("Hor"))
                 {
                     beItem = new Bearing_Enhancer_HorBlock(chosenSolution);
                 }
-                else
+                else if (chosenSolution.Contains("Ver"))
                 {
                     beItem = new Bearing_Enhancer_VerBlock(chosenSolution);
+                }
+                else
+                {
+                    continue;
                 }
 
                 if (!string.IsNullOrEmpty(trussName) && valueCol19 && chosenSolution.Contains("Block"))
@@ -1150,6 +1159,19 @@ namespace Bearing_Enhancer_CAN
                     topPlate.LoadTransfer = Convert.ToDouble(row.Cells["Load_Transfer"].Value?.ToString());
                     beItem.TopPlateInfo = topPlate;
                     beItem.Chosen_Solution = chosenSolution;
+
+                    foreach (var item in list_Original_Bearing)
+                    {
+                        if (beItem.TrussName == item.TrussName && beItem.TopPlateInfo.JointID == item.TopPlateInfo.JointID)
+                        {
+                            beItem.LumCoordinates_Left = item.LumCoordinates_Left;
+                            beItem.LumCoordinates_Right = item.LumCoordinates_Right;
+                            beItem.List_LumberPieces = item.List_LumberPieces;
+                            break;
+                        }
+                    }
+
+                    beItem.block_Draw_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);
                     formCADMarkup.listBearingEnhancers.Add(beItem);
 
                 }

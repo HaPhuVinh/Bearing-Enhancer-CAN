@@ -51,8 +51,9 @@ namespace Bearing_Enhancer_CAN
         }
         private void DataGridViewCellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex > 0 && e.ColumnIndex == 6)
+            if (e.RowIndex >= 0 && e.ColumnIndex == 6)
             {
+                string scriptNote;
                 DataGridViewRow row = dataGridView_CADMarkup.Rows[e.RowIndex];
                 bool isChecked = Convert.ToBoolean(row.Cells["Get_Script_Note"].Value);
                 if(isChecked)
