@@ -1889,6 +1889,7 @@ namespace Bearing_Enhancer_CAN
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
             List<string> polyLine = new List<string>();
             List<string[]> Cordinates = new List<string[]>();
+            List<string[]> Return_Cordinates = new List<string[]>();
             Cordinates.AddRange(leftcordinates);
 
             (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);
@@ -1901,9 +1902,16 @@ namespace Bearing_Enhancer_CAN
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);
                 string[] refPoint = Intersection_Point(refLineBot,refLineTop);
-                if (double.Parse(refPoint[0])< double.Parse(basePoint[0]))
+                if (double.Parse(refPoint[0]) > double.Parse(basePoint[0]))
                 {
-                    baseLineTop = refLineTop;
+                    if(blocklength <= double.Parse(refPoint[0]) - double.Parse(basePoint[0]))
+                    {
+                        baseLineTop = refLineTop;
+                    }
+                    else
+                    {
+                        baseLineTop = refLineBot;
+                    }
                 }
                 else
                 {
@@ -1917,20 +1925,20 @@ namespace Bearing_Enhancer_CAN
                 Cordinates.Add(intersectionTop);
                 string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
                 Cordinates.Add(intersectionBot);
-                
 
-                foreach (var Cor in Cordinates) // Convert to feet and round to 5 decimal places
+                Return_Cordinates = Cordinates;
+                foreach (var Cor in Return_Cordinates) // Convert to feet and round to 5 decimal places
                 {
                     Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
                     Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
                 }
 
-                for (int i = 0; i < Cordinates.Count-1; i++)
+                for (int i = 0; i < Return_Cordinates.Count-1; i++)
                 {
-                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000 " + $"{ Cordinates[i+1][0]} {Cordinates[i+1][1]} " + "0.00000";
+                    workline = $"wk {Return_Cordinates[i][0]} {Return_Cordinates[i][1]} " + "0.00000 " + $"{ Return_Cordinates[i+1][0]} {Return_Cordinates[i+1][1]} " + "0.00000";
                     polyLine.Add(workline);
                 }
-                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000 " + $"{Cordinates[Cordinates.Count-1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count-1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
             else if (bearingtype == "Exterior_Right")
@@ -1941,9 +1949,16 @@ namespace Bearing_Enhancer_CAN
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[2][topchordcordinates[2].Count - 1], topchordcordinates[3][0]);
                 string[] refPoint = Intersection_Point(refLineBot, refLineTop);
-                if (double.Parse(refPoint[0]) > double.Parse(basePoint[0]))
+                if (double.Parse(refPoint[0]) < double.Parse(basePoint[0]))
                 {
-                    baseLineTop = refLineTop;
+                    if( blocklength <= double.Parse(basePoint[0])- double.Parse(refPoint[0]))
+                    {
+                        baseLineTop = refLineTop;
+                    }
+                    else
+                    {
+                        baseLineTop = refLineBot;
+                    }
                 }
                 else
                 {
@@ -1958,18 +1973,19 @@ namespace Bearing_Enhancer_CAN
                 string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
                 Cordinates.Add(intersectionBot);
 
-                foreach (var Cor in Cordinates) // Convert to feet and round to 5 decimal places
+                Return_Cordinates = Cordinates;
+                foreach (var Cor in Return_Cordinates) // Convert to feet and round to 5 decimal places
                 {
                     Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
                     Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
                 }
 
-                for (int i = 0; i < Cordinates.Count - 1; i++)
+                for (int i = 0; i < Return_Cordinates.Count - 1; i++)
                 {
-                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
+                    workline = $"wk {Return_Cordinates[i][0]} {Return_Cordinates[i][1]} " + "0.00000" + $"{Return_Cordinates[i + 1][0]} {Return_Cordinates[i + 1][1]} " + "0.00000";
                     polyLine.Add(workline);
                 }
-                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count - 1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000" + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
             else
@@ -1988,18 +2004,19 @@ namespace Bearing_Enhancer_CAN
                 string[] intersectionBotRight = Intersection_Point(baseLineBot, offsetLines.Item2);
                 Cordinates.Add(intersectionBotRight);
 
-                foreach (var Cor in Cordinates)
+                Return_Cordinates = Cordinates;
+                foreach (var Cor in Return_Cordinates) // Convert to feet and round to 5 decimal places
                 {
-                    Cor[0] = Math.Round(double.Parse(Cor[0])/12, 6).ToString();
+                    Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
                     Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
                 }
 
-                for (int i = 0; i < Cordinates.Count - 1; i++)
+                for (int i = 0; i < Return_Cordinates.Count - 1; i++)
                 {
-                    workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
+                    workline = $"wk {Return_Cordinates[i][0]} {Return_Cordinates[i][1]} " + "0.00000" + $"{Return_Cordinates[i + 1][0]} {Return_Cordinates[i + 1][1]} " + "0.00000";
                     polyLine.Add(workline);
                 }
-                workline = $"wk {Cordinates[0][0]} {Cordinates[0][1]} " + "0.00000" + $"{Cordinates[Cordinates.Count - 1][0]} {Cordinates[Cordinates.Count - 1][1]} " + "0.00000";
+                workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000" + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
             return polyLine;
