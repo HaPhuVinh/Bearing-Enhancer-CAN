@@ -1167,6 +1167,7 @@ namespace Bearing_Enhancer_CAN
                             beItem.LumCoordinates_Left = item.LumCoordinates_Left;
                             beItem.LumCoordinates_Right = item.LumCoordinates_Right;
                             beItem.List_LumberPieces = item.List_LumberPieces;
+                            beItem.TopPlateInfo.XLocation_Physical = item.TopPlateInfo.XLocation_Physical;
                             break;
                         }
                     }

@@ -1912,11 +1912,18 @@ namespace Bearing_Enhancer_CAN
 
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
-                
-                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item2);
-                Cordinates.Add(intersectionBot);
-                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item2);
+
+                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item1);
                 Cordinates.Add(intersectionTop);
+                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
+                Cordinates.Add(intersectionBot);
+                
+
+                foreach (var Cor in Cordinates) // Convert to feet and round to 5 decimal places
+                {
+                    Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
+                    Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
+                }
 
                 for (int i = 0; i < Cordinates.Count-1; i++)
                 {
@@ -1951,6 +1958,12 @@ namespace Bearing_Enhancer_CAN
                 string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
                 Cordinates.Add(intersectionBot);
 
+                foreach (var Cor in Cordinates) // Convert to feet and round to 5 decimal places
+                {
+                    Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
+                    Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
+                }
+
                 for (int i = 0; i < Cordinates.Count - 1; i++)
                 {
                     workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
@@ -1974,6 +1987,13 @@ namespace Bearing_Enhancer_CAN
                 Cordinates.Add(intersectionTopRight);
                 string[] intersectionBotRight = Intersection_Point(baseLineBot, offsetLines.Item2);
                 Cordinates.Add(intersectionBotRight);
+
+                foreach (var Cor in Cordinates)
+                {
+                    Cor[0] = Math.Round(double.Parse(Cor[0])/12, 6).ToString();
+                    Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
+                }
+
                 for (int i = 0; i < Cordinates.Count - 1; i++)
                 {
                     workline = $"wk {Cordinates[i][0]} {Cordinates[i][1]} " + "0.00000" + $"{Cordinates[i + 1][0]} {Cordinates[i + 1][1]} " + "0.00000";
