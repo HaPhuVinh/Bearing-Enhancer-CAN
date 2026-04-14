@@ -1991,7 +1991,7 @@ namespace Bearing_Enhancer_CAN
                 {
                     baseLineTop = refLineBot;
                     //Cordinates.AddRange(rightcordinates);
-                    if (leftcordinates.Count > 2)
+                    if (rightcordinates.Count > 2)
                     {
                         Cordinates.RemoveRange(0, 2);
                         string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
