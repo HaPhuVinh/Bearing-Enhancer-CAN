@@ -1891,39 +1891,48 @@ namespace Bearing_Enhancer_CAN
             List<string> polyLine = new List<string>();
             List<string[]> Cordinates = new List<string[]>();
             List<string[]> Return_Cordinates = new List<string[]>();
-            
-            
 
-            (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);
+            (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);//line at the bottom of the block
 
             if (bearingtype == "Exterior_Left")
             {
-                Cordinates.AddRange(leftcordinates);
-                string[] basePoint = leftcordinates[0];
-
-                (double A, double B, double C) baseLineTop;
-                (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);
-                (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);
+                string[] basePoint = leftcordinates[0];//end point of the bottom of the lumber piece above the bearing at the left end
+                double X_LeftEnd = leftcordinates.Min(c => double.Parse(c[0]));//x left end of the lumber piece above the bearing at the left end
+                (double A, double B, double C) vertical_Line_LeftEnd = (1,0,-X_LeftEnd);
+                (double A, double B, double C) baseLineTop;//line at the top of the block
+                (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);//the top line of the bottom chord
+                (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);//the bottom line of the top chord
                 string[] refPoint = Intersection_Point(refLineBot,refLineTop);
+                Cordinates.AddRange(leftcordinates);
 
                 if (double.IsInfinity(double.Parse(refPoint[0])))
                 {
                     baseLineTop = refLineBot;
+                    //Cordinates.AddRange(leftcordinates);
                 }
-                else if (double.Parse(refPoint[0]) > double.Parse(basePoint[0]))
+                else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]))//check for girder heel
                 {
                     if(blocklength <= double.Parse(refPoint[0]) - double.Parse(basePoint[0]))
                     {
                         baseLineTop = refLineTop;
+                        //Cordinates.AddRange(leftcordinates);
                     }
                     else
                     {
                         baseLineTop = refLineBot;
+                        //Cordinates.AddRange(leftcordinates);
                     }
                 }
-                else
+                else//check for normal heel and rised heel
                 {
                     baseLineTop = refLineBot;
+                    //Cordinates.AddRange(leftcordinates);
+                    if(leftcordinates.Count > 2)
+                    {
+                        Cordinates.RemoveRange(Cordinates.Count - 2, 2);
+                        string[] newEndPoint = Intersection_Point(baseLineTop,vertical_Line_LeftEnd);
+                        Cordinates.Add(newEndPoint);
+                    }
                 }
 
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
@@ -1951,32 +1960,46 @@ namespace Bearing_Enhancer_CAN
             }
             else if (bearingtype == "Exterior_Right")
             {
-                Cordinates.AddRange(rightcordinates);
                 string[] basePoint = rightcordinates[rightcordinates.Count-1];
-
+                double X_RightEnd = rightcordinates.Max(c => double.Parse(c[0]));
+                (double A, double B, double C) vertical_Line_RightEnd = (1, 0, -X_RightEnd);
                 (double A, double B, double C) baseLineTop;
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[2][topchordcordinates[2].Count - 1], topchordcordinates[3][0]);
                 string[] refPoint = Intersection_Point(refLineBot, refLineTop);
+                Cordinates.AddRange(rightcordinates);
+
                 if (double.IsInfinity(double.Parse(refPoint[0])))
                 {
                     baseLineTop = refLineBot;
+                    //Cordinates.AddRange(rightcordinates);
                 }
-                else if (double.Parse(refPoint[0]) < double.Parse(basePoint[0]))
+                else if (double.Parse(refPoint[0]) <= double.Parse(basePoint[0]))
                 {
                     if( blocklength <= double.Parse(basePoint[0])- double.Parse(refPoint[0]))
                     {
                         baseLineTop = refLineTop;
+                        //Cordinates.AddRange(rightcordinates);
                     }
                     else
                     {
                         baseLineTop = refLineBot;
+                        //Cordinates.AddRange(rightcordinates);
                     }
                 }
                 else
                 {
                     baseLineTop = refLineBot;
+                    //Cordinates.AddRange(rightcordinates);
+                    if (leftcordinates.Count > 2)
+                    {
+                        Cordinates.RemoveRange(0, 2);
+                        string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                        Cordinates.Insert(0, newEndPoint);
+                    }
                 }
+
+                
 
                 (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
                 ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
