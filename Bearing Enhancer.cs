@@ -1972,25 +1972,55 @@ namespace Bearing_Enhancer_CAN
                 if (double.IsInfinity(double.Parse(refPoint[0])))
                 {
                     baseLineTop = refLineBot;
-                    //Cordinates.AddRange(rightcordinates);
+                    //Cordinates.Add(basePoint);
                 }
                 else if (double.Parse(refPoint[0]) <= double.Parse(basePoint[0]))
                 {
                     if( blocklength <= double.Parse(basePoint[0])- double.Parse(refPoint[0]))
                     {
                         baseLineTop = refLineTop;
-                        //Cordinates.AddRange(rightcordinates);
+                        //Cordinates.Add(basePoint);
+                        if (rightcordinates.Count > 2)
+                        {
+                            Cordinates.RemoveRange(0, 2);
+                            string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            Cordinates.Insert(0, newEndPoint);
+                        }
+                        else
+                        {
+                            Cordinates.RemoveRange(0, 1);
+                            string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            Cordinates.Insert(0, newEndPoint);
+                        }
                     }
                     else
                     {
                         baseLineTop = refLineBot;
-                        //Cordinates.AddRange(rightcordinates);
+                        //Cordinates.Add(basePoint);
+                        if (rightcordinates.Count > 2)
+                        {
+                            Cordinates.RemoveRange(0, 2);
+                            string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                            string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+                            
+                            Cordinates.Insert(0, newEndPoint_1);
+                            Cordinates.Insert(0, newEndPoint_2);
+                        }
+                        else
+                        {
+                            Cordinates.RemoveRange(0, 1);
+                            string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                            string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                            Cordinates.Insert(0, newEndPoint_1);
+                            Cordinates.Insert(0, newEndPoint_2);
+                        }
                     }
                 }
                 else
                 {
                     baseLineTop = refLineBot;
-                    //Cordinates.AddRange(rightcordinates);
+                    //Cordinates.Add(basePoint);
                     if (rightcordinates.Count > 2)
                     {
                         Cordinates.RemoveRange(0, 2);
