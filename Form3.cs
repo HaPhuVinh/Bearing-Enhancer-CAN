@@ -27,7 +27,8 @@ namespace Bearing_Enhancer_CAN
 
         private void Form3_Load(object sender, EventArgs e)
         {
-
+            dataGridView_CADMarkup.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dataGridView_CADMarkup.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
             List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", "" };
 
@@ -46,6 +47,7 @@ namespace Bearing_Enhancer_CAN
                     dataGridView_CADMarkup.Rows[i].Cells["Y_Location"].Value = listBearingEnhancers[i].TopPlateInfo.YLocation;
                     dataGridView_CADMarkup.Rows[i].Cells["X_Location"].Value = listBearingEnhancers[i].TopPlateInfo.XLocation;
                     dataGridView_CADMarkup.Rows[i].Cells["Chosen_Solution"].Value = listBearingEnhancers[i].Chosen_Solution;
+                    dataGridView_CADMarkup.Rows[i].Cells["The_Script_Note"].Value = listBearingEnhancers[i].BBlock_Markup_Script;
                 }
             }
         }
@@ -58,7 +60,7 @@ namespace Bearing_Enhancer_CAN
                 bool isChecked = Convert.ToBoolean(row.Cells["Get_Script_Note"].Value);
                 if(isChecked)
                 {
-                    row.Cells["The_Script_Note"].Value = "The_Script_Note";
+                    row.Cells["The_Script_Note"].Value = "";
                 }
                 else
                 {

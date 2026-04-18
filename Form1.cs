@@ -1172,7 +1172,7 @@ namespace Bearing_Enhancer_CAN
                         }
                     }
 
-                    beItem.block_Draw_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);
+                    beItem.BBlock_Markup_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);
                     formCADMarkup.listBearingEnhancers.Add(beItem);
 
                 }

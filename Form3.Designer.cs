@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView_CADMarkup = new System.Windows.Forms.DataGridView();
             this.AddTDL = new System.Windows.Forms.Button();
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -112,9 +113,12 @@
             // 
             // The_Script_Note
             // 
+            this.The_Script_Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.The_Script_Note.DefaultCellStyle = dataGridViewCellStyle1;
             this.The_Script_Note.HeaderText = "The-Script-Note";
             this.The_Script_Note.Name = "The_Script_Note";
-            this.The_Script_Note.Width = 500;
+            this.The_Script_Note.Width = 107;
             // 
             // Form_CAD_Markup
             // 

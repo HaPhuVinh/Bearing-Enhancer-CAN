@@ -31,7 +31,7 @@ namespace Bearing_Enhancer_CAN
         public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
 
-        public string block_Draw_Script = "";
+        public string BBlock_Markup_Script = "";
 
         public Bearing_Enhancer()
         {
@@ -1804,7 +1804,7 @@ namespace Bearing_Enhancer_CAN
             TopchordCordinates.Add(RRTopchordCordinates);
 
             List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates);
-
+            drawScript = string.Join(Environment.NewLine, polyWorkLine);
             return drawScript;
         }
 
