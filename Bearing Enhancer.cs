@@ -1,18 +1,20 @@
-﻿using System;
+﻿using iText.Layout.Element;
+using iText.Layout.Properties.Grid;
+using Microsoft.Office.Interop.Excel;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.Collections;
-using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-using System.Reflection;
-using iText.Layout.Element;
-using Microsoft.Office.Interop.Excel;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -1870,6 +1872,23 @@ namespace Bearing_Enhancer_CAN
 
             return (A, B, C);
         }
+
+        (double A, double B, double C)PerpendicularLineThroughPoint(string[] point,(double A, double B, double C) line)
+        {
+            double x0 = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y0 = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+
+            // Đường vuông góc có pháp tuyến (B, -A)
+            double A2 = B;
+            double B2 = -A;
+            double C2 = A * y0 - B * x0;
+
+            return (A2, B2, C2);
+        }
+
         ((double, double, double) line1 ,(double, double, double) line2) OffsetTwoLines(double A, double B, double C, double d)
         {
             // Độ dài pháp tuyến
@@ -1885,58 +1904,155 @@ namespace Bearing_Enhancer_CAN
 
             return (line1, line2);
         }
+
+        double DistancePointToLine(string[] point,(double A, double B, double C) line)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+            double C = line.C;
+
+            double denominator = Math.Sqrt(A * A + B * B);
+
+            return Math.Abs(A * x + B * y + C) / denominator;
+        }
+
+        double GetSlope((double A, double B, double C) line)
+        {
+            if (line.B == 0)
+                return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
+
+            return -line.A / line.B;
+        }
+
+
         List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates)
         {
+           
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
             List<string> polyLine = new List<string>();
             List<string[]> Cordinates = new List<string[]>();
             List<string[]> Return_Cordinates = new List<string[]>();
 
             (double A, double B, double C) baseLineBot = TwoPoint_LineEquation(leftcordinates[0], rightcordinates[rightcordinates.Count - 1]);//line at the bottom of the block
+            double slopeBaseLine = GetSlope(baseLineBot);//calculate bottom chord slope
+
+            const double TOL = 1e-6;
+            bool topChordContainRefPoint = false;
 
             if (bearingtype == "Exterior_Left")
             {
-                string[] basePoint = leftcordinates[0];//end point of the bottom of the lumber piece above the bearing at the left end
+                //string[] basePoint = leftcordinates[0];//end point of the bottom of the lumber piece above the bearing at the left end
+                string[] basePoint = leftcordinates.OrderBy(c => double.Parse(c[0])).First();//end point of the bottom of the lumber piece above the bearing at the left end
                 double X_LeftEnd = leftcordinates.Min(c => double.Parse(c[0]));//x left end of the lumber piece above the bearing at the left end
                 (double A, double B, double C) vertical_Line_LeftEnd = (1,0,-X_LeftEnd);
                 (double A, double B, double C) baseLineTop;//line at the top of the block
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);//the top line of the bottom chord
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);//the bottom line of the top chord
+                
+                double slopeRefLineTop = GetSlope(refLineTop);//calculate top chord slope
                 string[] refPoint = Intersection_Point(refLineBot,refLineTop);
+                foreach (var pointL in leftcordinates)
+                {
+                    double X = double.Parse(pointL[0], CultureInfo.InvariantCulture);
+                    double Y = double.Parse(pointL[1], CultureInfo.InvariantCulture);
+                    foreach (var pointT in topchordcordinates[0])
+                    {
+                        double x = double.Parse(pointT[0], CultureInfo.InvariantCulture);
+                        double y = double.Parse(pointT[1], CultureInfo.InvariantCulture);
+
+                        if (Math.Abs(X - x) <= TOL && Math.Abs(Y - y) <= TOL)
+                        {
+                            topChordContainRefPoint = true;
+                            break;
+                        }
+                    }
+                }
+
                 Cordinates.AddRange(leftcordinates);
 
-                if (double.IsInfinity(double.Parse(refPoint[0])))
+                if (double.IsInfinity(double.Parse(refPoint[0])))//check if the top chord and the bottom chord are parallel
                 {
                     baseLineTop = refLineBot;
                     //Cordinates.AddRange(leftcordinates);
                 }
-                else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]))//check for girder heel
+                else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && topChordContainRefPoint)//check for girder heels and normal heels
                 {
-                    if(blocklength <= double.Parse(refPoint[0]) - double.Parse(basePoint[0]))
+                    (double A, double B, double C) perp_BaseLine_AtRefPoint = PerpendicularLineThroughPoint(refPoint, baseLineBot);
+                    double girderHeelLength = DistancePointToLine(basePoint, perp_BaseLine_AtRefPoint);
+
+                    if (blocklength <= girderHeelLength)
                     {
                         baseLineTop = refLineTop;
                         //Cordinates.AddRange(leftcordinates);
+                        if (leftcordinates.Count > 2)
+                        {
+                            Cordinates.RemoveRange(Cordinates.Count - 2, 2);
+                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            //Cordinates.Insert(0, newEndPoint);
+                        }
+                        else
+                        {
+                            Cordinates.RemoveRange(Cordinates.Count - 1, 1);
+                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            //Cordinates.Insert(0, newEndPoint);
+                        }
+                        string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_LeftEnd);
+                        Cordinates.Add(newEndPoint);
                     }
                     else
                     {
                         baseLineTop = refLineBot;
                         //Cordinates.AddRange(leftcordinates);
+                        if (leftcordinates.Count > 2)
+                        {
+                            Cordinates.RemoveRange(Cordinates.Count - 2, 2);
+                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_LeftEnd);
+                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                            //Cordinates.Insert(0, newEndPoint_1);
+                            //Cordinates.Insert(0, newEndPoint_2);
+                        }
+                        else
+                        {
+                            Cordinates.RemoveRange(Cordinates.Count-1, 1);
+                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_LefEnd);
+                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                            //Cordinates.Insert(0, newEndPoint_1);
+                            //Cordinates.Insert(0, newEndPoint_2);
+                        }
+                        string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_LeftEnd);
+                        string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                        Cordinates.Add(newEndPoint_1);
+                        Cordinates.Add(newEndPoint_2);
                     }
                 }
-                else//check for normal heel and rised heel
+                else//check for normal heels and rised heels
                 {
                     baseLineTop = refLineBot;
                     //Cordinates.AddRange(leftcordinates);
                     if(leftcordinates.Count > 2)
                     {
                         Cordinates.RemoveRange(Cordinates.Count - 2, 2);
-                        string[] newEndPoint = Intersection_Point(baseLineTop,vertical_Line_LeftEnd);
-                        Cordinates.Add(newEndPoint);
+                        //string[] newEndPoint = Intersection_Point(baseLineTop,vertical_Line_LeftEnd);
+                        //Cordinates.Add(newEndPoint);
                     }
+                    else
+                    {
+                        Cordinates.RemoveRange(Cordinates.Count - 1, 1);
+                        //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_LeftEnd);
+                        //Cordinates.Add(newEndPoint);
+                    }
+                    string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_LeftEnd);
+                    Cordinates.Add(newEndPoint);
                 }
 
-                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
-                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
+                (double A, double B, double C) perp_BaseLine_AtBasePoint = PerpendicularLineThroughPoint(basePoint, baseLineBot);
+                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perp_BaseLine_AtBasePoint.A, perp_BaseLine_AtBasePoint.B, perp_BaseLine_AtBasePoint.C, blocklength);
 
                 string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item1);
                 Cordinates.Add(intersectionTop);
@@ -1960,7 +2076,8 @@ namespace Bearing_Enhancer_CAN
             }
             else if (bearingtype == "Exterior_Right")
             {
-                string[] basePoint = rightcordinates[rightcordinates.Count-1];
+                //string[] basePoint = rightcordinates[rightcordinates.Count-1];
+                string[] basePoint = rightcordinates.OrderBy(c => double.Parse(c[0])).Last();
                 double X_RightEnd = rightcordinates.Max(c => double.Parse(c[0]));
                 (double A, double B, double C) vertical_Line_RightEnd = (1, 0, -X_RightEnd);
                 (double A, double B, double C) baseLineTop;
@@ -1983,15 +2100,17 @@ namespace Bearing_Enhancer_CAN
                         if (rightcordinates.Count > 2)
                         {
                             Cordinates.RemoveRange(0, 2);
-                            string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                            Cordinates.Insert(0, newEndPoint);
+                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            //Cordinates.Insert(0, newEndPoint);
                         }
                         else
                         {
                             Cordinates.RemoveRange(0, 1);
-                            string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                            Cordinates.Insert(0, newEndPoint);
+                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                            //Cordinates.Insert(0, newEndPoint);
                         }
+                        string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                        Cordinates.Insert(0, newEndPoint);
                     }
                     else
                     {
@@ -2000,21 +2119,26 @@ namespace Bearing_Enhancer_CAN
                         if (rightcordinates.Count > 2)
                         {
                             Cordinates.RemoveRange(0, 2);
-                            string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
-                            string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
                             
-                            Cordinates.Insert(0, newEndPoint_1);
-                            Cordinates.Insert(0, newEndPoint_2);
+                            //Cordinates.Insert(0, newEndPoint_1);
+                            //Cordinates.Insert(0, newEndPoint_2);
                         }
                         else
                         {
                             Cordinates.RemoveRange(0, 1);
-                            string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
-                            string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
 
-                            Cordinates.Insert(0, newEndPoint_1);
-                            Cordinates.Insert(0, newEndPoint_2);
+                            //Cordinates.Insert(0, newEndPoint_1);
+                            //Cordinates.Insert(0, newEndPoint_2);
                         }
+                        string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                        string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                        Cordinates.Insert(0, newEndPoint_1);
+                        Cordinates.Insert(0, newEndPoint_2);
                     }
                 }
                 else
@@ -2024,9 +2148,17 @@ namespace Bearing_Enhancer_CAN
                     if (rightcordinates.Count > 2)
                     {
                         Cordinates.RemoveRange(0, 2);
-                        string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                        Cordinates.Insert(0, newEndPoint);
+                        //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                        //Cordinates.Insert(0, newEndPoint);
                     }
+                    else
+                    {
+                        Cordinates.RemoveRange(0, 1);
+                        //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                        //Cordinates.Insert(0, newEndPoint);
+                    }
+                    string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
+                    Cordinates.Insert(0, newEndPoint);
                 }
 
                 
