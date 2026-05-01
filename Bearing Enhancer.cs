@@ -1750,10 +1750,14 @@ namespace Bearing_Enhancer_CAN
             List<string[]> RLTopchordCordinates = new List<string[]>();
             List<string[]> RRTopchordCordinates = new List<string[]>();
             List<List<string[]>> TopchordCordinates = new List<List<string[]>>();
+            List<List<string[]>> VerticalWebCordinates = new List<List<string[]>>();
 
             List<(int, string, string ,string[], string[])> TopchordPieces = listlumberpieces.Where(x => x.Name.Contains("TC")).ToList();
             (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) LeftTopchordPiece = TopchordPieces[0];
             (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) RightTopchordPiece= TopchordPieces[TopchordPieces.Count - 1];
+
+            List<(int, string, string, string[], string[])> WebPieces = listlumberpieces.Where(x => x.Name.Contains("WB")).ToList();
+            VerticalWebCordinates = PotentialVerticalWeb(topPlateInfo.XLocation_Physical, WebPieces);
 
             //Get Bottomchord Cordinates
             for (int i = 0; i < leftCordinates.Length; i += 3)
@@ -1805,158 +1809,14 @@ namespace Bearing_Enhancer_CAN
             }
             TopchordCordinates.Add(RRTopchordCordinates);
 
-            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates);
+            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, VerticalWebCordinates);
             drawScript = string.Join(Environment.NewLine, polyWorkLine);
+
             return drawScript;
         }
 
-        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
-        {
-            //Ax+By+C=0
-            double x1 = double.Parse(P[0]);
-            double y1 = double.Parse(P[1]);
-            double x2 = double.Parse(Q[0]);
-            double y2 = double.Parse(Q[1]);
 
-            double A = y1 - y2;
-            double B = x2 - x1;
-            double C = x1 * y2 - x2 * y1;
-
-            return (A, B, C);
-        }
-        string[] Intersection_Point((double A1, double B1, double C1) line1, (double A2, double B2, double C2) line2)
-        {
-            string z = "0";
-            double A1 = line1.A1;
-            double B1 = line1.B1;
-            double C1 = line1.C1;
-            double A2 = line2.A2;
-            double B2 = line2.B2;
-            double C2 = line2.C2;
-            double D = A1 * B2 - A2 * B1;
-            double Dx = -C1 * B2 + C2 * B1;
-            double Dy = -A1 * C2 + A2 * C1;
-            double x = Math.Round(Dx / D, 5);
-            double y = Math.Round(Dy / D, 5);
-            string[] intersectionPoint = {x.ToString(), y.ToString(), z};
-            return intersectionPoint;
-        }
-        (double A, double B, double C) PerpendicularLineAtX(string[] p1, string[] p2, double x0)
-        {
-            // Parse 2 điểm
-            double x1 = double.Parse(p1[0]);
-            double y1 = double.Parse(p1[1]);
-            double x2 = double.Parse(p2[0]);
-            double y2 = double.Parse(p2[1]);
-
-            // Trường hợp đường gốc thẳng đứng
-            if (x1 == x2)
-            {
-                // Đường vuông góc là đường nằm ngang y = y0
-                double y0_vert = y1; // vì x0 = x1
-                return (0, 1, -y0_vert); // 0x + 1y - y0 = 0
-            }
-
-            // Tính t và y0 tại x0
-            double t = (x0 - x1) / (x2 - x1);
-            double y0 = y1 + t * (y2 - y1);
-
-            // Vector chỉ phương đường gốc
-            double dx = x2 - x1;
-            double dy = y2 - y1;
-
-            // Vector chỉ phương đường vuông góc
-            double A = -dx; // hệ số A của phương trình tổng quát
-            double B = -dy; // hệ số B
-            double C = -(A * x0 + B * y0);
-
-            return (A, B, C);
-        }
-
-        (double A, double B, double C)PerpendicularLineThroughPoint(string[] point,(double A, double B, double C) line)
-        {
-            double x0 = double.Parse(point[0], CultureInfo.InvariantCulture);
-            double y0 = double.Parse(point[1], CultureInfo.InvariantCulture);
-
-            double A = line.A;
-            double B = line.B;
-
-            // Đường vuông góc có pháp tuyến (B, -A)
-            double A2 = B;
-            double B2 = -A;
-            double C2 = A * y0 - B * x0;
-
-            return (A2, B2, C2);
-        }
-
-        ((double, double, double) line1 ,(double, double, double) line2) OffsetTwoLines(double A, double B, double C, double d)
-        {
-            // Độ dài pháp tuyến
-            double norm = Math.Sqrt(A * A + B * B);
-
-            // Hai giá trị C mới cho hai đường offset
-            double C1 = C + d * norm;
-            double C2 = C - d * norm;
-
-            // Mỗi đường thẳng trả về dạng [A, B, C]
-            (double A1, double B1, double C1) line1 = ( A, B, C1 );
-            (double A1, double B1, double C1) line2 = (A, B, C2);
-
-            return (line1, line2);
-        }
-
-        double DistancePointToLine(string[] point,(double A, double B, double C) line)
-        {
-            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
-            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
-
-            double A = line.A;
-            double B = line.B;
-            double C = line.C;
-
-            double denominator = Math.Sqrt(A * A + B * B);
-
-            return Math.Abs(A * x + B * y + C) / denominator;
-        }
-
-        bool IsPointOnLine(string[] point,(double A, double B, double C) line, double tolerance = 1e-6)
-        {
-            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
-            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
-
-            double value = line.A * x + line.B * y + line.C;
-
-            return Math.Abs(value) <= tolerance;
-        }
-        bool IsPointBelowLine(
-                string[] point,
-                (double A, double B, double C) line,
-                double tolerance = 1e-6)
-        {
-            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
-            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
-
-            double value = line.A * x + line.B * y + line.C;
-
-            if (Math.Abs(line.B) < tolerance)
-                throw new InvalidOperationException(
-                    "Đường thẳng đứng (B = 0) không có khái niệm trên/dưới.");
-
-            // Chuẩn hóa theo dấu của B
-            return line.B > 0
-                ? value < -tolerance
-                : value > tolerance;
-        }
-        double GetSlope((double A, double B, double C) line)
-        {
-            if (line.B == 0)
-                return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
-
-            return -line.A / line.B;
-        }
-
-
-        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates)
+        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<List<string[]>> verwebcordinate)
         {
             double tolerance = 1e-6;
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
@@ -2278,6 +2138,184 @@ namespace Bearing_Enhancer_CAN
             }
             return polyLine;
         }
+        #region Math related functions
+        List<List<string[]>> PotentialVerticalWeb(double xbearinglocation, List<(int, string, string, string[], string[])> webpieces)
+        {
+            List<List<string[]>> PotentialWeb = new List<List<string[]>>();
+            List<string[]> LeftCordinates = new List<string[]>();
+            List<string[]> RightCordinates = new List<string[]>();
+            foreach (var web in webpieces)
+            {
+                string[] RefLeftCordinate = web.Item4.ToArray();
+                string[] RefRightCordinate = web.Item5.ToArray();
+                double xVerticalLeft = double.Parse(RefLeftCordinate[0]);
+                double xVerticalRight = double.Parse(RefLeftCordinate[RefLeftCordinate.Length-1]);
+                string[] RefPoint = Intersection_Point(TwoPoint_LineEquation(RefLeftCordinate, RefRightCordinate), (1, 0, 0));
+
+                if (double.IsInfinity(double.Parse(RefPoint[1])) && xVerticalLeft <= xbearinglocation && xbearinglocation <= xVerticalRight)
+                {
+                    for (int i = 0 ; i < RefLeftCordinate.Length; i += 3)
+                    {
+                        string[] L = new string[] { RefLeftCordinate[i].Trim(), RefLeftCordinate[i + 1].Trim(), RefLeftCordinate[i + 2].Trim() };
+                        LeftCordinates.Add(L);
+                    }
+                    for (int j = 0; j < RefRightCordinate.Length; j += 3)
+                    {
+                        string[] R = new string[] { RefRightCordinate[j].Trim(), RefRightCordinate[j + 1].Trim(), RefRightCordinate[j + 2].Trim() };
+                        RightCordinates.Add(R);
+                    }
+                    PotentialWeb.Add(LeftCordinates);
+                    PotentialWeb.Add(RightCordinates);
+                    break;
+                }
+            }
+            return PotentialWeb;
+        }
+        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
+        {
+            //Ax+By+C=0
+            double x1 = double.Parse(P[0]);
+            double y1 = double.Parse(P[1]);
+            double x2 = double.Parse(Q[0]);
+            double y2 = double.Parse(Q[1]);
+
+            double A = y1 - y2;
+            double B = x2 - x1;
+            double C = x1 * y2 - x2 * y1;
+
+            return (A, B, C);
+        }
+        string[] Intersection_Point((double A1, double B1, double C1) line1, (double A2, double B2, double C2) line2)
+        {
+            string z = "0";
+            double A1 = line1.A1;
+            double B1 = line1.B1;
+            double C1 = line1.C1;
+            double A2 = line2.A2;
+            double B2 = line2.B2;
+            double C2 = line2.C2;
+            double D = A1 * B2 - A2 * B1;
+            double Dx = -C1 * B2 + C2 * B1;
+            double Dy = -A1 * C2 + A2 * C1;
+            double x = Math.Round(Dx / D, 5);
+            double y = Math.Round(Dy / D, 5);
+            string[] intersectionPoint = { x.ToString(), y.ToString(), z };
+            return intersectionPoint;
+        }
+        (double A, double B, double C) PerpendicularLineAtX(string[] p1, string[] p2, double x0)
+        {
+            // Parse 2 điểm
+            double x1 = double.Parse(p1[0]);
+            double y1 = double.Parse(p1[1]);
+            double x2 = double.Parse(p2[0]);
+            double y2 = double.Parse(p2[1]);
+
+            // Trường hợp đường gốc thẳng đứng
+            if (x1 == x2)
+            {
+                // Đường vuông góc là đường nằm ngang y = y0
+                double y0_vert = y1; // vì x0 = x1
+                return (0, 1, -y0_vert); // 0x + 1y - y0 = 0
+            }
+
+            // Tính t và y0 tại x0
+            double t = (x0 - x1) / (x2 - x1);
+            double y0 = y1 + t * (y2 - y1);
+
+            // Vector chỉ phương đường gốc
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+
+            // Vector chỉ phương đường vuông góc
+            double A = -dx; // hệ số A của phương trình tổng quát
+            double B = -dy; // hệ số B
+            double C = -(A * x0 + B * y0);
+
+            return (A, B, C);
+        }
+
+        (double A, double B, double C) PerpendicularLineThroughPoint(string[] point, (double A, double B, double C) line)
+        {
+            double x0 = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y0 = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+
+            // Đường vuông góc có pháp tuyến (B, -A)
+            double A2 = B;
+            double B2 = -A;
+            double C2 = A * y0 - B * x0;
+
+            return (A2, B2, C2);
+        }
+
+        ((double, double, double) line1, (double, double, double) line2) OffsetTwoLines(double A, double B, double C, double d)
+        {
+            // Độ dài pháp tuyến
+            double norm = Math.Sqrt(A * A + B * B);
+
+            // Hai giá trị C mới cho hai đường offset
+            double C1 = C + d * norm;
+            double C2 = C - d * norm;
+
+            // Mỗi đường thẳng trả về dạng [A, B, C]
+            (double A1, double B1, double C1) line1 = (A, B, C1);
+            (double A1, double B1, double C1) line2 = (A, B, C2);
+
+            return (line1, line2);
+        }
+
+        double DistancePointToLine(string[] point, (double A, double B, double C) line)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+            double C = line.C;
+
+            double denominator = Math.Sqrt(A * A + B * B);
+
+            return Math.Abs(A * x + B * y + C) / denominator;
+        }
+
+        bool IsPointOnLine(string[] point, (double A, double B, double C) line, double tolerance = 1e-6)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double value = line.A * x + line.B * y + line.C;
+
+            return Math.Abs(value) <= tolerance;
+        }
+        bool IsPointBelowLine(
+                string[] point,
+                (double A, double B, double C) line,
+                double tolerance = 1e-6)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double value = line.A * x + line.B * y + line.C;
+
+            if (Math.Abs(line.B) < tolerance)
+                throw new InvalidOperationException(
+                    "Đường thẳng đứng (B = 0) không có khái niệm trên/dưới.");
+
+            // Chuẩn hóa theo dấu của B
+            return line.B > 0
+                ? value < -tolerance
+                : value > tolerance;
+        }
+        double GetSlope((double A, double B, double C) line)
+        {
+            if (line.B == 0)
+                return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
+
+            return -line.A / line.B;
+        }
+        #endregion
     }
     public class Bearing_Enhancer_5Percent : Bearing_Enhancer
     {
