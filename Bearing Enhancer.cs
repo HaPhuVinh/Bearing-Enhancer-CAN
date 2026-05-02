@@ -1861,7 +1861,13 @@ namespace Bearing_Enhancer_CAN
                 if (double.IsInfinity(double.Parse(refPoint[0])))//Need to consider more...
                 {
                     baseLineTop = refLineBot;
-                    
+                    List<string> webCordinates = new List<string>();
+                    foreach (var web in Webs)
+                    {
+                        webCordinates.AddRange(web.Item4.ToList());
+                        webCordinates.AddRange(web.Item5.ToList());
+                        
+                    }
                     //Cordinates.AddRange(leftcordinates);
                 }
                 else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Need to consider more...
