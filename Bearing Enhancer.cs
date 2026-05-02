@@ -1750,14 +1750,13 @@ namespace Bearing_Enhancer_CAN
             List<string[]> RLTopchordCordinates = new List<string[]>();
             List<string[]> RRTopchordCordinates = new List<string[]>();
             List<List<string[]>> TopchordCordinates = new List<List<string[]>>();
-            List<List<string[]>> VerticalWebCordinates = new List<List<string[]>>();
+            //List<List<string[]>> VerticalWebCordinates = new List<List<string[]>>();
 
             List<(int, string, string ,string[], string[])> TopchordPieces = listlumberpieces.Where(x => x.Name.Contains("TC")).ToList();
             (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) LeftTopchordPiece = TopchordPieces[0];
             (int No_, string Name, string Key, string[] Lcordinate, string[] Rcordinate) RightTopchordPiece= TopchordPieces[TopchordPieces.Count - 1];
 
             List<(int, string, string, string[], string[])> WebPieces = listlumberpieces.Where(x => x.Name.Contains("WB")).ToList();
-            VerticalWebCordinates = PotentialVerticalWeb(topPlateInfo.XLocation_Physical, WebPieces);
 
             //Get Bottomchord Cordinates
             for (int i = 0; i < leftCordinates.Length; i += 3)
@@ -1809,14 +1808,14 @@ namespace Bearing_Enhancer_CAN
             }
             TopchordCordinates.Add(RRTopchordCordinates);
 
-            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, VerticalWebCordinates);
+            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
             drawScript = string.Join(Environment.NewLine, polyWorkLine);
 
             return drawScript;
         }
 
 
-        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<List<string[]>> verwebcordinate)
+        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<(int, string, string, string[], string[])> Webs)
         {
             double tolerance = 1e-6;
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
@@ -1862,7 +1861,8 @@ namespace Bearing_Enhancer_CAN
                 if (double.IsInfinity(double.Parse(refPoint[0])))//Need to consider more...
                 {
                     baseLineTop = refLineBot;
-                    Cordinates.AddRange(leftcordinates);
+                    
+                    //Cordinates.AddRange(leftcordinates);
                 }
                 else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Need to consider more...
                 {
@@ -2139,35 +2139,31 @@ namespace Bearing_Enhancer_CAN
             return polyLine;
         }
         #region Math related functions
-        List<List<string[]>> PotentialVerticalWeb(double xbearinglocation, List<(int, string, string, string[], string[])> webpieces)
+        List<List<string[]>> Get_VerticalWeb((int, string, string, string[], string[]) web)
         {
             List<List<string[]>> PotentialWeb = new List<List<string[]>>();
             List<string[]> LeftCordinates = new List<string[]>();
             List<string[]> RightCordinates = new List<string[]>();
-            foreach (var web in webpieces)
-            {
-                string[] RefLeftCordinate = web.Item4.ToArray();
-                string[] RefRightCordinate = web.Item5.ToArray();
-                double xVerticalLeft = double.Parse(RefLeftCordinate[0]);
-                double xVerticalRight = double.Parse(RefLeftCordinate[RefLeftCordinate.Length-1]);
-                string[] RefPoint = Intersection_Point(TwoPoint_LineEquation(RefLeftCordinate, RefRightCordinate), (1, 0, 0));
+            string[] leftCordinates = web.Item4.ToArray();
+            string[] rightCordinates = web.Item5.ToArray();
+            string[] refLeftCordinate = leftCordinates.Take(3).ToArray();
+            string[] refRightCordinate = rightCordinates.Skip(rightCordinates.Length - 3).ToArray();
+            string[] RefPoint = Intersection_Point(TwoPoint_LineEquation(refLeftCordinate, refRightCordinate), (1, 0, 0));
 
-                if (double.IsInfinity(double.Parse(RefPoint[1])) && xVerticalLeft <= xbearinglocation && xbearinglocation <= xVerticalRight)
+            if (double.IsInfinity(double.Parse(RefPoint[1])))
+            {
+                for (int i = 0; i < leftCordinates.Length; i += 3)
                 {
-                    for (int i = 0 ; i < RefLeftCordinate.Length; i += 3)
-                    {
-                        string[] L = new string[] { RefLeftCordinate[i].Trim(), RefLeftCordinate[i + 1].Trim(), RefLeftCordinate[i + 2].Trim() };
-                        LeftCordinates.Add(L);
-                    }
-                    for (int j = 0; j < RefRightCordinate.Length; j += 3)
-                    {
-                        string[] R = new string[] { RefRightCordinate[j].Trim(), RefRightCordinate[j + 1].Trim(), RefRightCordinate[j + 2].Trim() };
-                        RightCordinates.Add(R);
-                    }
-                    PotentialWeb.Add(LeftCordinates);
-                    PotentialWeb.Add(RightCordinates);
-                    break;
+                    string[] L = new string[] { leftCordinates[i].Trim(), leftCordinates[i + 1].Trim(), leftCordinates[i + 2].Trim() };
+                    LeftCordinates.Add(L);
                 }
+                for (int j = 0; j < rightCordinates.Length; j += 3)
+                {
+                    string[] R = new string[] { rightCordinates[j].Trim(), rightCordinates[j + 1].Trim(), rightCordinates[j + 2].Trim() };
+                    RightCordinates.Add(R);
+                }
+                PotentialWeb.Add(LeftCordinates);
+                PotentialWeb.Add(RightCordinates);
             }
             return PotentialWeb;
         }
