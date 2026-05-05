@@ -1843,7 +1843,7 @@ namespace Bearing_Enhancer_CAN
                 double slopeRefLineTop = GetSlope(refLineTop);//calculate top chord slope
                 string[] refPoint = Intersection_Point(refLineBot,refLineTop);
 
-                foreach (var point in leftcordinates)//check the type of the heel
+                foreach (var point in leftcordinates)//check for the type of the heel
                 {
                     if (IsPointOnLine(point, refLineBot))
                     {
@@ -1858,19 +1858,92 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                if (double.IsInfinity(double.Parse(refPoint[0])))//Need to consider more...
+                if (double.IsInfinity(double.Parse(refPoint[0])))//check if the top chord and the bottom chord are parallel
                 {
                     baseLineTop = refLineBot;
-                    List<string> webCordinates = new List<string>();
                     foreach (var web in Webs)
                     {
-                        webCordinates.AddRange(web.Item4.ToList());
-                        webCordinates.AddRange(web.Item5.ToList());
-                        
+                        Cordinates.AddRange(leftcordinates);
+                        List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
+                        if (VerticalWeb.Count > 1)
+                        {
+                            if (leftcordinates.Any(lc => IsPointOnLine(lc, TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count - 1]))))//Check vertical web pass through the heel the bottom chord
+                            {
+                                Cordinates.Clear();
+                                if (slopeBaseLine == 0)
+                                {
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineBot);
+                                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineTop);
+                                        Cordinates.Add(newPoint1);
+                                        Cordinates.Add(newPoint2);
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    break;
+                                }
+                                else if (slopeBaseLine > 0)
+                                {
+                                    string[] sRefPoint = Intersection_Point(baseLineTop, TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]));
+
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        if (double.Parse(sRefPoint[1]) <= double.Parse(VerticalWeb[0][VerticalWeb[0].Count - 1][1]))
+                                        {
+                                            Cordinates.AddRange(leftcordinates);
+                                        }
+                                        else
+                                        {
+                                            (double A, double B, double C) endVerticalLine = TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]);
+                                            string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][VerticalWeb[0].Count - 1], endVerticalLine));
+                                            string[] newPoint2 = VerticalWeb[0][VerticalWeb[0].Count - 1];
+                                            string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
+                                            Cordinates.Add(newPoint1);
+                                            Cordinates.Add(newPoint2);
+                                            Cordinates.Add(newPoint3);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    break;
+                                }
+                                else 
+                                {
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineBot);
+                                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineTop);
+                                        Cordinates.Add(newPoint1);
+                                        Cordinates.Add(newPoint2);
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    //Cordinates.AddRange(leftcordinates);
                 }
-                else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Need to consider more...
+                else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Check for raised heels with the top chord slope being negative
                 {
                     baseLineTop = refLineBot;
                     Cordinates.AddRange(leftcordinates);
@@ -1944,7 +2017,7 @@ namespace Bearing_Enhancer_CAN
                     baseLineTop = refLineBot;
                     Cordinates.AddRange(leftcordinates);
                 }
-                else//check for normal heels and rised heels
+                else//check for normal heels and raised heels
                 {
                     baseLineTop = refLineBot;
                     if (leftcordinates.Count > 2)
@@ -2291,19 +2364,12 @@ namespace Bearing_Enhancer_CAN
 
             return Math.Abs(value) <= tolerance;
         }
-        bool IsPointBelowLine(
-                string[] point,
-                (double A, double B, double C) line,
-                double tolerance = 1e-6)
+        bool IsPointBelowLine(string[] point, (double A, double B, double C) line, double tolerance = 1e-6)
         {
             double x = double.Parse(point[0], CultureInfo.InvariantCulture);
             double y = double.Parse(point[1], CultureInfo.InvariantCulture);
 
             double value = line.A * x + line.B * y + line.C;
-
-            if (Math.Abs(line.B) < tolerance)
-                throw new InvalidOperationException(
-                    "Đường thẳng đứng (B = 0) không có khái niệm trên/dưới.");
 
             // Chuẩn hóa theo dấu của B
             return line.B > 0
