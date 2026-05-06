@@ -1906,12 +1906,21 @@ namespace Bearing_Enhancer_CAN
                                         else
                                         {
                                             (double A, double B, double C) endVerticalLine = TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]);
-                                            string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][VerticalWeb[0].Count - 1], endVerticalLine));
-                                            string[] newPoint2 = VerticalWeb[0][VerticalWeb[0].Count - 1];
-                                            string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
-                                            Cordinates.Add(newPoint1);
-                                            Cordinates.Add(newPoint2);
-                                            Cordinates.Add(newPoint3);
+                                            if (IsPointOnLine(VerticalWeb[0][VerticalWeb[0].Count - 1], baseLineBot))
+                                            {
+                                                Cordinates.Add(VerticalWeb[0][VerticalWeb[0].Count - 1]);
+                                                string[] newPoint = Intersection_Point(endVerticalLine, baseLineTop);
+                                                Cordinates.Add(newPoint);
+                                            }
+                                            else
+                                            {
+                                                string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][VerticalWeb[0].Count - 1], endVerticalLine));
+                                                string[] newPoint2 = VerticalWeb[0][VerticalWeb[0].Count - 1];
+                                                string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
+                                                Cordinates.Add(newPoint1);
+                                                Cordinates.Add(newPoint2);
+                                                Cordinates.Add(newPoint3);
+                                            }
                                         }
                                     }
                                     else
