@@ -1858,7 +1858,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                if (double.IsInfinity(double.Parse(refPoint[0])))//check if the top chord and the bottom chord are parallel
+                if (Math.Abs(refLineBot.A*refLineTop.B - refLineBot.B*refLineTop.A) <= 0.01)//check if the top chord and the bottom chord are parallel
                 {
                     baseLineTop = refLineBot;
                     foreach (var web in Webs)
