@@ -52,7 +52,7 @@ namespace Bearing_Enhancer_CAN
             comboBox_Unit.Items.Add("Metric");
             comboBox_Unit.Text = "Imperial";
             
-            List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
+            List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF", "USER" };
             List<string> list_Ply = new List<string> { "1", "2", "3", "4", "5", "6" };
             List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
             List<string> list_Specie = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF" };
@@ -1053,8 +1053,6 @@ namespace Bearing_Enhancer_CAN
                 }
             }
         }
-
-        
 
         private void dataGridView_Table_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {

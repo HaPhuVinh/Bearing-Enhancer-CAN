@@ -155,7 +155,9 @@ namespace Bearing_Enhancer_CAN
                             XmlNodeList xmlBearingList = rootNode.SelectSingleNode("//Bearings").ChildNodes;
                             string[] sXLocLeft = xmlBearingList[TP.Key].Attributes["L"].Value.Trim().Split();
                             string[] sXLocRight = xmlBearingList[TP.Key].Attributes["R"].Value.Trim().Split();
-                            TP.Value.XLocation_Physical = (double.Parse(sXLocLeft[0]) + double.Parse(sXLocRight[0]))/2;
+                            TP.Value.XLoc_LeftSide = double.Parse(sXLocLeft[0]);
+                            TP.Value.XLoc_RightSide = double.Parse(sXLocRight[0]);
+                            TP.Value.XLocation_Physical = (TP.Value.XLoc_LeftSide + TP.Value.XLoc_RightSide)/2;
 
                             //Check Wet Service Condition and Green Lumber condition
                             elementNode = rootNode.SelectSingleNode("//Settings");
@@ -1381,7 +1383,7 @@ namespace Bearing_Enhancer_CAN
             foreach (string I in A)
             {
                 i++;
-                if (y == "BotChd" || y == "BottomChord")
+                if (y == "BotChd" || y == "BottomChord" || y== "Web")
                 {
                     if (!I.Contains("BC"))
                     {
@@ -1858,7 +1860,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                if (Math.Abs(refLineBot.A*refLineTop.B - refLineBot.B*refLineTop.A) <= 0.01)//check if the top chord and the bottom chord are parallel
+                if ((Math.Abs(refLineBot.A*refLineTop.B - refLineBot.B*refLineTop.A) <= 0.01))//check if the top chord and the bottom chord are parallel
                 {
                     baseLineTop = refLineBot;
                     foreach (var web in Webs)
@@ -1952,11 +1954,11 @@ namespace Bearing_Enhancer_CAN
                         }
                     }
                 }
-                else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Check for raised heels with the top chord slope being negative
-                {
-                    baseLineTop = refLineBot;
-                    Cordinates.AddRange(leftcordinates);
-                }
+                //else if(bTopChordAboveBottomChord && slopeRefLineTop < 0)//Check for raised heels with the top chord slope being negative
+                //{
+                //    baseLineTop = refLineBot;
+                //    Cordinates.AddRange(leftcordinates);
+                //}
                 else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && bTopChordOnBottomChord)//check for girder heels
                 {
 

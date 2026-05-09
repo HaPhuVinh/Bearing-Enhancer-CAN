@@ -19,6 +19,8 @@ namespace Bearing_Enhancer_CAN
         public string JointID { get; set; }
         public string XLocation { get; set; }
         public double XLocation_Physical { get; set; }
+        public double XLoc_LeftSide { get; set; }
+        public double XLoc_RightSide { get; set; }
         public string YLocation { get; set; }
         public string Location_Type { get; set; }
         public double Reaction { get; set; }
