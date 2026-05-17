@@ -181,20 +181,19 @@ namespace Bearing_Enhancer_CAN
                             var listPieces = Get_Lumber(TP.Value.YLocation, rootNode, unit);
                             (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) keyLumber = (0, "", "", Array.Empty<string>(), Array.Empty<string>());
                             //double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
-                            double xloc = TP.Value.XLocation_Physical;
+                            double X_bearing = TP.Value.XLocation_Physical;
                             int index = 0;
-                            bool leftEnd_Step = true;
-                            bool rightEnd_Step = true;
+                            bool bleftBreak = true;
+                            bool brightBreak = true;
+
                             foreach (var piece in listPieces)
                             {
-                                string X_leftEnd = piece.Item4[0];
-                                double X_leftEndLoc = Double.Parse(X_leftEnd);
-                                string X_rightEnd = piece.Item5[piece.Item5.Length - 3];
-                                double X_rightEndLoc = Double.Parse(X_rightEnd);
+                                double X_leftEnd = Double.Parse(piece.Cordinates_LeftEnd[0]);
+                                double X_rightEnd = Double.Parse(piece.Cordinates_RightEnd[piece.Cordinates_RightEnd.Length - 3]);
 
                                 if (listPieces.Count == 1)
                                 {
-                                    if (xloc > X_leftEndLoc + 8 && xloc < X_rightEndLoc - 8)
+                                    if (X_bearing > X_leftEnd + 8 && X_bearing < X_rightEnd - 8)
                                     {
                                         bE.TopPlateInfo.Location_Type = "Interior";
                                     }
@@ -205,64 +204,93 @@ namespace Bearing_Enhancer_CAN
                                 }
                                 else if (index < listPieces.Count-1)//&& listPieces.Count > 1
                                 {
-                                    string Y_rightEnd = listPieces.ElementAt(index).Cordinates_LeftEnd[1];
-                                    double Y_rightEndLoc = Double.Parse(Y_rightEnd);
-                                    string Y_leftEndAfter = listPieces.ElementAt(index+1).Cordinates_LeftEnd[1];
-                                    double Y_leftEndLocAfter = Double.Parse(Y_leftEndAfter);
+                                    double Y_rightEnd = Double.Parse(piece.Cordinates_RightEnd[piece.Cordinates_RightEnd.Length-2]);
+                                    double X_leftEndAfter = Double.Parse(listPieces.ElementAt(index + 1).Cordinates_LeftEnd[0]);
+                                    double Y_leftEndAfter = Double.Parse(listPieces.ElementAt(index + 1).Cordinates_LeftEnd[1]);
+                                    (double A, double B, double C) line = TwoPoint_LineEquation(piece.Cordinates_LeftEnd.Take(3).ToArray(), piece.Cordinates_RightEnd.Skip(piece.Cordinates_RightEnd.Length - 3).ToArray());
+                                    (double A, double B, double C) lineAfter = TwoPoint_LineEquation(listPieces.ElementAt(index+1).Cordinates_LeftEnd.Take(3).ToArray(), listPieces.ElementAt(index+1).Cordinates_RightEnd.Skip(listPieces.ElementAt(index+1).Cordinates_RightEnd.Length-3).ToArray()); 
+                                    double slope = GetSlope(line);
+                                    double slopeAfter = GetSlope(lineAfter);
+                                    bool bcoincidentlines = Math.Abs(slope - slopeAfter) <= 0.001 && IsPointOnLine(piece.Cordinates_LeftEnd.Take(3).ToArray(), lineAfter);
+                                    double lumberSize = DistancePointToLine(piece.Cordinates_LeftEnd.Skip(piece.Cordinates_LeftEnd.Length-3).ToArray(), line);
+                                    double lumberSizeAfter = DistancePointToLine(listPieces.ElementAt(index+1).Cordinates_LeftEnd.Skip(listPieces.ElementAt(index + 1).Cordinates_LeftEnd.Length-3).ToArray(), lineAfter);
 
+                                    if (bcoincidentlines)
+                                    {
+                                        brightBreak = false;
+                                    }
+                                    else
+                                    {
+                                        brightBreak = true;
+                                    }
 
-                                    if (Y_rightEndLoc == Y_leftEndLocAfter)
+                                    if (X_bearing <= X_leftEnd + 8)
                                     {
-                                        rightEnd_Step = false;
+                                        bE.TopPlateInfo.Location_Type = "Exterior";
+                                        keyLumber = piece;
+                                        break;
                                     }
-                                    else//Y_rightEndLoc != Y_leftEndLocAfter
-                                    {
-                                        rightEnd_Step = true;
-                                    }
-
-                                    if (leftEnd_Step == true && rightEnd_Step == true)
-                                    {
-                                        if (xloc <= X_leftEndLoc + 8 || xloc >= X_rightEndLoc - 8)
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Exterior";
-                                        }
-                                        else
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Interior";
-                                        }
-                                    }
-                                    else if (leftEnd_Step == true && rightEnd_Step == false)
-                                    {
-                                        if (xloc <= X_leftEndLoc + 8)
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Exterior";
-                                        }
-                                        else
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Interior";
-                                        }
-                                    }
-                                    else if (leftEnd_Step == false && rightEnd_Step == true)
-                                    {
-                                        if (xloc >= X_rightEndLoc - 8)
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Exterior";
-                                        }
-                                        else
-                                        {
-                                            bE.TopPlateInfo.Location_Type = "Interior";
-                                        }
-                                    }
-                                    else//leftEnd_Step == false && rightEnd_Step == false
+                                    else if (X_bearing <= X_rightEnd - 8)
                                     {
                                         bE.TopPlateInfo.Location_Type = "Interior";
+                                        keyLumber = piece;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        if (X_bearing <= X_rightEnd && !brightBreak)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                            keyLumber = lumberSize <= lumberSizeAfter ? piece : listPieces.ElementAt(index + 1);
+                                            break;
+                                        }
+                                        else if (X_bearing <= X_rightEnd && brightBreak)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                            keyLumber = piece;
+                                            break;
+                                        }
+                                        else if (X_bearing < X_leftEndAfter && !brightBreak)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Interior";
+                                            keyLumber = lumberSize <= lumberSizeAfter ? piece : listPieces.ElementAt(index + 1);
+                                            break;
+                                        }
+                                        else if(X_bearing < X_leftEndAfter && brightBreak)
+                                        {
+                                            bE.TopPlateInfo.Location_Type = "Exterior";
+                                            if (Y_rightEnd == Y_leftEndAfter)
+                                            {
+                                                if(slope == 0)
+                                                {
+                                                    keyLumber = piece;
+                                                    break;
+                                                }
+                                                else if (slopeAfter == 0)
+                                                {
+                                                    keyLumber = listPieces.ElementAt(index + 1); 
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    keyLumber = lumberSize <= lumberSizeAfter ? piece : listPieces.ElementAt(index + 1);
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                keyLumber = Y_rightEnd <= Y_leftEndAfter ? piece : listPieces.ElementAt(index + 1);
+                                                break;
+                                            }
+                                            
+                                        }
                                     }
                                 }
                                 else// index == listPieces.Count && listPieces.Count > 1
                                 {
-                                    if(leftEnd_Step == true)
+                                    if(bleftBreak == true)
                                     {
-                                        if (xloc <= X_leftEndLoc + 8 || xloc >= X_rightEndLoc - 8)
+                                        if (X_bearing <= X_leftEnd + 8 || X_bearing >= X_rightEnd - 8)
                                         {
                                             bE.TopPlateInfo.Location_Type = "Exterior";
                                         }
@@ -270,10 +298,11 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             bE.TopPlateInfo.Location_Type = "Interior";
                                         }
+                                        keyLumber = piece; break;
                                     }
-                                    else//leftEnd_Step == false
+                                    else//bleftBreak == false
                                     {
-                                        if( xloc >= X_rightEndLoc - 8)
+                                        if( X_bearing >= X_rightEnd - 8)
                                         {
                                             bE.TopPlateInfo.Location_Type = "Exterior";
                                         }
@@ -281,20 +310,11 @@ namespace Bearing_Enhancer_CAN
                                         {
                                             bE.TopPlateInfo.Location_Type = "Interior";
                                         }
+                                        keyLumber = piece; break;
                                     }
                                 }
 
-                                if (xloc <= X_rightEndLoc)
-                                {
-                                    keyLumber = piece;
-                                    break;
-                                }
-                                else
-                                {
-                                    keyLumber = piece;
-                                }
-
-                                leftEnd_Step = rightEnd_Step;
+                                bleftBreak = brightBreak;
                                 index = index + 1;
                             }
                             LumberInventory lumI = new LumberInventory();
@@ -319,18 +339,6 @@ namespace Bearing_Enhancer_CAN
                                     }
                                 }
                             }
-                            //Check Interior or Extorior Bearing
-                            //double xloc = double.TryParse(TP.Value.XLocation, out double result) ? result / iom.miliFactor : Convert_To_Inch(TP.Value.XLocation);
-                            //double xleftend = double.Parse(keyLumber.Cordinates_LeftEnd[0].ToString());
-                            //double xrightend = double.Parse(keyLumber.Cordinates_RightEnd[keyLumber.Cordinates_RightEnd.Length-3]);
-                            //if (xloc > xleftend + 8 && xloc < xrightend - 8)
-                            //{
-                            //    bE.TopPlateInfo.Location_Type = "Interior";
-                            //}
-                            //else
-                            //{
-                            //    bE.TopPlateInfo.Location_Type = "Exterior";
-                            //}
 
                             //Calculate Load Transfer load
                             double react = bE.TopPlateInfo.Reaction;
@@ -1556,7 +1564,49 @@ namespace Bearing_Enhancer_CAN
 
             return dictTrussName;
         }
-        
+        (double A, double B, double C) TwoPoint_LineEquation(string[] P, string[] Q)
+        {
+            //Ax+By+C=0
+            double x1 = double.Parse(P[0]);
+            double y1 = double.Parse(P[1]);
+            double x2 = double.Parse(Q[0]);
+            double y2 = double.Parse(Q[1]);
+
+            double A = y1 - y2;
+            double B = x2 - x1;
+            double C = x1 * y2 - x2 * y1;
+
+            return (A, B, C);
+        }
+        double GetSlope((double A, double B, double C) line)
+        {
+            if (line.B == 0)
+                return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
+
+            return -line.A / line.B;
+        }
+        bool IsPointOnLine(string[] point, (double A, double B, double C) line, double tolerance = 1e-3)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double value = line.A * x + line.B * y + line.C;
+
+            return Math.Abs(value) <= tolerance;
+        }
+        double DistancePointToLine(string[] point, (double A, double B, double C) line)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+            double C = line.C;
+
+            double denominator = Math.Sqrt(A * A + B * B);
+
+            return Math.Abs(A * x + B * y + C) / denominator;
+        }
         #endregion
     }
     public class Bearing_Enhancer_CP : Bearing_Enhancer
@@ -1957,100 +2007,7 @@ namespace Bearing_Enhancer_CAN
                         }
                     }
                 }
-                //else if (bTopChordAboveBottomChord && slopeRefLineTop > 0)//Check for raised heels with the top chord slope being positive
-                //{
-                //    baseLineTop = refLineBot;
-                //    foreach (var web in Webs)
-                //    {
-                //        Cordinates.AddRange(leftcordinates);
-                //        List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
-                //        if (VerticalWeb.Count > 1)
-                //        {
-                //            if (leftcordinates.Any(lc => IsPointOnLine(lc, TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count - 1]))))//Check vertical web pass through the heel the bottom chord
-                //            {
-                //                Cordinates.Clear();
-                //                if (slopeBaseLine == 0)
-                //                {
-                //                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
-                //                    {
-                //                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineBot);
-                //                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineTop);
-                //                        Cordinates.Add(newPoint1);
-                //                        Cordinates.Add(newPoint2);
-                //                    }
-                //                    else
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    break;
-                //                }
-                //                else if (slopeBaseLine > 0)
-                //                {
-                //                    string[] sRefPoint = Intersection_Point(baseLineTop, TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]));
-
-                //                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
-                //                    {
-                //                        if (double.Parse(sRefPoint[1]) <= double.Parse(VerticalWeb[0][VerticalWeb[0].Count - 1][1]))
-                //                        {
-                //                            Cordinates.AddRange(leftcordinates);
-                //                        }
-                //                        else
-                //                        {
-                //                            (double A, double B, double C) endVerticalLine = TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]);
-                //                            if (IsPointOnLine(VerticalWeb[0][VerticalWeb[0].Count - 1], baseLineBot))
-                //                            {
-                //                                Cordinates.Add(VerticalWeb[0][VerticalWeb[0].Count - 1]);
-                //                                string[] newPoint = Intersection_Point(endVerticalLine, baseLineTop);
-                //                                Cordinates.Add(newPoint);
-                //                            }
-                //                            else
-                //                            {
-                //                                string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][VerticalWeb[0].Count - 1], endVerticalLine));
-                //                                string[] newPoint2 = VerticalWeb[0][VerticalWeb[0].Count - 1];
-                //                                string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
-                //                                Cordinates.Add(newPoint1);
-                //                                Cordinates.Add(newPoint2);
-                //                                Cordinates.Add(newPoint3);
-                //                            }
-                //                        }
-                //                    }
-                //                    else
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    break;
-                //                }
-                //                else
-                //                {
-                //                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
-                //                    {
-                //                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineBot);
-                //                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count - 1], VerticalWeb[1][0]), baseLineTop);
-                //                        Cordinates.Add(newPoint1);
-                //                        Cordinates.Add(newPoint2);
-                //                    }
-                //                    else
-                //                    {
-                //                        Cordinates.AddRange(leftcordinates);
-                //                    }
-                //                    break;
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
+                
                 else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && (bTopChordOnBottomChord || !bTopChordAboveBottomChord))// && bTopChordOnBottomChord)//check for girder heels
                 {
                     (double A, double B, double C) perp_BaseLine_AtRefPoint = PerpendicularLineThroughPoint(refPoint, baseLineBot);
@@ -2068,7 +2025,7 @@ namespace Bearing_Enhancer_CAN
                         if (blocklength <= girderHeelLength)
                         {
                             baseLineTop = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], leftcordinates[leftcordinates.Count - 2]);
-                            for (int i = 0; i < leftcordinates.Count-2; i++)
+                            for (int i = 0; i < leftcordinates.Count-1; i++)
                             {
                                 Cordinates.Add(leftcordinates[i]);
                             }
@@ -2128,11 +2085,6 @@ namespace Bearing_Enhancer_CAN
                     }
                     
                 }
-                //else if(double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && bTopChordAboveBottomChord)//check for tail-rised heels
-                //{
-                //    baseLineTop = refLineBot;
-                //    Cordinates.AddRange(leftcordinates);
-                //}
                 else//check for normal heels 
                 {
                     baseLineTop = refLineBot;
