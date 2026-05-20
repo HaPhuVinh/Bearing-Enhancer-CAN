@@ -2138,94 +2138,231 @@ namespace Bearing_Enhancer_CAN
                 (double A, double B, double C) baseLineTop;
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[2][topchordcordinates[2].Count - 1], topchordcordinates[3][0]);
-                string[] refPoint = Intersection_Point(refLineBot, refLineTop);
-                Cordinates.AddRange(rightcordinates);
 
-                if (double.IsInfinity(double.Parse(refPoint[0])))
+                double slopeRefLineTop = GetSlope(refLineTop);
+                string[] refPoint = Intersection_Point(refLineBot, refLineTop);
+
+                foreach (var point in topchordcordinates[0])//check for the type of the heel
+                {
+                    if (IsPointOnLine(point, refLineBot))
+                    {
+                        bTopChordOnBottomChord = true;
+                        bTopChordAboveBottomChord = false;
+                        break;
+                    }
+
+                    if (IsPointBelowLine(point, refLineBot))
+                    {
+                        bTopChordAboveBottomChord = false;
+                    }
+                }
+
+                if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) check raised heels
                 {
                     baseLineTop = refLineBot;
-                    //Cordinates.Add(basePoint);
-                }
-                else if (double.Parse(refPoint[0]) <= double.Parse(basePoint[0]))
-                {
-                    if( blocklength <= double.Parse(basePoint[0])- double.Parse(refPoint[0]))
+                    foreach (var web in Webs)
                     {
-                        baseLineTop = refLineTop;
-                        //Cordinates.Add(basePoint);
-                        if (rightcordinates.Count > 2)
+                        Cordinates.AddRange(rightcordinates);
+                        List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
+                        if (VerticalWeb.Count > 1)
                         {
-                            Cordinates.RemoveRange(0, 2);
-                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                            //Cordinates.Insert(0, newEndPoint);
+                            if (rightcordinates.Any(rc => IsPointOnLine(rc, TwoPoint_LineEquation(VerticalWeb[0][VerticalWeb[0].Count-1], VerticalWeb[1][0]))))//Check vertical web pass through the heel the bottom chord
+                            {
+                                Cordinates.Clear();
+                                if (slopeBaseLine == 0)
+                                {
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(leftcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        basePoint = VerticalWeb[0][0];
+                                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count - 1]), baseLineBot);
+                                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count - 1]), baseLineTop);
+                                        Cordinates.Add(newPoint1);
+                                        Cordinates.Add(newPoint2);
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(rightcordinates);
+                                    }
+                                    break;
+                                }
+                                else if (slopeBaseLine < 0)
+                                {
+                                    string[] sRefPoint = Intersection_Point(baseLineTop, TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count-1]));
+
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(rightcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        basePoint = VerticalWeb[0][0];
+                                        if (double.Parse(sRefPoint[1]) <= double.Parse(VerticalWeb[0][0][1]))
+                                        {
+                                            Cordinates.AddRange(rightcordinates);
+                                        }
+                                        else
+                                        {
+                                            (double A, double B, double C) endVerticalLine = TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count-1]);
+                                            if (IsPointOnLine(VerticalWeb[0][0], baseLineBot))
+                                            {
+                                                Cordinates.Add(VerticalWeb[0][0]);
+                                                string[] newPoint = Intersection_Point(endVerticalLine, baseLineTop);
+                                                Cordinates.Add(newPoint);
+                                            }
+                                            else
+                                            {
+                                                string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][0], endVerticalLine));
+                                                string[] newPoint2 = VerticalWeb[0][0];
+                                                string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
+                                                Cordinates.Add(newPoint1);
+                                                Cordinates.Add(newPoint2);
+                                                Cordinates.Add(newPoint3);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(rightcordinates);
+                                    }
+                                    break;
+                                }
+                                else
+                                {
+                                    if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
+                                    {
+                                        Cordinates.AddRange(rightcordinates);
+                                    }
+                                    else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
+                                    {
+                                        basePoint = VerticalWeb[0][0];
+                                        string[] newPoint1 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count-1]), baseLineBot);
+                                        string[] newPoint2 = Intersection_Point(TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count-1]), baseLineTop);
+                                        Cordinates.Add(newPoint1);
+                                        Cordinates.Add(newPoint2);
+                                    }
+                                    else
+                                    {
+                                        Cordinates.AddRange(rightcordinates);
+                                    }
+                                    break;
+                                }
+                            }
                         }
-                        else
-                        {
-                            Cordinates.RemoveRange(0, 1);
-                            //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                            //Cordinates.Insert(0, newEndPoint);
-                        }
-                        string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                        Cordinates.Insert(0, newEndPoint);
                     }
-                    else
+                }
+
+                else if (double.Parse(refPoint[0]) <= double.Parse(basePoint[0]) && (bTopChordOnBottomChord || !bTopChordAboveBottomChord))// && bTopChordOnBottomChord)//check for girder heels
+                {
+                    (double A, double B, double C) perp_BaseLine_AtRefPoint = PerpendicularLineThroughPoint(refPoint, baseLineBot);
+                    double girderHeelLength = DistancePointToLine(basePoint, perp_BaseLine_AtRefPoint);
+
+                    if (double.Parse(refPoint[0]) < double.Parse(rightcordinates[0][0]))//tail bearing
                     {
                         baseLineTop = refLineBot;
-                        //Cordinates.Add(basePoint);
-                        if (rightcordinates.Count > 2)
+                        Cordinates.AddRange(rightcordinates);
+                    }
+                    else if (double.Parse(refPoint[0]) == double.Parse(rightcordinates[0][0]))//girder heel
+                    {
+
+
+                        if (blocklength <= girderHeelLength)
                         {
-                            Cordinates.RemoveRange(0, 2);
-                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
-                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
-                            
-                            //Cordinates.Insert(0, newEndPoint_1);
-                            //Cordinates.Insert(0, newEndPoint_2);
+                            baseLineTop = TwoPoint_LineEquation(rightcordinates[0], rightcordinates[1]);
+                            for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                            {
+                                Cordinates.Add(rightcordinates[i]);
+                            }
                         }
                         else
                         {
-                            Cordinates.RemoveRange(0, 1);
-                            //string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
-                            //string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+                            baseLineTop = refLineBot;
+                            Cordinates.AddRange(rightcordinates);
 
-                            //Cordinates.Insert(0, newEndPoint_1);
-                            //Cordinates.Insert(0, newEndPoint_2);
                         }
-                        string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
-                        string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
 
-                        Cordinates.Insert(0, newEndPoint_1);
-                        Cordinates.Insert(0, newEndPoint_2);
                     }
+                    else //Normal heels
+                    {
+
+                        if (blocklength <= girderHeelLength)
+                        {
+                            baseLineTop = refLineTop;
+                            for (int i = rightcordinates.Count -1 ; i >= 0 ; i--)
+                            {
+                                if (double.Parse(rightcordinates[i][0]) <= double.Parse(basePoint[0]))
+                                {
+                                    Cordinates.Add(rightcordinates[i]);
+                                }
+                                if (Math.Abs(double.Parse(basePoint[0]) - double.Parse(rightcordinates[i][0])) <= tolerance)
+                                {
+                                    break;
+                                }
+
+                            }
+                            string[] newEndPoint = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+
+                            Cordinates.Add(newEndPoint);
+                        }
+                        else//(blocklength > girderHeelLength)
+                        {
+                            baseLineTop = refLineBot;
+                            for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                            {
+                                if (double.Parse(rightcordinates[i][0]) <= double.Parse(basePoint[0]))
+                                {
+                                    Cordinates.Add(rightcordinates[i]);
+                                }
+                                if (Math.Abs(double.Parse(basePoint[0]) - double.Parse(rightcordinates[i][0])) <= tolerance)
+                                {
+                                    break;
+                                }
+
+                            }
+                            string[] newEndPoint_1 = Intersection_Point(refLineTop, vertical_Line_RightEnd);
+                            string[] newEndPoint_2 = Intersection_Point(baseLineTop, refLineTop);
+
+                            Cordinates.Add(newEndPoint_1);
+                            Cordinates.Add(newEndPoint_2);
+                        }
+
+                    }
+
                 }
-                else
+                else//check for normal heels 
                 {
                     baseLineTop = refLineBot;
-                    //Cordinates.Add(basePoint);
-                    if (rightcordinates.Count > 2)
+                    for (int i = rightcordinates.Count - 1; i >= 0; i--)
                     {
-                        Cordinates.RemoveRange(0, 2);
-                        //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                        //Cordinates.Insert(0, newEndPoint);
+                        if (double.Parse(rightcordinates[i][0]) <= double.Parse(basePoint[0]))
+                        {
+                            Cordinates.Add(rightcordinates[i]);
+                        }
+                        if (Math.Abs(double.Parse(basePoint[0]) - double.Parse(rightcordinates[i][0])) <= tolerance)
+                        {
+                            break;
+                        }
+
                     }
-                    else
-                    {
-                        Cordinates.RemoveRange(0, 1);
-                        //string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                        //Cordinates.Insert(0, newEndPoint);
-                    }
-                    string[] newEndPoint = Intersection_Point(baseLineTop, vertical_Line_RightEnd);
-                    Cordinates.Insert(0, newEndPoint);
+                    string[] newEndPoint = Intersection_Point(refLineBot, vertical_Line_RightEnd);
+
+                    Cordinates.Add(newEndPoint);
+
                 }
 
-                
 
-                (double A, double B, double C) perpBaseLine = PerpendicularLineAtX(leftcordinates[0], rightcordinates[rightcordinates.Count - 1], double.Parse(basePoint[0]));
-                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perpBaseLine.A, perpBaseLine.B, perpBaseLine.C, blocklength);
 
-                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item2);
-                Cordinates.Add(intersectionBot);
-                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item2);
+                (double A, double B, double C) perp_BaseLine_AtBasePoint = PerpendicularLineThroughPoint(basePoint, baseLineBot);
+                ((double, double, double) line1, (double, double, double) line2) offsetLines = OffsetTwoLines(perp_BaseLine_AtBasePoint.A, perp_BaseLine_AtBasePoint.B, perp_BaseLine_AtBasePoint.C, blocklength);
+
+                string[] intersectionTop = Intersection_Point(baseLineTop, offsetLines.Item1);
                 Cordinates.Add(intersectionTop);
-                
+                string[] intersectionBot = Intersection_Point(baseLineBot, offsetLines.Item1);
+                Cordinates.Add(intersectionBot);
+
                 Return_Cordinates = Cordinates;
                 foreach (var Cor in Return_Cordinates) // Convert to feet and round to 6 decimal places
                 {
