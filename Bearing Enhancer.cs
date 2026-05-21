@@ -1913,9 +1913,9 @@ namespace Bearing_Enhancer_CAN
                 if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) check raised heels
                 {
                     baseLineTop = refLineBot;
+                    Cordinates.AddRange(leftcordinates);
                     foreach (var web in Webs)
                     {
-                        Cordinates.AddRange(leftcordinates);
                         List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
                         if (VerticalWeb.Count > 1)
                         {
@@ -2160,9 +2160,9 @@ namespace Bearing_Enhancer_CAN
                 if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) check raised heels
                 {
                     baseLineTop = refLineBot;
+                    Cordinates.AddRange(rightcordinates);
                     foreach (var web in Webs)
                     {
-                        Cordinates.AddRange(rightcordinates);
                         List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
                         if (VerticalWeb.Count > 1)
                         {
