@@ -2128,6 +2128,8 @@ namespace Bearing_Enhancer_CAN
                 }
                 workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count-1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
+
+
             }
             else if (bearingtype == "Exterior_Right")
             {
@@ -2142,7 +2144,7 @@ namespace Bearing_Enhancer_CAN
                 double slopeRefLineTop = GetSlope(refLineTop);
                 string[] refPoint = Intersection_Point(refLineBot, refLineTop);
 
-                foreach (var point in topchordcordinates[0])//check for the type of the heel
+                foreach (var point in topchordcordinates[3])//check for the type of the heel
                 {
                     if (IsPointOnLine(point, refLineBot))
                     {
@@ -2207,15 +2209,16 @@ namespace Bearing_Enhancer_CAN
                                         else
                                         {
                                             (double A, double B, double C) endVerticalLine = TwoPoint_LineEquation(VerticalWeb[0][0], VerticalWeb[1][VerticalWeb[1].Count-1]);
-                                            if (IsPointOnLine(VerticalWeb[0][0], baseLineBot))
+                                            if (IsPointOnLine(VerticalWeb[0][VerticalWeb[0].Count-1], baseLineBot))
                                             {
+                                                Cordinates.Add(VerticalWeb[0][VerticalWeb[0].Count-1]);
                                                 Cordinates.Add(VerticalWeb[0][0]);
                                                 string[] newPoint = Intersection_Point(endVerticalLine, baseLineTop);
                                                 Cordinates.Add(newPoint);
                                             }
                                             else
                                             {
-                                                string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][0], endVerticalLine));
+                                                string[] newPoint1 = Intersection_Point(baseLineBot, PerpendicularLineThroughPoint(VerticalWeb[0][VerticalWeb[0].Count-1], endVerticalLine));
                                                 string[] newPoint2 = VerticalWeb[0][0];
                                                 string[] newPoint3 = Intersection_Point(endVerticalLine, baseLineTop);
                                                 Cordinates.Add(newPoint1);
@@ -2378,7 +2381,7 @@ namespace Bearing_Enhancer_CAN
                 workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
-            else
+            else //bearingtype == Interior
             {
                 (double A, double B, double C) baseLineTop = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
 
