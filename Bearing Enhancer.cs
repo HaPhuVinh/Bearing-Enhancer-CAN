@@ -1860,14 +1860,29 @@ namespace Bearing_Enhancer_CAN
             }
             TopchordCordinates.Add(RRTopchordCordinates);
 
-            List<string> polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
-            drawScript = string.Join(Environment.NewLine, polyWorkLine);
+            (List < string[]> blockCordinates, List<string> workLines) polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
+            
+            
+            drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
 
             return drawScript;
         }
 
+        List<string> Create_HatchScript(List<string[]> cordinates)
+        {
+            List<string> hatchScripts = new List<string>();
+            for(int i = 0; i < cordinates.Count - 1; i++)
+            {
+                double[] clickPoint = new double[2];
+                clickPoint[0] = 1 / 2 * (double.Parse(cordinates[i][0]) + double.Parse(cordinates[i+1][0]));
+                clickPoint[1] = 1 / 2 * (double.Parse(cordinates[i][1]) + double.Parse(cordinates[i+1][1]));
+                string hatchScript = $"beginpoly 0 213 -10000 0 213 10000";
+                hatchScripts.Add(hatchScript);
+            }
+            return hatchScripts;
+        }
 
-        List<string> Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<(int, string, string, string[], string[])> Webs)
+        (List<string[]>, List<string>) Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<(int, string, string, string[], string[])> Webs)
         {
             double tolerance = 1e-6;
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
@@ -1880,7 +1895,7 @@ namespace Bearing_Enhancer_CAN
 
             bool bTopChordOnBottomChord = false;
             bool bTopChordAboveBottomChord = true;
-            bool bVerWebPassThroughBottomChord = false;
+            //bool bVerWebPassThroughBottomChord = false;
 
             if (bearingtype == "Exterior_Left")
             {
@@ -2412,9 +2427,33 @@ namespace Bearing_Enhancer_CAN
                 workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
                 polyLine.Add(workline);
             }
-            return polyLine;
+            return (Return_Cordinates, polyLine);
         }
         #region Math related functions
+        string InchToFitInchSix(double totalInches)
+        {
+            int feet = (int)(totalInches / 12);
+
+            double remainingInches = totalInches - feet * 12;
+
+            int inches = (int)Math.Floor(remainingInches);
+
+            int sixteenth = (int)Math.Round((remainingInches - inches) * 16);
+
+            if (sixteenth == 16)
+            {
+                sixteenth = 0;
+                inches++;
+
+                if (inches == 12)
+                {
+                    inches = 0;
+                    feet++;
+                }
+            }
+
+            return (feet * 10000 + inches * 100 + sixteenth).ToString();
+        }
         List<List<string[]>> Get_VerticalWeb((int, string, string, string[], string[]) web)
         {
             List<List<string[]>> PotentialWeb = new List<List<string[]>>();
