@@ -1868,14 +1868,21 @@ namespace Bearing_Enhancer_CAN
             return drawScript;
         }
 
-        List<string> Create_HatchScript(List<string[]> cordinates)
+        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
         {
+            (string X, string Y, string Z) clickPoint;
+            (double X, double Y, double Z) currentPoint;
+            (double A, double B, double C) currentLine;
             List<string> hatchScripts = new List<string>();
-            for(int i = 0; i < cordinates.Count - 1; i++)
+            for(int i = 0; i < blockcordinates.Count - 1; i++)
             {
-                double[] clickPoint = new double[2];
-                clickPoint[0] = 1 / 2 * (double.Parse(cordinates[i][0]) + double.Parse(cordinates[i+1][0]));
-                clickPoint[1] = 1 / 2 * (double.Parse(cordinates[i][1]) + double.Parse(cordinates[i+1][1]));
+                currentLine = TwoPoint_LineEquation(blockcordinates[i], blockcordinates[i + 1]);
+                currentPoint.X = 1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(blockcordinates[i+1][0]));
+                currentPoint.Y = 1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(blockcordinates[i+1][1]));
+                for(i=0; i < listlumberpieces.Count; i++)
+                {
+
+                }
                 string hatchScript = $"beginpoly 0 213 -10000 0 213 10000";
                 hatchScripts.Add(hatchScript);
             }
@@ -2177,7 +2184,10 @@ namespace Bearing_Enhancer_CAN
                 if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) check raised heels
                 {
                     baseLineTop = refLineBot;
-                    Cordinates.AddRange(rightcordinates);
+                    for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                    {
+                        Cordinates.Add(rightcordinates[i]);
+                    }
                     foreach (var web in Webs)
                     {
                         List<List<string[]>> VerticalWeb = Get_VerticalWeb(web);
@@ -2190,7 +2200,10 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
                                     {
-                                        Cordinates.AddRange(leftcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
                                     {
@@ -2202,7 +2215,10 @@ namespace Bearing_Enhancer_CAN
                                     }
                                     else
                                     {
-                                        Cordinates.AddRange(rightcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     break;
                                 }
@@ -2212,14 +2228,20 @@ namespace Bearing_Enhancer_CAN
 
                                     if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
                                     {
-                                        Cordinates.AddRange(rightcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
                                     {
                                         basePoint = VerticalWeb[0][0];
                                         if (double.Parse(sRefPoint[1]) <= double.Parse(VerticalWeb[0][0][1]))
                                         {
-                                            Cordinates.AddRange(rightcordinates);
+                                            for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                            {
+                                                Cordinates.Add(rightcordinates[i]);
+                                            }
                                         }
                                         else
                                         {
@@ -2244,7 +2266,10 @@ namespace Bearing_Enhancer_CAN
                                     }
                                     else
                                     {
-                                        Cordinates.AddRange(rightcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     break;
                                 }
@@ -2252,7 +2277,10 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineBot)))
                                     {
-                                        Cordinates.AddRange(rightcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     else if (VerticalWeb[0].Any(wc => IsPointBelowLine(wc, baseLineTop)))
                                     {
@@ -2264,7 +2292,10 @@ namespace Bearing_Enhancer_CAN
                                     }
                                     else
                                     {
-                                        Cordinates.AddRange(rightcordinates);
+                                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                                        {
+                                            Cordinates.Add(rightcordinates[i]);
+                                        }
                                     }
                                     break;
                                 }
@@ -2281,7 +2312,10 @@ namespace Bearing_Enhancer_CAN
                     if (double.Parse(refPoint[0]) < double.Parse(rightcordinates[0][0]))//tail bearing
                     {
                         baseLineTop = refLineBot;
-                        Cordinates.AddRange(rightcordinates);
+                        for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                        {
+                            Cordinates.Add(rightcordinates[i]);
+                        }
                     }
                     else if (double.Parse(refPoint[0]) == double.Parse(rightcordinates[0][0]))//girder heel
                     {
@@ -2298,7 +2332,10 @@ namespace Bearing_Enhancer_CAN
                         else
                         {
                             baseLineTop = refLineBot;
-                            Cordinates.AddRange(rightcordinates);
+                            for (int i = rightcordinates.Count - 1; i >= 0; i--)
+                            {
+                                Cordinates.Add(rightcordinates[i]);
+                            }
 
                         }
 
