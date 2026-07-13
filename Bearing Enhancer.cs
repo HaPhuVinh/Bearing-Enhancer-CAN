@@ -1871,14 +1871,19 @@ namespace Bearing_Enhancer_CAN
         List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
         {
             (string X, string Y, string Z) clickPoint;
-            (double X, double Y, double Z) currentPoint;
+            string[] currentPoint;
             (double A, double B, double C) currentLine;
+            (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             for(int i = 0; i < blockcordinates.Count - 1; i++)
             {
+                currentPoint = new string[3];
+                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(blockcordinates[i + 1][0]))).ToString();
+                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(blockcordinates[i + 1][1]))).ToString();
                 currentLine = TwoPoint_LineEquation(blockcordinates[i], blockcordinates[i + 1]);
-                currentPoint.X = 1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(blockcordinates[i+1][0]));
-                currentPoint.Y = 1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(blockcordinates[i+1][1]));
+                perpToCurrentLine = PerpendicularLineThroughPoint(currentPoint, currentLine);
+
+                
                 for(i=0; i < listlumberpieces.Count; i++)
                 {
 
