@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -1860,35 +1861,81 @@ namespace Bearing_Enhancer_CAN
             }
             TopchordCordinates.Add(RRTopchordCordinates);
 
-            (List < string[]> blockCordinates, List<string> workLines) polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
-            
-            
+            (List <string[]> blockCordinates, List<string> workLines) polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
             drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
+
+            List<string> hatchScripts = Create_HatchScript(polyWorkLine.blockCordinates, listlumberpieces);
+
+            //drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines, hatchScripts);
+            drawScript = string.Join(Environment.NewLine, hatchScripts);
 
             return drawScript;
         }
 
         List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
         {
+            double tolerance = 1e-6;
+            List<string[]> tolalCordinates = new List<string[]>();
             (string X, string Y, string Z) clickPoint;
-            string[] currentPoint;
+            string[] currentPoint = new string[3];
+            string[] endPoint = new string[3];
             (double A, double B, double C) currentLine;
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
-            for(int i = 0; i < blockcordinates.Count - 1; i++)
+            string hatchScript = $"";
+
+            for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
             {
-                currentPoint = new string[3];
-                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(blockcordinates[i + 1][0]))).ToString();
-                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(blockcordinates[i + 1][1]))).ToString();
-                currentLine = TwoPoint_LineEquation(blockcordinates[i], blockcordinates[i + 1]);
-                perpToCurrentLine = PerpendicularLineThroughPoint(currentPoint, currentLine);
-
                 
-                for(i=0; i < listlumberpieces.Count; i++)
+                for (int k = 0; k < listlumberpieces[j].Lcordinates.Length; k += 3)
                 {
-
+                    string[] L = new string[] { listlumberpieces[j].Lcordinates[k].Trim(), listlumberpieces[j].Lcordinates[k + 1].Trim(), listlumberpieces[j].Lcordinates[k + 2].Trim() };
+                    tolalCordinates.Add(L);
                 }
-                string hatchScript = $"beginpoly 0 213 -10000 0 213 10000";
+                for (int l = 0; l < listlumberpieces[j].Rcordinates.Length; l += 3)
+                {
+                    string[] R = new string[] { listlumberpieces[j].Rcordinates[l].Trim(), listlumberpieces[j].Rcordinates[l + 1].Trim(), listlumberpieces[j].Rcordinates[l + 2].Trim() };
+                    tolalCordinates.Add(R);
+                }
+            }
+
+            for (int i = 0; i < blockcordinates.Count; i++)
+            {
+                endPoint = (i == blockcordinates.Count - 1 ? blockcordinates[0] : blockcordinates[i + 1]);
+                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(endPoint[0]))).ToString();
+                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(endPoint[1]))).ToString();
+                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(currentPoint[0]))).ToString();
+                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(currentPoint[1]))).ToString();
+                currentLine = TwoPoint_LineEquation(blockcordinates[i], endPoint);
+                perpToCurrentLine = PerpendicularLineThroughPoint(currentPoint, currentLine);
+                for(int m = 0; m < tolalCordinates.Count; m++)
+                {
+                    if (IsPointOnLine(tolalCordinates[m], currentLine) 
+                        && double.Parse(blockcordinates[i][0]) <= double.Parse(tolalCordinates[m][0]) && double.Parse(tolalCordinates[m][0]) <= double.Parse(endPoint[0])
+                        && double.Parse(blockcordinates[i][1]) <= double.Parse(tolalCordinates[m][1]) && double.Parse(tolalCordinates[m][1]) <= double.Parse(endPoint[1]))
+                    {
+                        if (Math.Abs(double.Parse(currentPoint[0]) - double.Parse(tolalCordinates[m][0])) <= tolerance 
+                            && Math.Abs(double.Parse(currentPoint[1]) - double.Parse(tolalCordinates[m][1])) <= tolerance)
+                        {
+                            ((double A, double B, double C) Line1, (double A, double B, double C) Line2) perpToCurrentLineOffset = OffsetTwoLines(perpToCurrentLine.A, perpToCurrentLine.B, perpToCurrentLine.C, 0.25);
+                            currentPoint = Intersection_Point(currentLine, perpToCurrentLineOffset.Line2);
+                            
+                            continue;
+                        }
+                        
+                    }
+                }
+                clickPoint.X = Convert_InchToFitInchSix(double.Parse(currentPoint[0]));
+                clickPoint.Y = Convert_InchToFitInchSix(double.Parse(currentPoint[1]));
+                clickPoint.Z = "0";
+                if (i == 0)
+                {
+                    hatchScript = $"beginpoly {clickPoint.X} {clickPoint.Y} -10000 {clickPoint.X} {clickPoint.Y} 10000";
+                }
+                else
+                {
+                    hatchScript = $"addpoly {clickPoint.X} {clickPoint.Y} -10000 {clickPoint.X} {clickPoint.Y} 10000";
+                }
                 hatchScripts.Add(hatchScript);
             }
             return hatchScripts;
@@ -2472,7 +2519,7 @@ namespace Bearing_Enhancer_CAN
             return (Return_Cordinates, polyLine);
         }
         #region Math related functions
-        string InchToFitInchSix(double totalInches)
+        string Convert_InchToFitInchSix(double totalInches)
         {
             int feet = (int)(totalInches / 12);
 
