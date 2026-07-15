@@ -1862,12 +1862,16 @@ namespace Bearing_Enhancer_CAN
             TopchordCordinates.Add(RRTopchordCordinates);
 
             (List <string[]> blockCordinates, List<string> workLines) polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
-            drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
+            //drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
 
             List<string> hatchScripts = Create_HatchScript(polyWorkLine.blockCordinates, listlumberpieces);
 
-            //drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines, hatchScripts);
-            drawScript = string.Join(Environment.NewLine, hatchScripts);
+            List<string> allScripts = new List<string>();
+
+            allScripts.AddRange(polyWorkLine.workLines);
+            allScripts.AddRange(hatchScripts);
+
+            drawScript = string.Join(Environment.NewLine, allScripts);
 
             return drawScript;
         }
@@ -1877,12 +1881,21 @@ namespace Bearing_Enhancer_CAN
             double tolerance = 1e-6;
             List<string[]> tolalCordinates = new List<string[]>();
             (string X, string Y, string Z) clickPoint;
-            string[] currentPoint = new string[3];
-            string[] endPoint = new string[3];
+            string[] currentPoint;
+            string[] endPoint; 
             (double A, double B, double C) currentLine;
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             string hatchScript = $"";
+
+            for (int i = 0; i < blockcordinates.Count; i++)//Đổi từ ft sang inch
+            {
+                for (int j = 0; j < blockcordinates[i].Length; j++)
+                {
+                    blockcordinates[i][j] =
+                        (double.Parse(blockcordinates[i][j]) * 12.0).ToString();
+                }
+            }
 
             for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
             {
@@ -1901,11 +1914,22 @@ namespace Bearing_Enhancer_CAN
 
             for (int i = 0; i < blockcordinates.Count; i++)
             {
-                endPoint = (i == blockcordinates.Count - 1 ? blockcordinates[0] : blockcordinates[i + 1]);
-                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(endPoint[0]))).ToString();
-                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(endPoint[1]))).ToString();
-                currentPoint[0] = (1 / 2 * (double.Parse(blockcordinates[i][0]) + double.Parse(currentPoint[0]))).ToString();
-                currentPoint[1] = (1 / 2 * (double.Parse(blockcordinates[i][1]) + double.Parse(currentPoint[1]))).ToString();
+                
+                currentPoint = new string[3];
+                endPoint = new string[3];
+                if(i == blockcordinates.Count - 1)
+                {
+                    endPoint = blockcordinates[i];
+                    blockcordinates[i] = blockcordinates[0];
+                }
+                else
+                {
+                    endPoint = blockcordinates[i + 1];
+                }
+                currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(endPoint[0]))).ToString();
+                currentPoint[1] = (0.5 * (double.Parse(blockcordinates[i][1]) + double.Parse(endPoint[1]))).ToString();
+                currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(currentPoint[0]))).ToString();
+                currentPoint[1] = (0.5 * (double.Parse(blockcordinates[i][1]) + double.Parse(currentPoint[1]))).ToString();
                 currentLine = TwoPoint_LineEquation(blockcordinates[i], endPoint);
                 perpToCurrentLine = PerpendicularLineThroughPoint(currentPoint, currentLine);
                 for(int m = 0; m < tolalCordinates.Count; m++)
@@ -1938,6 +1962,8 @@ namespace Bearing_Enhancer_CAN
                 }
                 hatchScripts.Add(hatchScript);
             }
+            hatchScripts.Add($"hatch 65280 3 208 0.1 1");
+
             return hatchScripts;
         }
 
@@ -2519,15 +2545,15 @@ namespace Bearing_Enhancer_CAN
             return (Return_Cordinates, polyLine);
         }
         #region Math related functions
-        string Convert_InchToFitInchSix(double totalInches)
+        private string Convert_InchToFitInchSix(double totalInches)
         {
             int feet = (int)(totalInches / 12);
 
-            double remainingInches = totalInches - feet * 12;
+            double remain = totalInches % 12;
 
-            int inches = (int)Math.Floor(remainingInches);
+            int inches = (int)remain;
 
-            int sixteenth = (int)Math.Round((remainingInches - inches) * 16);
+            int sixteenth = (int)Math.Round((remain - inches) * 16);
 
             if (sixteenth == 16)
             {
@@ -2541,7 +2567,11 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            return (feet * 10000 + inches * 100 + sixteenth).ToString();
+            int fitInchSix = feet * 10000
+                           + inches * 100
+                           + sixteenth;
+
+            return fitInchSix.ToString("D6");
         }
         List<List<string[]>> Get_VerticalWeb((int, string, string, string[], string[]) web)
         {
