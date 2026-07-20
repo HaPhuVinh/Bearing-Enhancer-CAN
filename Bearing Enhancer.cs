@@ -34,7 +34,7 @@ namespace Bearing_Enhancer_CAN
         public List<string> BearingSolution { get; set; }
         public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
-
+        public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) VertialWebCandidate { get; set; }
         public string BBlock_Markup_Script = "";
 
         public Bearing_Enhancer()
@@ -397,7 +397,10 @@ namespace Bearing_Enhancer_CAN
             return list_Bearing_Solution;
         }
 
-        
+        public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Check_VerticalWeb_Candiadate()
+        {
+
+        }
         #endregion
 
         #region Support Methods:

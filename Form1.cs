@@ -314,9 +314,9 @@ namespace Bearing_Enhancer_CAN
                         {
                             f2.Language = comboBox_Language.Text;
                             f2.Unit = comboBox_Unit.Text;
-                            f2.LumSize = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value?.ToString() ?? "2x4";
-                            f2.LumSpecie = dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value?.ToString() ?? "SPF";
-                            f2.ContactLength = dataGridView_Table.Rows[e.RowIndex].Cells["Brg_Width"].Value?.ToString();
+                            f2.LumSize = "";//dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value?.ToString() ?? "2x4";
+                            f2.LumSpecie = "";//dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value?.ToString() ?? "SPF";
+                            f2.ContactLength = ""; //dataGridView_Table.Rows[e.RowIndex].Cells["Brg_Width"].Value?.ToString();
 
                             if (f2.ShowDialog() == DialogResult.OK)
                             {
