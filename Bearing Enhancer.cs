@@ -28,13 +28,13 @@ namespace Bearing_Enhancer_CAN
         public string LumSize { get; set; }
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
-        public string[] LumCoordinates_Left { get; set; }
-        public string[] LumCoordinates_Right { get; set; }
+        public string[] Lumber_Coordinates_Left { get; set; }//Chord which bearing attached
+        public string[] Lumber_Coordinates_Right { get; set; }//Chord which bearing attached
         public Top_Plate_Info TopPlateInfo { get; set; }
         public List<string> BearingSolution { get; set; }
         public string Chosen_Solution { get; set; }
-        public List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> List_LumberPieces { get; set; }
-        public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) VertialWebCandidate { get; set; }
+        public List<(int No_, string Name, string key, string[] Coordinates_LeftEnd, string[] Coordinates_RightEnd)> List_LumberPieces { get; set; }
+        public VerticalWebCandidate VertialWebCandidate { get; set; }
         public string BBlock_Markup_Script = "";
 
         public Bearing_Enhancer()
@@ -69,7 +69,9 @@ namespace Bearing_Enhancer_CAN
             Top_Plate_Info tpi = new Top_Plate_Info();
             mainListTrussName = Directory.GetFiles(trussesPath).ToList();
             Dictionary<string, int> orderDicTrussName = PickUp_TrussName(txtPath, language);
-
+            LumberInventory lumI = new LumberInventory();
+            List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectPath);
+            
             mainListTrussName.Sort((a, b) =>
             {
                 int indexA = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(a)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(a)] : int.MaxValue;
@@ -323,9 +325,8 @@ namespace Bearing_Enhancer_CAN
                                 bleftBreak = brightBreak;
                                 index = index + 1;
                             }
-                            LumberInventory lumI = new LumberInventory();
-                            List<LumberInventory> list_lumI = lumI.Get_Lumber_Inv(projectPath);
-
+                            
+                            //Determine chord lumber which bearing attached
                             if (keyLumber.key == "")
                             {
                                 //Consider if necessary
@@ -340,8 +341,8 @@ namespace Bearing_Enhancer_CAN
                                         bE.LumSize = LI.Lumber_Size;
                                         bE.LumWidth = LI.Lumber_Width;
                                         bE.LumThick = LI.Lumber_Thickness;
-                                        bE.LumCoordinates_Left = keyLumber.Cordinates_LeftEnd;
-                                        bE.LumCoordinates_Right = keyLumber.Cordinates_RightEnd;
+                                        bE.Lumber_Coordinates_Left = keyLumber.Cordinates_LeftEnd;
+                                        bE.Lumber_Coordinates_Right = keyLumber.Cordinates_RightEnd;
                                     }
                                 }
                             }
@@ -397,9 +398,56 @@ namespace Bearing_Enhancer_CAN
             return list_Bearing_Solution;
         }
 
-        public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Check_VerticalWeb_Candiadate()
+        public VerticalWebCandidate Check_VerticalWeb_Candiadate(Top_Plate_Info topplate, List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> lumberpieces, List<LumberInventory> lumberinventory, (string[] leftcordinates, string[] rightcordinates) lumbercordinates)
         {
+            double tolerance = 1e-3;
+            double xVLeft;
+            double xVRight;
+            VerticalWebCandidate verWebCandate = new VerticalWebCandidate();
+            List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = lumberpieces.Where(x => x.Name.Contains("WB")).ToList();
+            if(topplate.YLocation == "bottomchord" || topplate.YLocation == "BC")
+            {
+                string[] chord_LeftPoint_Bot = lumbercordinates.leftcordinates.Take(3).ToArray();
+                string[] chord_LeftPoint_Top = lumbercordinates.leftcordinates.Skip(lumbercordinates.leftcordinates.Length - 3).ToArray();
+                
+                string[] chord_RightPoint_Top = lumbercordinates.rightcordinates.Take(3).ToArray();
+                string[] chord_RightPoint_Bot = lumbercordinates.rightcordinates.Skip(lumbercordinates.rightcordinates.Length - 3).ToArray();
 
+                (double A, double B, double C) chord_Top_Line = TwoPoint_LineEquation(chord_LeftPoint_Top, chord_RightPoint_Top);
+                (double A, double B, double C) chord_Bot_Line = TwoPoint_LineEquation(chord_LeftPoint_Bot, chord_RightPoint_Bot);
+
+                foreach (var web in webPieces)
+                {
+                    string[] web_RefPoint_Left = web.Cordinates_LeftEnd.Take(3).ToArray();
+                    string[] web_RefPoint_Right = web.Cordinates_RightEnd.Skip(web.Cordinates_RightEnd.Length-3).ToArray();
+                    (double A, double B, double C) webRefLine = TwoPoint_LineEquation(web_RefPoint_Left, web_RefPoint_Right);
+                    double webRefLineSlope = GetSlope(webRefLine);
+
+                    xVLeft = double.Parse(web.Cordinates_LeftEnd[web.Cordinates_LeftEnd.Length - 3]);
+                    xVRight = double.Parse(web.Cordinates_LeftEnd[0]);
+                    if(Math.Abs(webRefLine.B-0) <= tolerance)
+                    {
+                        List<string[]> Web_Cordinates = new List<string[]>();
+                        for (int i = 0; i < web.Cordinates_LeftEnd.Length; i += 3)
+                        {
+                            string[] LL = new string[] { web.Cordinates_LeftEnd[i].Trim(), web.Cordinates_LeftEnd[i + 1].Trim(), web.Cordinates_LeftEnd[i + 2].Trim() };
+                            Web_Cordinates.Add(LL);
+                        }
+                        for (int i = 0; i < web.Cordinates_RightEnd.Length; i += 3)
+                        {
+                            string[] RR = new string[] { web.Cordinates_RightEnd[i].Trim(), web.Cordinates_RightEnd[i + 1].Trim(), web.Cordinates_RightEnd[i + 2].Trim() };
+                            Web_Cordinates.Add(RR);
+                        }
+
+                        if (xVLeft <= topplate.XLoc_LeftSide)
+                        {
+
+                        }
+                    }
+                }
+            }
+            
+            return verWebCandate;
         }
         #endregion
 

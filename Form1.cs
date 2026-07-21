@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iText.Layout.Element;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -34,6 +35,7 @@ namespace Bearing_Enhancer_CAN
         };
 
         public List<Bearing_Enhancer> list_Original_Bearing;
+        public List<LumberInventory> list_Lumber_Inventory;
         public Form_BearingEnhacerCAN()
         {
             InitializeComponent();
@@ -270,6 +272,11 @@ namespace Bearing_Enhancer_CAN
                 }
 
                 list_Original_Bearing = list_BE;
+
+                list_Lumber_Inventory.Clear();
+                LumberInventory lumI = new LumberInventory();
+                list_Lumber_Inventory = lumI.Get_Lumber_Inv(tbx_ProjectNumberPath.Text);
+
             }
             catch (Exception ex)
             {
@@ -310,6 +317,8 @@ namespace Bearing_Enhancer_CAN
                     }
                     else
                     {
+                        
+
                         using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
                         {
                             f2.Language = comboBox_Language.Text;
@@ -1162,15 +1171,15 @@ namespace Bearing_Enhancer_CAN
                     {
                         if (beItem.TrussName == item.TrussName && beItem.TopPlateInfo.JointID == item.TopPlateInfo.JointID)
                         {
-                            beItem.LumCoordinates_Left = item.LumCoordinates_Left;
-                            beItem.LumCoordinates_Right = item.LumCoordinates_Right;
+                            beItem.Lumber_Coordinates_Left = item.Lumber_Coordinates_Left;
+                            beItem.Lumber_Coordinates_Right = item.Lumber_Coordinates_Right;
                             beItem.List_LumberPieces = item.List_LumberPieces;
                             beItem.TopPlateInfo.XLocation_Physical = item.TopPlateInfo.XLocation_Physical;
                             break;
                         }
                     }
 
-                    beItem.BBlock_Markup_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);
+                    beItem.BBlock_Markup_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.Lumber_Coordinates_Left, beItem.Lumber_Coordinates_Right, beItem.List_LumberPieces);
                     formCADMarkup.listBearingEnhancers.Add(beItem);
 
                 }

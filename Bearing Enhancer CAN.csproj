@@ -165,6 +165,7 @@
     <Compile Include="System\IO\Compression\ZipFile.cs" />
     <Compile Include="Top_Plate_Info.cs" />
     <Compile Include="TBE_Info.cs" />
+    <Compile Include="VerticalWebCandidate.cs" />
     <Compile Include="WetServiceFactor.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
