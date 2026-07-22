@@ -439,9 +439,33 @@ namespace Bearing_Enhancer_CAN
                             Web_Cordinates.Add(RR);
                         }
 
-                        if (xVLeft <= topplate.XLoc_LeftSide)
-                        {
+                        verWebCandate.Web_PassThrough = Web_Cordinates.Any(p => IsPointBelowLine(p, chord_Top_Line));
 
+                        if (xVRight > topplate.XLoc_LeftSide && xVRight <= topplate.XLoc_RightSide)
+                        {
+                            if (xVLeft <= topplate.XLoc_LeftSide)
+                            {
+                                verWebCandate.Contact_Length = xVRight - topplate.XLoc_LeftSide;
+                            }
+                            else
+                            {
+                                verWebCandate.Contact_Length = xVRight - xVLeft;
+                            }
+                        }
+                        else if (xVLeft >= topplate.XLoc_LeftSide && xVLeft < topplate.XLoc_RightSide)
+                        {
+                            if(xVRight >= topplate.XLoc_RightSide)
+                            {
+                                verWebCandate.Contact_Length = topplate.XLoc_RightSide - xVLeft;
+                            }
+                            else
+                            {
+                                verWebCandate.Contact_Length = xVRight - xVLeft;
+                            }
+                        }
+                        else
+                        {
+                            verWebCandate.Contact_Length = xVRight - xVLeft;
                         }
                     }
                 }
@@ -1663,6 +1687,21 @@ namespace Bearing_Enhancer_CAN
             double denominator = Math.Sqrt(A * A + B * B);
 
             return Math.Abs(A * x + B * y + C) / denominator;
+        }
+        bool IsPointBelowLine(string[] point, (double A, double B, double C) line, double tolerance = 1e-3)
+        {
+            double x = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            // Đường thẳng đứng
+            if (Math.Abs(line.B) < tolerance)
+            {
+                return false;
+            }
+
+            double yLine = (-line.A * x - line.C) / line.B;
+
+            return y < yLine - tolerance;
         }
         #endregion
     }
