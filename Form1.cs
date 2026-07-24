@@ -317,7 +317,13 @@ namespace Bearing_Enhancer_CAN
                     }
                     else
                     {
-                        
+                        Bearing_Enhancer BE = new Bearing_Enhancer();
+                        BE = list_Original_Bearing?.ElementAtOrDefault(e.RowIndex);
+                        List<VerticalWebCandidate> ListVerticalWebCandidate = BE.Check_VerticalWeb_Candiadate(BE.TopPlateInfo, BE.List_LumberPieces, list_Lumber_Inventory, (BE.Lumber_Coordinates_Left, BE.Lumber_Coordinates_Right));
+                        if(ListVerticalWebCandidate != null && ListVerticalWebCandidate.Count > 0)
+                        {
+                            // Do something with the vertical web candidates
+                        }
 
                         using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
                         {

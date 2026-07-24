@@ -218,8 +218,8 @@ namespace Bearing_Enhancer_CAN
                                     double Y_leftEndAfter = Double.Parse(listPieces.ElementAt(index + 1).Cordinates_LeftEnd[1]);
                                     (double A, double B, double C) line = TwoPoint_LineEquation(piece.Cordinates_LeftEnd.Take(3).ToArray(), piece.Cordinates_RightEnd.Skip(piece.Cordinates_RightEnd.Length - 3).ToArray());
                                     (double A, double B, double C) lineAfter = TwoPoint_LineEquation(listPieces.ElementAt(index+1).Cordinates_LeftEnd.Take(3).ToArray(), listPieces.ElementAt(index+1).Cordinates_RightEnd.Skip(listPieces.ElementAt(index+1).Cordinates_RightEnd.Length-3).ToArray()); 
-                                    double slope = GetSlope(line);
-                                    double slopeAfter = GetSlope(lineAfter);
+                                    double slope = Get_Line_Slope(line);
+                                    double slopeAfter = Get_Line_Slope(lineAfter);
                                     bool bcoincidentlines = Math.Abs(slope - slopeAfter) <= 0.001 && IsPointOnLine(piece.Cordinates_LeftEnd.Take(3).ToArray(), lineAfter);
                                     double lumberSize = DistancePointToLine(piece.Cordinates_LeftEnd.Skip(piece.Cordinates_LeftEnd.Length-3).ToArray(), line);
                                     double lumberSizeAfter = DistancePointToLine(listPieces.ElementAt(index+1).Cordinates_LeftEnd.Skip(listPieces.ElementAt(index + 1).Cordinates_LeftEnd.Length-3).ToArray(), lineAfter);
@@ -433,35 +433,41 @@ namespace Bearing_Enhancer_CAN
                         verWebCandidate.Name = web.Name;
                         verWebCandidate.Web_PassThrough = verWebCandidate.Left_Coordinates.Any(p => IsPointBelowLine(p, chord_Top_Line));
                         verWebCandidate.Bottom_Line = !verWebCandidate.Web_PassThrough ? chord_Bot_Line :
-                        TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[0], verWebCandidate.Left_Coordinates[verWebCandidate.Left_Coordinates.Count - 1]);
-                        double slope = GetSlope(verWebCandidate.Bottom_Line);
+                        verWebCandidate.Left_Coordinates.Count<3? TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[0], verWebCandidate.Left_Coordinates[verWebCandidate.Left_Coordinates.Count - 1]):
+                        PerpendicularLineThroughPoint(verWebCandidate.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),(0, 1, 0));
+                        double slope = Get_Line_Slope(verWebCandidate.Bottom_Line);
                         double slopeFactor = Math.Sqrt(slope * slope + 1);
 
                         if (xWRight > topplate.XLoc_LeftSide && xWRight <= topplate.XLoc_RightSide)
                         {
                             if (xWLeft <= topplate.XLoc_LeftSide)
                             {
-                                verWebCandidate.Contact_Length = (xWRight - topplate.XLoc_LeftSide);
+                                verWebCandidate.Contact_Length = slopeFactor * (xWRight - topplate.XLoc_LeftSide);
+                                List_VerWeb_Candate.Add(verWebCandidate);
                             }
                             else
                             {
-                                verWebCandidate.Contact_Length = xWRight - xWLeft;
+                                verWebCandidate.Contact_Length = slopeFactor * (xWRight - xWLeft);
+                                List_VerWeb_Candate.Add(verWebCandidate);
                             }
                         }
                         else if (xWLeft >= topplate.XLoc_LeftSide && xWLeft < topplate.XLoc_RightSide)
                         {
                             if(xWRight >= topplate.XLoc_RightSide)
                             {
-                                verWebCandidate.Contact_Length = topplate.XLoc_RightSide - xWLeft;
+                                verWebCandidate.Contact_Length = slopeFactor * (topplate.XLoc_RightSide - xWLeft);
+                                List_VerWeb_Candate.Add(verWebCandidate);
                             }
                             else
                             {
-                                verWebCandidate.Contact_Length = xWRight - xWLeft;
+                                verWebCandidate.Contact_Length = slopeFactor * (xWRight - xWLeft);
+                                List_VerWeb_Candate.Add(verWebCandidate);
                             }
                         }
                         else
                         {
-                            verWebCandidate.Contact_Length = xWRight - xWLeft;
+                            verWebCandidate.Contact_Length = slopeFactor * (xWRight - xWLeft);
+                            List_VerWeb_Candate.Add(verWebCandidate);
                         }
                     }
                 }
@@ -1655,7 +1661,7 @@ namespace Bearing_Enhancer_CAN
 
             return (A, B, C);
         }
-        double GetSlope((double A, double B, double C) line)
+        double Get_Line_Slope((double A, double B, double C) line)
         {
             if (line.B == 0)
                 return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
@@ -1698,6 +1704,21 @@ namespace Bearing_Enhancer_CAN
             double yLine = (-line.A * x - line.C) / line.B;
 
             return y < yLine - tolerance;
+        }
+        (double A, double B, double C) PerpendicularLineThroughPoint(string[] point, (double A, double B, double C) line)
+        {
+            double x0 = double.Parse(point[0], CultureInfo.InvariantCulture);
+            double y0 = double.Parse(point[1], CultureInfo.InvariantCulture);
+
+            double A = line.A;
+            double B = line.B;
+
+            // Đường vuông góc có pháp tuyến (B, -A)
+            double A2 = B;
+            double B2 = -A;
+            double C2 = A * y0 - B * x0;
+
+            return (A2, B2, C2);
         }
         #endregion
     }
