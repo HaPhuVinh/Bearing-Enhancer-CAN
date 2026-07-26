@@ -35,7 +35,7 @@ namespace Bearing_Enhancer_CAN
         public List<string> BearingSolution { get; set; }
         public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Coordinates_LeftEnd, string[] Coordinates_RightEnd)> List_LumberPieces { get; set; }
-        public VerticalWebCandidate VertialWebCandidate { get; set; }
+        public VerticalWebCandidate VertialWeb_Candidate { get; set; } = new VerticalWebCandidate();
         public string BBlock_Markup_Script = "";
 
         public Bearing_Enhancer()
@@ -405,8 +405,9 @@ namespace Bearing_Enhancer_CAN
             double xWLeft;
             double xWRight;
             List<VerticalWebCandidate> List_VerWeb_Candate = new List<VerticalWebCandidate>();
-            List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = lumberpieces.Where(x => x.Name.Contains("WB")).ToList();
-            if(topplate.YLocation == "bottomchord" || topplate.YLocation == "BC")
+            List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = new List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)>();
+            webPieces = lumberpieces?.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains("WB")).ToList();
+            if (topplate.YLocation == "bottomchord" || topplate.YLocation == "BC")
             {
                 string[] chord_LeftPoint_Bot = lumbercoordinates.leftcordinates.Take(3).ToArray();
                 string[] chord_LeftPoint_Top = lumbercoordinates.leftcordinates.Skip(lumbercoordinates.leftcordinates.Length - 3).ToArray();
@@ -1617,7 +1618,34 @@ namespace Bearing_Enhancer_CAN
 
             return q;
         }
+        string Convert_InchToFitInchSix(double totalInches)
+        {
+            int feet = (int)(totalInches / 12);
 
+            double remain = totalInches % 12;
+
+            int inches = (int)remain;
+
+            int sixteenth = (int)Math.Round((remain - inches) * 16);
+
+            if (sixteenth == 16)
+            {
+                sixteenth = 0;
+                inches++;
+
+                if (inches == 12)
+                {
+                    inches = 0;
+                    feet++;
+                }
+            }
+
+            int fitInchSix = feet * 10000
+                           + inches * 100
+                           + sixteenth;
+
+            return fitInchSix.ToString("D6");
+        }
         Dictionary<string, int> PickUp_TrussName(string txtPath, string language)
         {
             Dictionary<string, int> dictTrussName = new Dictionary<string, int>();
@@ -2859,7 +2887,7 @@ namespace Bearing_Enhancer_CAN
         
         
         #region Math related functions
-        private string Convert_InchToFitInchSix(double totalInches)
+        string Convert_InchToFitInchSix(double totalInches)
         {
             int feet = (int)(totalInches / 12);
 
