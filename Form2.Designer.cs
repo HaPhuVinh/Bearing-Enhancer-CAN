@@ -47,7 +47,7 @@
             this.lbl_Lumber_Size.ForeColor = System.Drawing.Color.Coral;
             this.lbl_Lumber_Size.Location = new System.Drawing.Point(16, 12);
             this.lbl_Lumber_Size.Name = "lbl_Lumber_Size";
-            this.lbl_Lumber_Size.Size = new System.Drawing.Size(103, 18);
+            this.lbl_Lumber_Size.Size = new System.Drawing.Size(89, 15);
             this.lbl_Lumber_Size.TabIndex = 0;
             this.lbl_Lumber_Size.Text = "Lumber-Size";
             this.lbl_Lumber_Size.Click += new System.EventHandler(this.label1_Click);
@@ -59,7 +59,7 @@
             this.lbl_Lumber_Specie.ForeColor = System.Drawing.Color.Coral;
             this.lbl_Lumber_Specie.Location = new System.Drawing.Point(16, 54);
             this.lbl_Lumber_Specie.Name = "lbl_Lumber_Specie";
-            this.lbl_Lumber_Specie.Size = new System.Drawing.Size(121, 18);
+            this.lbl_Lumber_Specie.Size = new System.Drawing.Size(105, 15);
             this.lbl_Lumber_Specie.TabIndex = 0;
             this.lbl_Lumber_Specie.Text = "Lumber-Specie";
             this.lbl_Lumber_Specie.Click += new System.EventHandler(this.label1_Click);
@@ -71,29 +71,31 @@
             this.lbl_Contact_Length.ForeColor = System.Drawing.Color.Coral;
             this.lbl_Contact_Length.Location = new System.Drawing.Point(16, 100);
             this.lbl_Contact_Length.Name = "lbl_Contact_Length";
-            this.lbl_Contact_Length.Size = new System.Drawing.Size(123, 18);
+            this.lbl_Contact_Length.Size = new System.Drawing.Size(104, 15);
             this.lbl_Contact_Length.TabIndex = 0;
             this.lbl_Contact_Length.Text = "Contact-Length";
             this.lbl_Contact_Length.Click += new System.EventHandler(this.label1_Click);
             // 
             // cbx_Lumber_Size
             // 
+            this.cbx_Lumber_Size.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbx_Lumber_Size.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbx_Lumber_Size.FormattingEnabled = true;
             this.cbx_Lumber_Size.Location = new System.Drawing.Point(165, 12);
             this.cbx_Lumber_Size.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbx_Lumber_Size.Name = "cbx_Lumber_Size";
-            this.cbx_Lumber_Size.Size = new System.Drawing.Size(141, 28);
+            this.cbx_Lumber_Size.Size = new System.Drawing.Size(141, 25);
             this.cbx_Lumber_Size.TabIndex = 1;
             // 
             // cbx_Lumber_Specie
             // 
+            this.cbx_Lumber_Specie.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbx_Lumber_Specie.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbx_Lumber_Specie.FormattingEnabled = true;
             this.cbx_Lumber_Specie.Location = new System.Drawing.Point(165, 54);
             this.cbx_Lumber_Specie.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbx_Lumber_Specie.Name = "cbx_Lumber_Specie";
-            this.cbx_Lumber_Specie.Size = new System.Drawing.Size(141, 28);
+            this.cbx_Lumber_Specie.Size = new System.Drawing.Size(141, 25);
             this.cbx_Lumber_Specie.TabIndex = 1;
             // 
             // txt_Contact_Length
@@ -102,7 +104,7 @@
             this.txt_Contact_Length.Location = new System.Drawing.Point(165, 99);
             this.txt_Contact_Length.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Contact_Length.Name = "txt_Contact_Length";
-            this.txt_Contact_Length.Size = new System.Drawing.Size(141, 27);
+            this.txt_Contact_Length.Size = new System.Drawing.Size(141, 23);
             this.txt_Contact_Length.TabIndex = 2;
             // 
             // buttonOK
@@ -123,7 +125,7 @@
             // 
             // Form_Vertical_Block_Info
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(569, 151);
             this.Controls.Add(this.buttonOK);

@@ -15,8 +15,8 @@ namespace Bearing_Enhancer_CAN
         public string Ver_Lumber_Thickness { get; set; }
         public string Ver_Web_Specie { get; set; }
         public double Contact_Length { get; set; }
-        public List<string[]> Left_Coordinates { get; set; }
-        public List<string[]> Right_Coordinates { get; set; }
+        public List<string[]> Left_Coordinates { get; set; } = new List<string[]>();
+        public List<string[]> Right_Coordinates { get; set; } = new List<string[]>();
         public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Vertical_Web_Member;
         public (double A, double B, double C) Bottom_Line { get; set; }
         public VerticalWebCandidate() { }

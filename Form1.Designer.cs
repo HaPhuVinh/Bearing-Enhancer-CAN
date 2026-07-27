@@ -334,6 +334,7 @@
             // 
             // comboBox_Language
             // 
+            this.comboBox_Language.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Language.FormattingEnabled = true;
             this.comboBox_Language.Location = new System.Drawing.Point(207, 52);
@@ -343,6 +344,7 @@
             // 
             // comboBox_Unit
             // 
+            this.comboBox_Unit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Unit.FormattingEnabled = true;
             this.comboBox_Unit.Location = new System.Drawing.Point(207, 86);
@@ -461,6 +463,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form_BearingEnhacerCAN";
             this.Text = "Bearing Enhancer CAN";
+            this.Load += new System.EventHandler(this.Form_BearingEnhacerCAN_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bearingEnhancerBindingSource)).EndInit();

@@ -407,7 +407,7 @@ namespace Bearing_Enhancer_CAN
             List<VerticalWebCandidate> List_VerWeb_Candate = new List<VerticalWebCandidate>();
             List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = new List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)>();
             webPieces = lumberpieces?.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains("WB")).ToList();
-            if (topplate.YLocation == "bottomchord" || topplate.YLocation == "BC")
+            if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd")
             {
                 string[] chord_LeftPoint_Bot = lumbercoordinates.leftcordinates.Take(3).ToArray();
                 string[] chord_LeftPoint_Top = lumbercoordinates.leftcordinates.Skip(lumbercoordinates.leftcordinates.Length - 3).ToArray();
@@ -422,6 +422,14 @@ namespace Bearing_Enhancer_CAN
                 {
                     List<string[]> Web_Left_Cordinates = new List<string[]>();
                     List<string[]> Web_Right_Cordinates = new List<string[]>();
+                    for(int i = 0; i < web.Cordinates_LeftEnd.Length; i += 3)
+                    {
+                        Web_Left_Cordinates.Add(web.Cordinates_LeftEnd.Skip(i).Take(3).ToArray());
+                    }
+                    for(int i = 0; i < web.Cordinates_RightEnd.Length; i += 3)
+                    {
+                        Web_Right_Cordinates.Add(web.Cordinates_RightEnd.Skip(i).Take(3).ToArray());
+                    }
 
                     (double A, double B, double C) webRefLine = TwoPoint_LineEquation(Web_Left_Cordinates[0], Web_Right_Cordinates[Web_Right_Cordinates.Count - 1]);
 
@@ -435,7 +443,7 @@ namespace Bearing_Enhancer_CAN
                         verWebCandidate.Web_PassThrough = verWebCandidate.Left_Coordinates.Any(p => IsPointBelowLine(p, chord_Top_Line));
                         verWebCandidate.Bottom_Line = !verWebCandidate.Web_PassThrough ? chord_Bot_Line :
                         verWebCandidate.Left_Coordinates.Count<3? TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[0], verWebCandidate.Left_Coordinates[verWebCandidate.Left_Coordinates.Count - 1]):
-                        PerpendicularLineThroughPoint(verWebCandidate.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),(0, 1, 0));
+                        PerpendicularLineThroughPoint(verWebCandidate.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),(1, 0, 0));
                         double slope = Get_Line_Slope(verWebCandidate.Bottom_Line);
                         double slopeFactor = Math.Sqrt(slope * slope + 1);
 
@@ -465,7 +473,7 @@ namespace Bearing_Enhancer_CAN
                                 List_VerWeb_Candate.Add(verWebCandidate);
                             }
                         }
-                        else
+                        else if(xWLeft < topplate.XLoc_LeftSide && xWRight > topplate.XLoc_RightSide)
                         {
                             verWebCandidate.Contact_Length = slopeFactor * (xWRight - xWLeft);
                             List_VerWeb_Candate.Add(verWebCandidate);

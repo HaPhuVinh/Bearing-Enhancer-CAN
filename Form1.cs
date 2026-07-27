@@ -320,38 +320,42 @@ namespace Bearing_Enhancer_CAN
                     {
                         VerticalWebCandidate verWeb = new VerticalWebCandidate();
                         list_Original_Bearing.ElementAtOrDefault(e.RowIndex).VertialWeb_Candidate = verWeb;
-                        Bearing_Enhancer BE = list_Original_Bearing.ElementAtOrDefault(e.RowIndex);
+                        Bearing_Enhancer BE = new Bearing_Enhancer();
+                        BE = list_Original_Bearing.ElementAtOrDefault(e.RowIndex);
                         List<VerticalWebCandidate> ListVerticalWebCandidate = BE.Check_VerticalWeb_Candiadate(BE.TopPlateInfo, BE.List_LumberPieces, list_Lumber_Inventory, (BE.Lumber_Coordinates_Left, BE.Lumber_Coordinates_Right));
                         
                         if(ListVerticalWebCandidate != null && ListVerticalWebCandidate.Count > 0)
                         {
                             verWeb = ListVerticalWebCandidate.OrderBy(v => v.Contact_Length).Last();
-                            BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
-                            BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells["No_Ply"].Value?.ToString();
-                            BE.LumSpecie = verWeb.Ver_Web_Specie;
-                            BE.LumSize = verWeb.Ver_Web_Size;
-                            Top_Plate_Info topPlate = new Top_Plate_Info();
-                            topPlate.DOL = new Duration_Factor();
-                            topPlate.DOL.DOL_Snow = dataGridView_Table.Rows[e.RowIndex].Cells["DOL_Column"].Value?.ToString();
-                            topPlate.DOL.DOL_Live = "N/A";
-                            topPlate.DOL.DOL_Wind = "N/A";
-                            topPlate.WetService = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Wet_Service"].Value);
-                            topPlate.GreenLumber = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Green_Lumber"].Value);
-                            topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells["Joint_ID"].Value?.ToString();
-                            topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells["X_Location"].Value?.ToString();
-                            topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value?.ToString();
-                            topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells["Location_Type"].Value?.ToString();
-                            topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells["Reaction"].Value?.ToString());
-                            topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells["Brg_Width"].Value?.ToString();
-                            topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells["Req_Width"].Value?.ToString();
-                            topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells["Material"].Value?.ToString();
-                            topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells["Load_Transfer"].Value.ToString());
-                            BE.TopPlateInfo = topPlate;
-                            string contLength = Convert_InchToFitInchSix(verWeb.Contact_Length);
+                            //BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
+                            //BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells["No_Ply"].Value?.ToString();
+                            //BE.LumSpecie = verWeb.Ver_Web_Specie;
+                            //BE.LumSize = verWeb.Ver_Web_Size;
+                            //Top_Plate_Info topPlate = new Top_Plate_Info();
+                            //topPlate.DOL = new Duration_Factor();
+                            //topPlate.DOL.DOL_Snow = dataGridView_Table.Rows[e.RowIndex].Cells["DOL_Column"].Value?.ToString();
+                            //topPlate.DOL.DOL_Live = "N/A";
+                            //topPlate.DOL.DOL_Wind = "N/A";
+                            //topPlate.WetService = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Wet_Service"].Value);
+                            //topPlate.GreenLumber = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Green_Lumber"].Value);
+                            //topPlate.JointID = dataGridView_Table.Rows[e.RowIndex].Cells["Joint_ID"].Value?.ToString();
+                            //topPlate.XLocation = dataGridView_Table.Rows[e.RowIndex].Cells["X_Location"].Value?.ToString();
+                            //topPlate.YLocation = dataGridView_Table.Rows[e.RowIndex].Cells["Y_Location"].Value?.ToString();
+                            //topPlate.Location_Type = dataGridView_Table.Rows[e.RowIndex].Cells["Location_Type"].Value?.ToString();
+                            //topPlate.Reaction = double.Parse(dataGridView_Table.Rows[e.RowIndex].Cells["Reaction"].Value?.ToString());
+                            //topPlate.BearingWidth = dataGridView_Table.Rows[e.RowIndex].Cells["Brg_Width"].Value?.ToString();
+                            //topPlate.RequireWidth = dataGridView_Table.Rows[e.RowIndex].Cells["Req_Width"].Value?.ToString();
+                            //topPlate.Material = dataGridView_Table.Rows[e.RowIndex].Cells["Material"].Value?.ToString();
+                            //topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells["Load_Transfer"].Value.ToString());
+                            //BE.TopPlateInfo = topPlate;
+                            string contLength = Convert_Inch_String(verWeb.Contact_Length);
 
-                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, BE.LumSize, BE.LumSpecie, BE.TopPlateInfo, comboBox_Unit.Text, comboBox_Language.Text, true, contLength);
+                            List<string> listVerBBlock = BE.Check_Bearing_Solution(BE.Ply, verWeb.Ver_Web_Size, verWeb.Ver_Web_Specie, BE.TopPlateInfo, comboBox_Unit.Text, comboBox_Language.Text, true, contLength);
                             (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
                             dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"].Value = listVerBBlock[0];
+                            dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Specie"].Value = verWeb.Ver_Web_Specie;
+                            dataGridView_Table.Rows[e.RowIndex].Cells["Lumber_Size"].Value = verWeb.Ver_Web_Size;
+                            dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value = contLength;
 
                             row.DefaultCellStyle.BackColor = Color.AntiqueWhite; // Đổi màu dòng
                         }
@@ -916,7 +920,7 @@ namespace Bearing_Enhancer_CAN
 
             return q;
         }
-        string Convert_InchToFitInchSix(double totalInches)
+        string Convert_Inch_String(double totalInches)
         {
             int feet = (int)(totalInches / 12);
 
@@ -942,7 +946,7 @@ namespace Bearing_Enhancer_CAN
                            + inches * 100
                            + sixteenth;
 
-            return fitInchSix.ToString("D6");
+            return $"{feet:D2}-{inches:D2}-{sixteenth:D2}";
         }
 
         private void btn_export_data_Click(object sender, EventArgs e)
@@ -1261,6 +1265,11 @@ namespace Bearing_Enhancer_CAN
                 }
             }
             formCADMarkup.ShowDialog();
+        }
+
+        private void Form_BearingEnhacerCAN_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 
