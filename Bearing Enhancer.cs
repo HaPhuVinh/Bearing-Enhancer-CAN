@@ -416,9 +416,9 @@ namespace Bearing_Enhancer_CAN
                 {
                     Left_Chord_Coordinates.Add(chordcoordinates.leftcordinates.Skip(i).Take(3).ToArray());
                 }
-                for (int i = 0; i < chordcoordinates.rightcordinates.Length; i += 3)
+                for (int j = 0; j < chordcoordinates.rightcordinates.Length; j += 3)
                 {
-                    Left_Chord_Coordinates.Add(chordcoordinates.rightcordinates.Skip(i).Take(3).ToArray());
+                    Right_Chord_Coordinates.Add(chordcoordinates.rightcordinates.Skip(j).Take(3).ToArray());
                 }
 
                 string[] chord_LeftPoint_Bot = Left_Chord_Coordinates[0];
@@ -434,13 +434,13 @@ namespace Bearing_Enhancer_CAN
                 {
                     List<string[]> Web_Left_Cordinates = new List<string[]>();
                     List<string[]> Web_Right_Cordinates = new List<string[]>();
-                    for(int i = 0; i < web.Cordinates_LeftEnd.Length; i += 3)
+                    for(int k = 0; k < web.Cordinates_LeftEnd.Length; k += 3)
                     {
-                        Web_Left_Cordinates.Add(web.Cordinates_LeftEnd.Skip(i).Take(3).ToArray());
+                        Web_Left_Cordinates.Add(web.Cordinates_LeftEnd.Skip(k).Take(3).ToArray());
                     }
-                    for(int i = 0; i < web.Cordinates_RightEnd.Length; i += 3)
+                    for(int l = 0; l < web.Cordinates_RightEnd.Length; l += 3)
                     {
-                        Web_Right_Cordinates.Add(web.Cordinates_RightEnd.Skip(i).Take(3).ToArray());
+                        Web_Right_Cordinates.Add(web.Cordinates_RightEnd.Skip(l).Take(3).ToArray());
                     }
 
                     (double A, double B, double C) webRefLine = TwoPoint_LineEquation(Web_Left_Cordinates[0], Web_Right_Cordinates[Web_Right_Cordinates.Count - 1]);
@@ -448,7 +448,7 @@ namespace Bearing_Enhancer_CAN
                     xWRight = double.Parse(Web_Left_Cordinates[0][0]);
                     xWLeft = double.Parse(Web_Left_Cordinates[Web_Left_Cordinates.Count - 1][0]);
 
-                    if(Math.Abs(webRefLine.B-0) <= tolerance)
+                    if(Math.Abs(webRefLine.B) <= tolerance)
                     {
                         VerticalWebCandidate verWebCandidate = new VerticalWebCandidate(web, listlumberinventory);
                         verWebCandidate.Name = web.Name;
@@ -477,7 +477,7 @@ namespace Bearing_Enhancer_CAN
                             else if((topplate.Location_Type == "Exterior"
                                 && topplate.XLocation_Physical > 0.5 * (double.Parse(Left_Chord_Coordinates[0][0]) + double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 1][0]))))
                             {
-                                if (Left_Chord_Coordinates.Count > 2)
+                                if (Right_Chord_Coordinates.Count > 2)
                                 {
                                     if (double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1][0]) >= topplate.XLoc_RightSide)
                                     {
