@@ -27,6 +27,7 @@ namespace Bearing_Enhancer_CAN
         public string Span { get; set; }
         public string LumSpecie { get; set; }
         public string LumSize { get; set; }
+        public string DurationFactor { get; set; }
         public string LumWidth { get; set; }
         public string LumThick { get; set; }
         public string[] Lumber_Coordinates_Left { get; set; }//Chord which bearing attached
@@ -399,7 +400,7 @@ namespace Bearing_Enhancer_CAN
             return list_Bearing_Solution;
         }
 
-        public List<VerticalWebCandidate> Check_VerticalWeb_Candiadate(Top_Plate_Info topplate, List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> lumberpieces, List<LumberInventory> listlumberinventory, (string[] leftcordinates, string[] rightcordinates) lumbercoordinates)
+        public List<VerticalWebCandidate> Check_VerticalWeb_Candiadate(Top_Plate_Info topplate, List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> lumberpieces, List<LumberInventory> listlumberinventory, (string[] leftcordinates, string[] rightcordinates) chordcoordinates)
         {
             double tolerance = 1e-3;
             double xWLeft;
@@ -409,11 +410,22 @@ namespace Bearing_Enhancer_CAN
             webPieces = lumberpieces?.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains("WB")).ToList();
             if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd")
             {
-                string[] chord_LeftPoint_Bot = lumbercoordinates.leftcordinates.Take(3).ToArray();
-                string[] chord_LeftPoint_Top = lumbercoordinates.leftcordinates.Skip(lumbercoordinates.leftcordinates.Length - 3).ToArray();
+                List<string[]> Left_Chord_Coordinates = new List<string[]>();
+                List<string[]> Right_Chord_Coordinates = new List<string[]>();
+                for (int i = 0; i < chordcoordinates.leftcordinates.Length; i += 3)
+                {
+                    Left_Chord_Coordinates.Add(chordcoordinates.leftcordinates.Skip(i).Take(3).ToArray());
+                }
+                for (int i = 0; i < chordcoordinates.rightcordinates.Length; i += 3)
+                {
+                    Left_Chord_Coordinates.Add(chordcoordinates.rightcordinates.Skip(i).Take(3).ToArray());
+                }
+
+                string[] chord_LeftPoint_Bot = Left_Chord_Coordinates[0];
+                string[] chord_LeftPoint_Top = Left_Chord_Coordinates[Left_Chord_Coordinates.Count-1];
                 
-                string[] chord_RightPoint_Top = lumbercoordinates.rightcordinates.Take(3).ToArray();
-                string[] chord_RightPoint_Bot = lumbercoordinates.rightcordinates.Skip(lumbercoordinates.rightcordinates.Length - 3).ToArray();
+                string[] chord_RightPoint_Top = Right_Chord_Coordinates[0];
+                string[] chord_RightPoint_Bot = Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1];
 
                 (double A, double B, double C) chord_Top_Line = TwoPoint_LineEquation(chord_LeftPoint_Top, chord_RightPoint_Top);
                 (double A, double B, double C) chord_Bot_Line = TwoPoint_LineEquation(chord_LeftPoint_Bot, chord_RightPoint_Bot);
@@ -441,9 +453,57 @@ namespace Bearing_Enhancer_CAN
                         VerticalWebCandidate verWebCandidate = new VerticalWebCandidate(web, listlumberinventory);
                         verWebCandidate.Name = web.Name;
                         verWebCandidate.Web_PassThrough = verWebCandidate.Left_Coordinates.Any(p => IsPointBelowLine(p, chord_Top_Line));
-                        verWebCandidate.Bottom_Line = !verWebCandidate.Web_PassThrough ? chord_Bot_Line :
-                        verWebCandidate.Left_Coordinates.Count<3? TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[0], verWebCandidate.Left_Coordinates[verWebCandidate.Left_Coordinates.Count - 1]):
-                        PerpendicularLineThroughPoint(verWebCandidate.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),(1, 0, 0));
+                        if (!verWebCandidate.Web_PassThrough)
+                        {
+                            if (topplate.Location_Type == "Exterior" 
+                                && topplate.XLocation_Physical < 0.5 * (double.Parse(Left_Chord_Coordinates[0][0]) + double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 1][0])))
+                            {
+                                if (Left_Chord_Coordinates.Count > 2)
+                                {
+                                    if (double.Parse(Left_Chord_Coordinates[1][0]) <= topplate.XLoc_LeftSide)
+                                    {
+                                        verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                    }
+                                    else
+                                    {
+                                        verWebCandidate.Bottom_Line = TwoPoint_LineEquation(Left_Chord_Coordinates[0], Left_Chord_Coordinates[1]);
+                                    }
+                                }
+                                else
+                                {
+                                    verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                }
+                            }
+                            else if((topplate.Location_Type == "Exterior"
+                                && topplate.XLocation_Physical > 0.5 * (double.Parse(Left_Chord_Coordinates[0][0]) + double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 1][0]))))
+                            {
+                                if (Left_Chord_Coordinates.Count > 2)
+                                {
+                                    if (double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1][0]) >= topplate.XLoc_RightSide)
+                                    {
+                                        verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                    }
+                                    else
+                                    {
+                                        verWebCandidate.Bottom_Line = TwoPoint_LineEquation(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1], Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 2]);
+                                    }
+                                }
+                                else
+                                {
+                                    verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                }
+                            }
+                            else
+                            {
+                                verWebCandidate.Bottom_Line = chord_Bot_Line;
+                            }
+                        }
+                        else
+                        {
+                            //Need to consider
+                        }
+                        
+                        
                         double slope = Get_Line_Slope(verWebCandidate.Bottom_Line);
                         double slopeFactor = Math.Sqrt(slope * slope + 1);
 
