@@ -48,10 +48,14 @@ namespace Bearing_Enhancer_CAN
         {
             return "";
         }
-        public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
+        public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             return "";
         }
+        //public virtual string Generate_Draw_Script(string unit, string language, string chosenSolution, VerticalWebCandidate verticalweb)
+        //{
+        //    return "";
+        //}
         public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
         {
             //Get Data from tdlTruss file
@@ -1887,6 +1891,11 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
+        public Bearing_Enhancer_VerBlock(string chosensolution, VerticalWebCandidate web)
+        {
+            Chosen_Solution = chosensolution;
+            VertialWeb_Candidate = web;
+        }
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
@@ -1948,7 +1957,35 @@ namespace Bearing_Enhancer_CAN
             }
             return theNote;
         }
+        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
+        {
+            string drawScript = "";
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
+            string[] arrKey = chosenSolution.Split('-');
+            double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
+            List<string[]> blockCoordinates = new List<string[]>();
+            (double A, double B, double C) verLine_Left = TwoPoint_LineEquation(verticalweb.Left_Coordinates[verticalweb.Left_Coordinates.Count - 1], verticalweb.Right_Coordinates[0]);
+            (double A, double B, double C) verLine_Right = TwoPoint_LineEquation(verticalweb.Left_Coordinates[0],verticalweb.Right_Coordinates[verticalweb.Right_Coordinates.Count - 1]);
+            (double A, double B, double C) botLine;
+            ((double A, double B, double C) Line1, (double A, double B, double C)Line2) topLine;
 
+            if (verticalweb.Web_PassThrough)
+            {
+                string[] botPoint = verticalweb.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
+                botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
+                topLine = OffsetTwoLines(botLine.A,botLine.B,botLine.C, blockLength);
+
+                blockCoordinates.AddRange(verticalweb.Left_Coordinates);
+                blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
+                blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
+            }
+            else
+            {
+
+            }
+
+            return drawScript;
+        }
         #region Math related functions
         private string Convert_InchToFitInchSix(double totalInches)
         {
@@ -2155,6 +2192,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
+        
         public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
@@ -2216,7 +2254,7 @@ namespace Bearing_Enhancer_CAN
             }
             return theNote;
         }
-        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
+        public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             string drawScript = "";
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
