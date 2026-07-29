@@ -433,6 +433,7 @@ namespace Bearing_Enhancer_CAN
 
                 (double A, double B, double C) chord_Top_Line = TwoPoint_LineEquation(chord_LeftPoint_Top, chord_RightPoint_Top);
                 (double A, double B, double C) chord_Bot_Line = TwoPoint_LineEquation(chord_LeftPoint_Bot, chord_RightPoint_Bot);
+                double chordSlope = Get_Line_Slope(chord_Bot_Line);
 
                 foreach (var web in webPieces)
                 {
@@ -462,7 +463,7 @@ namespace Bearing_Enhancer_CAN
                             if (topplate.Location_Type == "Exterior" 
                                 && topplate.XLocation_Physical < 0.5 * (double.Parse(Left_Chord_Coordinates[0][0]) + double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 1][0])))
                             {
-                                if (Left_Chord_Coordinates.Count > 2)
+                                if (chordSlope > 0 && Left_Chord_Coordinates.Count > 2)
                                 {
                                     if (double.Parse(Left_Chord_Coordinates[1][0]) <= topplate.XLoc_LeftSide)
                                     {
@@ -482,7 +483,7 @@ namespace Bearing_Enhancer_CAN
                             else if((topplate.Location_Type == "Exterior"
                                 && topplate.XLocation_Physical > 0.5 * (double.Parse(Left_Chord_Coordinates[0][0]) + double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 1][0]))))
                             {
-                                if (Right_Chord_Coordinates.Count > 2)
+                                if (chordSlope < 0 && Right_Chord_Coordinates.Count > 2)
                                 {
                                     if (double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1][0]) >= topplate.XLoc_RightSide)
                                     {
@@ -1981,7 +1982,20 @@ namespace Bearing_Enhancer_CAN
             }
             else
             {
-
+                switch (verticalweb.Bottom_Lines.Count)
+                {
+                    case 1:
+                        blockCoordinates.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
+                        blockCoordinates.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
+                        botLine = PerpendicularLineThroughPoint(blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),verLine_Left);
+                        topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                        blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
+                        blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
+                        break;
+                    case 2:
+                        //Need to consider
+                        break;
+                }
             }
 
             return drawScript;
