@@ -17,8 +17,8 @@ namespace Bearing_Enhancer_CAN
         public double Contact_Length { get; set; }
         public List<string[]> Left_Coordinates { get; set; } = new List<string[]>();
         public List<string[]> Right_Coordinates { get; set; } = new List<string[]>();
-        public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Vertical_Web_Member;
-        public (double A, double B, double C) Bottom_Line { get; set; }
+        //public (int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) Vertical_Web_Member;
+        public List<(double A, double B, double C)> Bottom_Lines { get; set; } = new List<(double A, double B, double C)>();
         public VerticalWebCandidate() { }
         public VerticalWebCandidate ((int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd) web, List<LumberInventory> listlumberinventory)
         {

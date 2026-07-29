@@ -402,7 +402,7 @@ namespace Bearing_Enhancer_CAN
 
         public List<VerticalWebCandidate> Check_VerticalWeb_Candiadate(Top_Plate_Info topplate, List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> lumberpieces, List<LumberInventory> listlumberinventory, (string[] leftcordinates, string[] rightcordinates) chordcoordinates)
         {
-            double tolerance = 1e-3;
+            double tolerance = 1e-6;
             double xWLeft;
             double xWRight;
             List<VerticalWebCandidate> List_VerWeb_Candate = new List<VerticalWebCandidate>();
@@ -462,16 +462,17 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     if (double.Parse(Left_Chord_Coordinates[1][0]) <= topplate.XLoc_LeftSide)
                                     {
-                                        verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                        verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                     }
                                     else
                                     {
-                                        verWebCandidate.Bottom_Line = TwoPoint_LineEquation(Left_Chord_Coordinates[0], Left_Chord_Coordinates[1]);
+                                        verWebCandidate.Bottom_Lines.Add(TwoPoint_LineEquation(Left_Chord_Coordinates[0], Left_Chord_Coordinates[1]));
+                                        verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                     }
                                 }
                                 else
                                 {
-                                    verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                    verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                 }
                             }
                             else if((topplate.Location_Type == "Exterior"
@@ -481,30 +482,49 @@ namespace Bearing_Enhancer_CAN
                                 {
                                     if (double.Parse(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1][0]) >= topplate.XLoc_RightSide)
                                     {
-                                        verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                        verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                     }
                                     else
                                     {
-                                        verWebCandidate.Bottom_Line = TwoPoint_LineEquation(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1], Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 2]);
+                                        verWebCandidate.Bottom_Lines.Add(TwoPoint_LineEquation(Right_Chord_Coordinates[Right_Chord_Coordinates.Count-1], Right_Chord_Coordinates[Right_Chord_Coordinates.Count - 2]));
+                                        verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                     }
                                 }
                                 else
                                 {
-                                    verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                    verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                 }
                             }
                             else
                             {
-                                verWebCandidate.Bottom_Line = chord_Bot_Line;
+                                verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                             }
                         }
-                        else
+                        else//verWebCandidate.Web_PassThrough
                         {
-                            //Need to consider
+                            if (verWebCandidate.Left_Coordinates.Count > 2)
+                            {
+                                for(int i = 0; i < verWebCandidate.Left_Coordinates.Count - 1; i++)
+                                {
+                                    double s = Get_Line_Slope(TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[i], verWebCandidate.Left_Coordinates[i + 1]));
+                                    if(s<=tolerance)
+                                    {
+                                        verWebCandidate.Bottom_Lines.Add(TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[i], verWebCandidate.Left_Coordinates[i + 1]));
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        verWebCandidate.Bottom_Lines.Add(PerpendicularLineThroughPoint(verWebCandidate.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(), (1, 0, 1)));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                verWebCandidate.Bottom_Lines.Add(TwoPoint_LineEquation(verWebCandidate.Left_Coordinates[0], verWebCandidate.Left_Coordinates[1]));
+                            }
                         }
                         
-                        
-                        double slope = Get_Line_Slope(verWebCandidate.Bottom_Line);
+                        double slope = Get_Line_Slope(verWebCandidate.Bottom_Lines[0]);
                         double slopeFactor = Math.Sqrt(slope * slope + 1);
 
                         if (xWRight > topplate.XLoc_LeftSide && xWRight <= topplate.XLoc_RightSide)
