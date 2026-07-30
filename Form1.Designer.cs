@@ -317,6 +317,7 @@
             // 
             this.Wet_Service.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.Wet_Service.FalseValue = "False";
+            this.Wet_Service.Frozen = true;
             this.Wet_Service.HeaderText = "Wet-Service";
             this.Wet_Service.MinimumWidth = 6;
             this.Wet_Service.Name = "Wet_Service";
@@ -328,12 +329,14 @@
             // Green_Lumber
             // 
             this.Green_Lumber.FalseValue = "False";
+            this.Green_Lumber.Frozen = true;
             this.Green_Lumber.HeaderText = "Green-Lumber";
             this.Green_Lumber.Name = "Green_Lumber";
             this.Green_Lumber.TrueValue = "True";
             // 
             // Joint_ID
             // 
+            this.Joint_ID.Frozen = true;
             this.Joint_ID.HeaderText = "Joint-ID";
             this.Joint_ID.MinimumWidth = 6;
             this.Joint_ID.Name = "Joint_ID";

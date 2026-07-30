@@ -1982,19 +1982,36 @@ namespace Bearing_Enhancer_CAN
             }
             else
             {
-                switch (verticalweb.Bottom_Lines.Count)
+                if (verticalweb.Bottom_Lines.Count < 2)
                 {
-                    case 1:
-                        blockCoordinates.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
-                        blockCoordinates.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
-                        botLine = PerpendicularLineThroughPoint(blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(),verLine_Left);
-                        topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
-                        blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
-                        blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
-                        break;
-                    case 2:
-                        //Need to consider
-                        break;
+                    blockCoordinates.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
+                    blockCoordinates.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
+                    botLine = PerpendicularLineThroughPoint(blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(), verLine_Left);
+                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                    blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
+                    blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2)); 
+                }
+                else
+                {
+                    List < string[]> Left_Points_Bottle = new List<string[]>();
+                    List<string[]> Right_Points_Bottle = new List<string[]>();
+
+                    Right_Points_Bottle.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
+                    Right_Points_Bottle.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[1]));
+
+                    blockCoordinates.Add(Right_Points_Bottle.OrderBy(p => double.Parse(p[1])).Last());
+                    blockCoordinates.Add(Intersection_Point(verticalweb.Bottom_Lines[0], verticalweb.Bottom_Lines[1]));
+
+                    Left_Points_Bottle.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
+                    Left_Points_Bottle.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[1]));
+
+                    blockCoordinates.Add(Left_Points_Bottle.OrderBy(p => double.Parse(p[1])).Last());
+
+                    string[] botPoint = blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
+                    botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
+                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                    blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
+                    blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
                 }
             }
 

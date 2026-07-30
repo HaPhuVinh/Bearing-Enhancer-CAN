@@ -328,6 +328,7 @@ namespace Bearing_Enhancer_CAN
                         if(ListVerticalWebCandidate != null && ListVerticalWebCandidate.Count > 0)
                         {
                             verWeb = ListVerticalWebCandidate.OrderBy(v => v.Contact_Length).Last();
+                            list_Original_Bearing.ElementAtOrDefault(e.RowIndex).VertialWeb_Candidate = verWeb;
                             //BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
                             //BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells["No_Ply"].Value?.ToString();
                             //BE.LumSpecie = verWeb.Ver_Web_Specie;
@@ -1231,6 +1232,7 @@ namespace Bearing_Enhancer_CAN
                             beItem.Lumber_Coordinates_Right = item.Lumber_Coordinates_Right;
                             beItem.List_LumberPieces = item.List_LumberPieces;
                             beItem.TopPlateInfo.XLocation_Physical = item.TopPlateInfo.XLocation_Physical;
+                            beItem.VertialWeb_Candidate = item.VertialWeb_Candidate;
                             break;
                         }
                     }
