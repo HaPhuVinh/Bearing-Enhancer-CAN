@@ -1961,20 +1961,31 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             string drawScript = "";
+            
+
+
+
+            return drawScript;
+        }
+        #region Math related functions
+        List<string> Create_PolyWorkLine(string unit, string language, string chosenSolution, double blocklength, VerticalWebCandidate verticalweb)
+        {
+            double tolerance = 1e-6;
+            string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             string[] arrKey = chosenSolution.Split('-');
             double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
             List<string[]> blockCoordinates = new List<string[]>();
             (double A, double B, double C) verLine_Left = TwoPoint_LineEquation(verticalweb.Left_Coordinates[verticalweb.Left_Coordinates.Count - 1], verticalweb.Right_Coordinates[0]);
-            (double A, double B, double C) verLine_Right = TwoPoint_LineEquation(verticalweb.Left_Coordinates[0],verticalweb.Right_Coordinates[verticalweb.Right_Coordinates.Count - 1]);
+            (double A, double B, double C) verLine_Right = TwoPoint_LineEquation(verticalweb.Left_Coordinates[0], verticalweb.Right_Coordinates[verticalweb.Right_Coordinates.Count - 1]);
             (double A, double B, double C) botLine;
-            ((double A, double B, double C) Line1, (double A, double B, double C)Line2) topLine;
+            ((double A, double B, double C) Line1, (double A, double B, double C) Line2) topLine;
 
             if (verticalweb.Web_PassThrough)
             {
                 string[] botPoint = verticalweb.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
                 botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
-                topLine = OffsetTwoLines(botLine.A,botLine.B,botLine.C, blockLength);
+                topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
 
                 blockCoordinates.AddRange(verticalweb.Left_Coordinates);
                 blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
@@ -1989,11 +2000,11 @@ namespace Bearing_Enhancer_CAN
                     botLine = PerpendicularLineThroughPoint(blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(), verLine_Left);
                     topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
                     blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
-                    blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2)); 
+                    blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
                 }
                 else
                 {
-                    List < string[]> Left_Points_Bottle = new List<string[]>();
+                    List<string[]> Left_Points_Bottle = new List<string[]>();
                     List<string[]> Right_Points_Bottle = new List<string[]>();
 
                     Right_Points_Bottle.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
@@ -2015,9 +2026,116 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            return drawScript;
+            List<string[]> Return_Cordinates = new List<string[]>();
+            Return_Cordinates = blockCoordinates;
+            foreach (var Cor in Return_Cordinates) // Convert to feet and round to 6 decimal places
+            {
+                Cor[0] = Math.Round(double.Parse(Cor[0]) / 12, 6).ToString();
+                Cor[1] = Math.Round(double.Parse(Cor[1]) / 12, 6).ToString();
+            }
+            List<string> polyLine = new List<string>();
+            for (int i = 0; i < Return_Cordinates.Count - 1; i++)
+            {
+                workline = $"wk {Return_Cordinates[i][0]} {Return_Cordinates[i][1]} " + "0.00000 " + $"{Return_Cordinates[i + 1][0]} {Return_Cordinates[i + 1][1]} " + "0.00000";
+                polyLine.Add(workline);
+            }
+            workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
+            polyLine.Add(workline);
+
+            return polyLine;
         }
-        #region Math related functions
+
+        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
+        {
+            double tolerance = 1e-3;
+            List<string[]> tolalCordinates = new List<string[]>();
+            (string X, string Y, string Z) clickPoint;
+            string[] currentPoint;
+            string[] endPoint;
+            (double A, double B, double C) currentLine;
+            (double A, double B, double C) perpToCurrentLine;
+            List<string> hatchScripts = new List<string>();
+            string hatchScript = $"";
+
+            for (int i = 0; i < blockcordinates.Count; i++)//Đổi từ ft sang inch
+            {
+                for (int j = 0; j < blockcordinates[i].Length; j++)
+                {
+                    blockcordinates[i][j] =
+                        (double.Parse(blockcordinates[i][j]) * 12.0).ToString();
+                }
+            }
+
+            for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
+            {
+
+                for (int k = 0; k < listlumberpieces[j].Lcordinates.Length; k += 3)
+                {
+                    string[] L = new string[] { listlumberpieces[j].Lcordinates[k].Trim(), listlumberpieces[j].Lcordinates[k + 1].Trim(), listlumberpieces[j].Lcordinates[k + 2].Trim() };
+                    tolalCordinates.Add(L);
+                }
+                for (int l = 0; l < listlumberpieces[j].Rcordinates.Length; l += 3)
+                {
+                    string[] R = new string[] { listlumberpieces[j].Rcordinates[l].Trim(), listlumberpieces[j].Rcordinates[l + 1].Trim(), listlumberpieces[j].Rcordinates[l + 2].Trim() };
+                    tolalCordinates.Add(R);
+                }
+            }
+
+            for (int i = 0; i < blockcordinates.Count; i++)
+            {
+
+                currentPoint = new string[3];
+                endPoint = new string[3];
+                if (i == blockcordinates.Count - 1)
+                {
+                    endPoint = blockcordinates[i];
+                    blockcordinates[i] = blockcordinates[0];
+                }
+                else
+                {
+                    endPoint = blockcordinates[i + 1];
+                }
+                currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(endPoint[0]))).ToString();
+                currentPoint[1] = (0.5 * (double.Parse(blockcordinates[i][1]) + double.Parse(endPoint[1]))).ToString();
+                currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(currentPoint[0]))).ToString();
+                currentPoint[1] = (0.5 * (double.Parse(blockcordinates[i][1]) + double.Parse(currentPoint[1]))).ToString();
+                currentLine = TwoPoint_LineEquation(blockcordinates[i], endPoint);
+                perpToCurrentLine = PerpendicularLineThroughPoint(currentPoint, currentLine);
+                for (int m = 0; m < tolalCordinates.Count; m++)
+                {
+                    if (IsPointOnLine(tolalCordinates[m], currentLine)
+                        && double.Parse(blockcordinates[i][0]) <= double.Parse(tolalCordinates[m][0]) && double.Parse(tolalCordinates[m][0]) <= double.Parse(endPoint[0])
+                        && double.Parse(blockcordinates[i][1]) <= double.Parse(tolalCordinates[m][1]) && double.Parse(tolalCordinates[m][1]) <= double.Parse(endPoint[1]))
+                    {
+                        if (Math.Abs(double.Parse(currentPoint[0]) - double.Parse(tolalCordinates[m][0])) <= tolerance
+                            && Math.Abs(double.Parse(currentPoint[1]) - double.Parse(tolalCordinates[m][1])) <= tolerance)
+                        {
+                            ((double A, double B, double C) Line1, (double A, double B, double C) Line2) perpToCurrentLineOffset = OffsetTwoLines(perpToCurrentLine.A, perpToCurrentLine.B, perpToCurrentLine.C, 0.25);
+                            currentPoint = Intersection_Point(currentLine, perpToCurrentLineOffset.Line2);
+
+                            continue;
+                        }
+
+                    }
+                }
+                clickPoint.X = Convert_InchToFitInchSix(double.Parse(currentPoint[0]));
+                clickPoint.Y = Convert_InchToFitInchSix(double.Parse(currentPoint[1]));
+                clickPoint.Z = "0";
+                if (i == 0)
+                {
+                    hatchScript = $"beginpoly {clickPoint.X} {clickPoint.Y} -10000 {clickPoint.X} {clickPoint.Y} 10000";
+                }
+                else
+                {
+                    hatchScript = $"addpoly {clickPoint.X} {clickPoint.Y} -10000 {clickPoint.X} {clickPoint.Y} 10000";
+                }
+                hatchScripts.Add(hatchScript);
+            }
+            hatchScripts.Add($"hatch 65280 3 208 0.1 1");
+
+            return hatchScripts;
+        }
+
         private string Convert_InchToFitInchSix(double totalInches)
         {
             int feet = (int)(totalInches / 12);
