@@ -412,7 +412,7 @@ namespace Bearing_Enhancer_CAN
             List<VerticalWebCandidate> List_VerWeb_Candate = new List<VerticalWebCandidate>();
             List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = new List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)>();
             webPieces = lumberpieces?.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains("WB")).ToList();
-            if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd")
+            if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd"|| topplate.YLocation == "Web")
             {
                 List<string[]> Left_Chord_Coordinates = new List<string[]>();
                 List<string[]> Right_Chord_Coordinates = new List<string[]>();
@@ -1961,20 +1961,28 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             string drawScript = "";
-            
+            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
+            string[] arrKey = chosenSolution.Split('-');
+            double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
 
+            (List<string[]> BlockCordinate, List<string> WorkLine) polyWorkLines = Create_PolyWorkLine(chosenSolution, blockLength, verticalweb);
+            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinate, listlumberpieces);
 
+            List<string> allScripts = new List<string>();
+
+            allScripts.AddRange(polyWorkLines.WorkLine);
+            allScripts.AddRange(hatchScripts);
+
+            drawScript = string.Join(Environment.NewLine, allScripts);
 
             return drawScript;
         }
         #region Math related functions
-        List<string> Create_PolyWorkLine(string unit, string language, string chosenSolution, double blocklength, VerticalWebCandidate verticalweb)
+        (List<string[]> Block_Cordinates, List<string> PolyWorkLines) Create_PolyWorkLine(string chosenSolution, double blocklength, VerticalWebCandidate verticalweb)
         {
-            double tolerance = 1e-6;
+            //double tolerance = 1e-6;
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
-            Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
-            string[] arrKey = chosenSolution.Split('-');
-            double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
+            
             List<string[]> blockCoordinates = new List<string[]>();
             (double A, double B, double C) verLine_Left = TwoPoint_LineEquation(verticalweb.Left_Coordinates[verticalweb.Left_Coordinates.Count - 1], verticalweb.Right_Coordinates[0]);
             (double A, double B, double C) verLine_Right = TwoPoint_LineEquation(verticalweb.Left_Coordinates[0], verticalweb.Right_Coordinates[verticalweb.Right_Coordinates.Count - 1]);
@@ -1985,7 +1993,7 @@ namespace Bearing_Enhancer_CAN
             {
                 string[] botPoint = verticalweb.Left_Coordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
                 botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
-                topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blocklength);
 
                 blockCoordinates.AddRange(verticalweb.Left_Coordinates);
                 blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
@@ -1998,7 +2006,7 @@ namespace Bearing_Enhancer_CAN
                     blockCoordinates.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
                     blockCoordinates.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
                     botLine = PerpendicularLineThroughPoint(blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault(), verLine_Left);
-                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blocklength);
                     blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
                     blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
                 }
@@ -2020,7 +2028,7 @@ namespace Bearing_Enhancer_CAN
 
                     string[] botPoint = blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
                     botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
-                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blockLength);
+                    topLine = OffsetTwoLines(botLine.A, botLine.B, botLine.C, blocklength);
                     blockCoordinates.Add(Intersection_Point(verLine_Left, topLine.Line2));
                     blockCoordinates.Add(Intersection_Point(verLine_Right, topLine.Line2));
                 }
@@ -2042,7 +2050,7 @@ namespace Bearing_Enhancer_CAN
             workline = $"wk {Return_Cordinates[0][0]} {Return_Cordinates[0][1]} " + "0.00000 " + $"{Return_Cordinates[Return_Cordinates.Count - 1][0]} {Return_Cordinates[Return_Cordinates.Count - 1][1]} " + "0.00000";
             polyLine.Add(workline);
 
-            return polyLine;
+            return (Return_Cordinates, polyLine);
         }
 
         List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
@@ -2476,14 +2484,14 @@ namespace Bearing_Enhancer_CAN
             }
             TopchordCordinates.Add(RRTopchordCordinates);
 
-            (List <string[]> blockCordinates, List<string> workLines) polyWorkLine = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
+            (List <string[]> BlockCordinates, List<string> WorkLines) polyWorkLines = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
             //drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
 
-            List<string> hatchScripts = Create_HatchScript(polyWorkLine.blockCordinates, listlumberpieces);
+            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinates, listlumberpieces);
 
             List<string> allScripts = new List<string>();
 
-            allScripts.AddRange(polyWorkLine.workLines);
+            allScripts.AddRange(polyWorkLines.WorkLines);
             allScripts.AddRange(hatchScripts);
 
             drawScript = string.Join(Environment.NewLine, allScripts);
@@ -2582,7 +2590,7 @@ namespace Bearing_Enhancer_CAN
             return hatchScripts;
         }
 
-        (List<string[]>, List<string>) Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<(int, string, string, string[], string[])> Webs)
+        (List<string[]> Block_Cordinates, List<string> PolyWorkLines) Create_PolyWorkLine(List<string[]> leftcordinates, List<string[]> rightcordinates, string bearingtype, double xlocation, double blocklength, List<List<string[]>> topchordcordinates, List<(int, string, string, string[], string[])> Webs)
         {
             double tolerance = 1e-6;
             string workline = $"wk 2.000000 0.000000 0.000000 2.000000 0.458333 0.000000";
