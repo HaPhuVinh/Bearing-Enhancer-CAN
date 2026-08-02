@@ -388,7 +388,7 @@ namespace Bearing_Enhancer_CAN
                                         (dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"] as DataGridViewComboBoxCell).DataSource = listVerBBlock;
                                         dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"].Value = listVerBBlock[0];
 
-                                        row.DefaultCellStyle.BackColor = Color.AntiqueWhite; // Đổi màu dòng
+                                        row.DefaultCellStyle.BackColor = Color.LightGray; // Đổi màu dòng
                                     }
                                     else
                                     {
@@ -534,9 +534,9 @@ namespace Bearing_Enhancer_CAN
                         topPlate.LoadTransfer = Convert.ToDouble(dataGridView_Table.Rows[e.RowIndex].Cells["Load_Transfer"].Value.ToString());
                         beItem.TopPlateInfo = topPlate;
                         string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value?.ToString();
+                        beItem.VertialWeb_Candidate = list_Original_Bearing.FirstOrDefault(x => x.TrussName == beItem.TrussName && x.TopPlateInfo.JointID == beItem.TopPlateInfo.JointID).VertialWeb_Candidate;
 
-
-                        string theNote = $"Jnt {beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text)}";
+                        string theNote = $"Jnt {beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text, beItem.VertialWeb_Candidate)}";
                         row.Cells["The_Note"].Value = theNote;
 
                         //string polyWorkLine = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);

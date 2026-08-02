@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -37,14 +38,17 @@ namespace Bearing_Enhancer_CAN
         public string Chosen_Solution { get; set; }
         public List<(int No_, string Name, string key, string[] Coordinates_LeftEnd, string[] Coordinates_RightEnd)> List_LumberPieces { get; set; }
         public VerticalWebCandidate VertialWeb_Candidate { get; set; } = new VerticalWebCandidate();
+
         public string BBlock_Markup_Script = "";
+
+        public string BBlock_Name = "BB1";
 
         public Bearing_Enhancer()
         {
         }
 
         #region Service Method
-        public virtual string Generate_Enhancer_Note(string bearingsolution, string language, string unit)
+        public virtual string Generate_Enhancer_Note(string bearingsolution, string language, string unit, VerticalWebCandidate Verweb)
         {
             return "";
         }
@@ -456,7 +460,7 @@ namespace Bearing_Enhancer_CAN
                     if(Math.Abs(webRefLine.B) <= tolerance)
                     {
                         VerticalWebCandidate verWebCandidate = new VerticalWebCandidate(web, listlumberinventory);
-                        verWebCandidate.Name = web.Name;
+                        verWebCandidate.IDName = web.Name;
                         verWebCandidate.Web_PassThrough = verWebCandidate.Left_Coordinates.Any(p => IsPointBelowLine(p, chord_Top_Line));
                         if (!verWebCandidate.Web_PassThrough)
                         {
@@ -1849,7 +1853,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial", VerticalWebCandidate web = null)
         {
             string crushPlate = chosensolution.Split('&')[0].Trim();
             string theNote = "";
@@ -1871,7 +1875,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial", VerticalWebCandidate web = null)
         {
             string theNote = "";
             if (language == "English")
@@ -1897,7 +1901,7 @@ namespace Bearing_Enhancer_CAN
             Chosen_Solution = chosensolution;
             VertialWeb_Candidate = web;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit, VerticalWebCandidate web)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             string[] arrKey = chosensolution.Split('-');
@@ -1928,15 +1932,15 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. {(row > 1 ? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web {web.IDName} w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. {(row > 1 ? "Stagger rows by 1/2 the nails spacing." : ".")} Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) nails{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web {web.IDName} w/ {(row)} {(row > 1 ? "staggered rows" : "row")} of Simpson {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} o.c. Install the screws per Simpson specifications. Install a minimum of ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) screws{(Hor_Block.NumberBlock == 2 ? " per block." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web #-# w/ ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) Simpson {fasDescription}{(Hor_Block.NumberBlock == 2 ? " per block." : ".")} See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
+                    theNote = $"Attach bearing block BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (or better), to {(Hor_Block.NumberBlock == 1 ? "one face" : "both faces")} of the web {web.IDName} w/ ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) Simpson {fasDescription}{(Hor_Block.NumberBlock == 2 ? " per block." : ".")} See ICC-ES Report ESR-2236 for minimum spacing, edge distance, and end distance requirements for SDS screws.";
                 }
                 else { theNote = ""; }
             }
@@ -1944,15 +1948,15 @@ namespace Bearing_Enhancer_CAN
             {
                 if (fastenerType.Contains("Nail"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme {web.IDName} avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de {fasDescription} @ {Hor_Block.MinSpacing}{iom.Text} c.c. {(row > 1 ? "Le décalage des rangées doit être de 1/2 l'espacement." : ".")} Installez un min de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) clous{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDW"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme {web.IDName} avec {(row)} {(row > 1 ? "rangée décalées" : "rangée")} de vis {fasDescription} de Simpson@ {Hor_Block.MinSpacing}{iom.Text} c.c. Installez les vis selon les spécifications de Simpson. Installez un min. de ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")}";
                 }
                 else if (fastenerType.Contains("SDS"))
                 {
-                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme #-# avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
+                    theNote = $"Attachez le renfort d'appui BB1, {lumSize}x{Hor_Block.BlockLength}{iom.Text} {LumSpecie} #2 (ou mieux), sur {(Hor_Block.NumberBlock == 1 ? "une face" : "les deux faces")} de la l’âme {web.IDName} avec ({(Hor_Block.NumberBlock == 2 ? (Math.Ceiling(numberFastener * 1.0 / 2)) : numberFastener)}) vis {fasDescription} de Simpson{(Hor_Block.NumberBlock == 2 ? " par bloc." : ".")} Consultez le rapport d'évaluation ESR-2236 pour les espacements min. d'extrémité et de rive pour les vis SDS.";
                 }
                 else { theNote = ""; }
             }
@@ -1961,6 +1965,12 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             string drawScript = "";
+            if (verticalweb.IDName == null)
+            {
+                return drawScript;
+                //return "The program did not find any appropriate vertical webs.\nPlease review and manually markup bearing block in Truss Studio!";
+            }
+            
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit, language);
             string[] arrKey = chosenSolution.Split('-');
             double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
@@ -2350,7 +2360,7 @@ namespace Bearing_Enhancer_CAN
             Chosen_Solution = chosensolution;
         }
         
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit)
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit, VerticalWebCandidate web = null)
         {
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit,language);
             string[] arrKey = chosensolution.Split('-');
@@ -3374,7 +3384,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial", VerticalWebCandidate web = null)
         {
             string theNote = "";
             if (language == "English")
@@ -3394,7 +3404,7 @@ namespace Bearing_Enhancer_CAN
         {
             Chosen_Solution = chosensolution;
         }
-        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial")
+        public override string Generate_Enhancer_Note(string chosensolution, string language, string unit = "Imperial", VerticalWebCandidate web = null)
         {
             string theNote = "";
             if (language == "English")

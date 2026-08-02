@@ -8,7 +8,7 @@ namespace Bearing_Enhancer_CAN
 {
     public class VerticalWebCandidate
     {
-        public string Name { get; set; }
+        public string IDName { get; set; } = "#-#";
         public bool Web_PassThrough { get; set; } = false;
         public string Ver_Web_Size { get; set; }
         public string Ver_Lumber_Width { get; set; }
