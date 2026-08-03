@@ -55,7 +55,6 @@
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lbl_DataTable = new System.Windows.Forms.Label();
             this.comboBox_Language = new System.Windows.Forms.ComboBox();
             this.comboBox_Unit = new System.Windows.Forms.ComboBox();
             this.label_Language = new System.Windows.Forms.Label();
@@ -66,6 +65,8 @@
             this.btn_Browse = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.bnt_Draw_BearingBlock = new System.Windows.Forms.Button();
+            this.comboBox_SolutionPriority = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -77,7 +78,7 @@
             this.button_Check.BackColor = System.Drawing.Color.White;
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button_Check.Location = new System.Drawing.Point(528, 70);
+            this.button_Check.Location = new System.Drawing.Point(453, 56);
             this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(136, 49);
@@ -90,7 +91,7 @@
             // 
             this.lbl_ProjectNumberPath.AutoSize = true;
             this.lbl_ProjectNumberPath.Font = new System.Drawing.Font("Arial Black", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ProjectNumberPath.Location = new System.Drawing.Point(6, 14);
+            this.lbl_ProjectNumberPath.Location = new System.Drawing.Point(6, 7);
             this.lbl_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbl_ProjectNumberPath.Name = "lbl_ProjectNumberPath";
             this.lbl_ProjectNumberPath.Size = new System.Drawing.Size(182, 22);
@@ -101,7 +102,7 @@
             // tbx_ProjectNumberPath
             // 
             this.tbx_ProjectNumberPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbx_ProjectNumberPath.Location = new System.Drawing.Point(207, 15);
+            this.tbx_ProjectNumberPath.Location = new System.Drawing.Point(207, 8);
             this.tbx_ProjectNumberPath.Margin = new System.Windows.Forms.Padding(2);
             this.tbx_ProjectNumberPath.Name = "tbx_ProjectNumberPath";
             this.tbx_ProjectNumberPath.Size = new System.Drawing.Size(382, 24);
@@ -326,25 +327,12 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
             // 
-            // lbl_DataTable
-            // 
-            this.lbl_DataTable.AutoSize = true;
-            this.lbl_DataTable.Font = new System.Drawing.Font("Arial Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_DataTable.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.lbl_DataTable.Location = new System.Drawing.Point(12, 105);
-            this.lbl_DataTable.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lbl_DataTable.Name = "lbl_DataTable";
-            this.lbl_DataTable.Size = new System.Drawing.Size(105, 23);
-            this.lbl_DataTable.TabIndex = 4;
-            this.lbl_DataTable.Text = "Data Table";
-            this.lbl_DataTable.Click += new System.EventHandler(this.label2_Click);
-            // 
             // comboBox_Language
             // 
             this.comboBox_Language.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(207, 43);
+            this.comboBox_Language.Location = new System.Drawing.Point(207, 39);
             this.comboBox_Language.Name = "comboBox_Language";
             this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
             this.comboBox_Language.TabIndex = 5;
@@ -354,7 +342,7 @@
             this.comboBox_Unit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(207, 70);
+            this.comboBox_Unit.Location = new System.Drawing.Point(207, 66);
             this.comboBox_Unit.Name = "comboBox_Unit";
             this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
             this.comboBox_Unit.TabIndex = 5;
@@ -363,7 +351,7 @@
             // 
             this.label_Language.AutoSize = true;
             this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(125, 44);
+            this.label_Language.Location = new System.Drawing.Point(125, 40);
             this.label_Language.Name = "label_Language";
             this.label_Language.Size = new System.Drawing.Size(72, 17);
             this.label_Language.TabIndex = 6;
@@ -373,7 +361,7 @@
             // 
             this.label_Unit.AutoSize = true;
             this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(125, 69);
+            this.label_Unit.Location = new System.Drawing.Point(164, 68);
             this.label_Unit.Name = "label_Unit";
             this.label_Unit.Size = new System.Drawing.Size(33, 17);
             this.label_Unit.TabIndex = 6;
@@ -411,7 +399,7 @@
             // 
             this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Browse.ForeColor = System.Drawing.Color.Black;
-            this.btn_Browse.Location = new System.Drawing.Point(596, 15);
+            this.btn_Browse.Location = new System.Drawing.Point(596, 8);
             this.btn_Browse.Name = "btn_Browse";
             this.btn_Browse.Size = new System.Drawing.Size(68, 24);
             this.btn_Browse.TabIndex = 9;
@@ -441,6 +429,30 @@
             this.bnt_Draw_BearingBlock.UseVisualStyleBackColor = true;
             this.bnt_Draw_BearingBlock.Click += new System.EventHandler(this.bnt_Draw_BearingBlock_Click);
             // 
+            // comboBox_SolutionPriority
+            // 
+            this.comboBox_SolutionPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_SolutionPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_SolutionPriority.FormattingEnabled = true;
+            this.comboBox_SolutionPriority.Items.AddRange(new object[] {
+            "TBE",
+            "Bearing Bock",
+            "Crush Plate"});
+            this.comboBox_SolutionPriority.Location = new System.Drawing.Point(207, 94);
+            this.comboBox_SolutionPriority.Name = "comboBox_SolutionPriority";
+            this.comboBox_SolutionPriority.Size = new System.Drawing.Size(191, 23);
+            this.comboBox_SolutionPriority.TabIndex = 12;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(90, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(107, 17);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Solution Priority";
+            // 
             // bearingEnhancerBindingSource
             // 
             this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
@@ -451,16 +463,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1796, 948);
+            this.Controls.Add(this.comboBox_SolutionPriority);
             this.Controls.Add(this.bnt_Draw_BearingBlock);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.btn_Browse);
             this.Controls.Add(this.btn_Add_Note);
             this.Controls.Add(this.btn_export_data);
             this.Controls.Add(this.label_Unit);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label_Language);
             this.Controls.Add(this.comboBox_Unit);
             this.Controls.Add(this.comboBox_Language);
-            this.Controls.Add(this.lbl_DataTable);
             this.Controls.Add(this.dataGridView_Table);
             this.Controls.Add(this.tbx_ProjectNumberPath);
             this.Controls.Add(this.lbl_ProjectNumberPath);
@@ -485,7 +498,6 @@
         private System.Windows.Forms.Label lbl_ProjectNumberPath;
         private System.Windows.Forms.TextBox tbx_ProjectNumberPath;
         private System.Windows.Forms.DataGridView dataGridView_Table;
-        private System.Windows.Forms.Label lbl_DataTable;
         private System.Windows.Forms.BindingSource bearingEnhancerBindingSource;
         private System.Windows.Forms.ComboBox comboBox_Language;
         private System.Windows.Forms.ComboBox comboBox_Unit;
@@ -518,6 +530,8 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Solution;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
+        private System.Windows.Forms.ComboBox comboBox_SolutionPriority;
+        private System.Windows.Forms.Label label1;
     }
 }
 
