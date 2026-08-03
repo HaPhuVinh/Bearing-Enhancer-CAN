@@ -363,7 +363,7 @@ namespace Bearing_Enhancer_CAN
                         }
                         else//ListVerticalWebCandidate = null
                         {
-                            DialogResult vResult = MessageBox.Show("Not found any appropriate webs to apply! Do you want to consider manually?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                            DialogResult vResult = MessageBox.Show("The program did not find any appropriate webs to apply! Do you want to consider manually?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                             if (vResult == DialogResult.OK)
                             {
                                 using (Form_Vertical_Block_Info f2 = new Form_Vertical_Block_Info())
@@ -473,6 +473,7 @@ namespace Bearing_Enhancer_CAN
 
             if (e.ColumnIndex == 19 || e.ColumnIndex == 18 || e.ColumnIndex == 16 && e.RowIndex >= 0) // Cột Checked || Bearing-Solution || Vertical-Block 
             {
+                Made_BearingBlock_Label(list_Original_Bearing);
                 bool isChecked19 = Convert.ToBoolean(dataGridView_Table.Rows[e.RowIndex].Cells["Checked"].Value);
                 DataGridViewRow row = dataGridView_Table.Rows[e.RowIndex];
                 var cell = dataGridView_Table.Rows[e.RowIndex].Cells["Bearing_Solution"];
@@ -535,6 +536,7 @@ namespace Bearing_Enhancer_CAN
                         beItem.TopPlateInfo = topPlate;
                         string contactLength = dataGridView_Table.Rows[e.RowIndex].Cells["Contact_Length"].Value?.ToString();
                         beItem.VertialWeb_Candidate = list_Original_Bearing.FirstOrDefault(x => x.TrussName == beItem.TrussName && x.TopPlateInfo.JointID == beItem.TopPlateInfo.JointID).VertialWeb_Candidate;
+                        beItem.BBlock_Label = list_Original_Bearing.FirstOrDefault(x => x.TrussName == beItem.TrussName && x.TopPlateInfo.JointID == beItem.TopPlateInfo.JointID).BBlock_Label;
 
                         string theNote = $"Jnt {beItem.TopPlateInfo.JointID}: {beItem.Generate_Enhancer_Note(chosenSolution, comboBox_Language.Text, comboBox_Unit.Text, beItem.VertialWeb_Candidate)}";
                         row.Cells["The_Note"].Value = theNote;
@@ -924,6 +926,36 @@ namespace Bearing_Enhancer_CAN
                            + sixteenth;
 
             return $"{feet:D2}-{inches:D2}-{sixteenth:D2}";
+        }
+
+        void Made_BearingBlock_Label (List<Bearing_Enhancer> listbearingenhancer)
+        {
+            foreach (DataGridViewRow row in dataGridView_Table.Rows)
+            {
+                if (!row.IsNewRow)
+                {
+                    string trussName = row.Cells["Truss_Name"].Value?.ToString();
+                    string jointID = row.Cells["Joint_ID"].Value?.ToString();
+                    var matchingBE = listbearingenhancer.FirstOrDefault(be => be.TrussName == trussName && be.TopPlateInfo.JointID == jointID);
+                    if (matchingBE != null)
+                    {
+                        matchingBE.Chosen_Solution = row.Cells["Bearing_Solution"].Value?.ToString();
+                    }
+                }
+            }
+            foreach(var be in listbearingenhancer)
+            {
+                int i = 1;
+                List<Bearing_Enhancer> listBE = listbearingenhancer.Where(x=>x.TrussName == be.TrussName).ToList();
+                foreach(var bei in listBE)
+                {
+                    if (bei.Chosen_Solution.Contains("Block"))
+                    {
+                        bei.BBlock_Label = $"BB{i}";
+                        i++;
+                    }
+                }
+            }
         }
 
         private void btn_export_data_Click(object sender, EventArgs e)
