@@ -436,7 +436,7 @@
             this.comboBox_SolutionPriority.FormattingEnabled = true;
             this.comboBox_SolutionPriority.Items.AddRange(new object[] {
             "TBE",
-            "Bearing Bock",
+            "Bearing Block",
             "Crush Plate"});
             this.comboBox_SolutionPriority.Location = new System.Drawing.Point(207, 94);
             this.comboBox_SolutionPriority.Name = "comboBox_SolutionPriority";

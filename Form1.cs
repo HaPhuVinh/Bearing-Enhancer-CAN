@@ -53,6 +53,7 @@ namespace Bearing_Enhancer_CAN
             comboBox_Unit.Items.Add("Imperial");
             comboBox_Unit.Items.Add("Metric");
             comboBox_Unit.Text = "Imperial";
+            comboBox_SolutionPriority.Text = "TBE";
             
             List<string> list_Mat = new List<string> { "SPF", "DFL", "DFLN", "SP", "SYP", "HF", "USER" };
             List<string> list_Ply = new List<string> { "1", "2", "3", "4", "5", "6" };
@@ -213,7 +214,7 @@ namespace Bearing_Enhancer_CAN
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
 
-                list_BE = BE.Get_Bearing_Info(outputTxtFile, comboBox_Language.Text, comboBox_Unit.Text);
+                list_BE = BE.Get_Bearing_Info(outputTxtFile, comboBox_Language.Text, comboBox_Unit.Text, comboBox_SolutionPriority.Text);
 
                 //LumberInventory lumberI = new LumberInventory();
                 //List<LumberInventory> list_Lumber = lumberI.Get_Lumber_Inv(projectID);
@@ -1037,7 +1038,7 @@ namespace Bearing_Enhancer_CAN
             }
             if (listItem.Count != 0)
             {
-                string mssg = "Are you sure? The below trusses will be added:\n";
+                string mssg = "Please confirm! The below trusses will be added:\n";
                 foreach (var item in listItem)
                 {
                     mssg += $"Truss: {item.TrussName} - Joint: {item.JointID},\n";

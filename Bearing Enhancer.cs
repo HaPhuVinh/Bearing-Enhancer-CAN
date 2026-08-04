@@ -60,7 +60,7 @@ namespace Bearing_Enhancer_CAN
         //{
         //    return "";
         //}
-        public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit)
+        public List<Bearing_Enhancer> Get_Bearing_Info(string txtpath, string language, string unit, string solutionpriority)
         {
             //Get Data from tdlTruss file
             Imperial_Or_Metric iom = new Imperial_Or_Metric(unit);
@@ -364,7 +364,7 @@ namespace Bearing_Enhancer_CAN
                             bE.TopPlateInfo.LoadTransfer = Math.Round((react - react * bear_W / bear_Wrq), 1);
 
                             //Get Bearing Solution
-                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit,language);
+                            List<string> bear_Solution = bE.Check_Bearing_Solution(bE.Ply, bE.LumSize, bE.LumSpecie, bE.TopPlateInfo, unit,language,solutionpriority:solutionpriority);
                             bE.BearingSolution = bear_Solution;
                             bearingEnhancerItems.Add(bE);
                         }
@@ -375,7 +375,7 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language, bool bVertical = false, string contactlength = "00", string solutionpriority = "TBE")
+        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language, bool bVertical = false, string contactlength = "00", string solutionpriority = "Bearing Block")
         {
             List<string> list_Bearing_Solution = new List<string>();
 
@@ -405,7 +405,46 @@ namespace Bearing_Enhancer_CAN
             {
                 list_Bearing_Solution.Add("Not-found-an-appropriate-solution");
             }
-            return list_Bearing_Solution;
+
+            //string priority = "";
+            //if (solutionpriority == "TBE")
+            //{
+            //    priority = "TBE";
+            //}
+            //else if(solutionpriority == "Bearing Block")
+            //{
+            //    priority = "Block";
+            //}
+            //else
+            //{
+            //    priority = "CP";
+            //}
+            solutionpriority = solutionpriority?.Trim();
+            return list_Bearing_Solution
+                .OrderBy(s =>
+                {
+                    if (solutionpriority == "Bearing Block")
+                    {
+                        if (s.Contains("Block")) return 0;
+                        if (s.Contains("TBE")) return 1;
+                        if (s.Contains("CP")) return 2;
+                    }
+                    else if (solutionpriority == "TBE")
+                    {
+                        if (s.Contains("TBE")) return 0;
+                        if (s.Contains("CP")) return 1;
+                        if (s.Contains("Block")) return 2;
+                    }
+                    else
+                    {
+                        if (s.Contains("CP")) return 0;
+                        if (s.Contains("TBE")) return 1;
+                        if (s.Contains("Block")) return 2;
+                    }
+
+                    return 999;
+                })
+                .ToList();
         }
 
         public List<VerticalWebCandidate> Check_VerticalWeb_Candiadate(Top_Plate_Info topplate, List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> lumberpieces, List<LumberInventory> listlumberinventory, (string[] leftcordinates, string[] rightcordinates) chordcoordinates)
@@ -1976,7 +2015,7 @@ namespace Bearing_Enhancer_CAN
             double blockLength = Math.Round((unit == "Imperial" ? int.Parse(arrKey[0].Replace(iom.Text, "").Trim()) : double.Parse(arrKey[0].Replace(iom.Text, "").Trim()) / iom.miliFactor));
 
             (List<string[]> BlockCordinate, List<string> WorkLine) polyWorkLines = Create_PolyWorkLine(chosenSolution, blockLength, verticalweb);
-            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinate, listlumberpieces);
+            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinate, listlumberpieces, chosenSolution);
 
             List<string> allScripts = new List<string>();
 
@@ -2063,7 +2102,7 @@ namespace Bearing_Enhancer_CAN
             return (Return_Cordinates, polyLine);
         }
 
-        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
+        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
         {
             double tolerance = 1e-3;
             List<string[]> tolalCordinates = new List<string[]>();
@@ -2074,6 +2113,7 @@ namespace Bearing_Enhancer_CAN
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             string hatchScript = $"";
+            
 
             for (int i = 0; i < blockcordinates.Count; i++)//Đổi từ ft sang inch
             {
@@ -2149,7 +2189,11 @@ namespace Bearing_Enhancer_CAN
                 }
                 hatchScripts.Add(hatchScript);
             }
-            hatchScripts.Add($"hatch 65280 3 208 0.1 1");
+
+            string[] arrKey = chosensolution.Split('-');
+            double.TryParse(arrKey[3], out double numberblock);
+
+            hatchScripts.Add($"hatch 65280 {(numberblock==1?"3":"4")} 208 0.1 1");
 
             return hatchScripts;
         }
@@ -2497,7 +2541,7 @@ namespace Bearing_Enhancer_CAN
             (List <string[]> BlockCordinates, List<string> WorkLines) polyWorkLines = Create_PolyWorkLine(LeftCordinates, RightCordinates, bearingType, topPlateInfo.XLocation_Physical, blockLength, TopchordCordinates, WebPieces);
             //drawScript = string.Join(Environment.NewLine, polyWorkLine.workLines);
 
-            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinates, listlumberpieces);
+            List<string> hatchScripts = Create_HatchScript(polyWorkLines.BlockCordinates, listlumberpieces, chosenSolution);
 
             List<string> allScripts = new List<string>();
 
@@ -2509,7 +2553,7 @@ namespace Bearing_Enhancer_CAN
             return drawScript;
         }
 
-        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces)
+        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
         {
             double tolerance = 1e-3;
             List<string[]> tolalCordinates = new List<string[]>();
@@ -2595,7 +2639,35 @@ namespace Bearing_Enhancer_CAN
                 }
                 hatchScripts.Add(hatchScript);
             }
-            hatchScripts.Add($"hatch 65280 3 208 0.1 1");
+
+            string[] arrKey = chosensolution.Split('-');
+            double.TryParse(arrKey[3], out double numberblock);
+
+            hatchScripts.Add($"hatch 65280 {(numberblock == 1 ? "3" : "4")} 208 0.1 1");
+
+            double X_BlockRightEnd = double.Parse(blockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
+            List<string[]> BlockRightEndPoints = blockcordinates.Where(x => (double.Parse(x[0]) - X_BlockRightEnd) <= tolerance).ToList();
+
+            string[] blockLabelCordinate = BlockRightEndPoints.OrderBy(x => double.Parse(x[1])).LastOrDefault();
+
+            string fontsize = "fs24";
+            string labelName = "BB2";
+            string startX = "250500";
+            string startY = "-120901";
+            string endX = "260500";
+            string endY = "-120901";
+
+            string blockLabelScript = $@"
+                    label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}
+                    {{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}
+                    \viewkind4\uc1\pard
+                    \tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880
+                    \tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760
+                    \tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640
+                    \tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520
+                    \cf1\highlight2\f0\{fontsize} {labelName}\par
+                    }}
+                    "" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Above schedule n {startX} {startY} 0 {endX} {endY} 0";
 
             return hatchScripts;
         }
