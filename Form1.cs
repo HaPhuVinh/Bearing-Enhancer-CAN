@@ -1266,6 +1266,9 @@ namespace Bearing_Enhancer_CAN
                             beItem.List_LumberPieces = item.List_LumberPieces;
                             beItem.TopPlateInfo.XLocation_Physical = item.TopPlateInfo.XLocation_Physical;
                             beItem.VertialWeb_Candidate = item.VertialWeb_Candidate;
+                            beItem.BBlock_Label = item.BBlock_Label;
+                            beItem.Span = item.Span;
+
                             break;
                         }
                     }

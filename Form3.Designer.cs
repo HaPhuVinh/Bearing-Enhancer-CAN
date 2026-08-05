@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView_CADMarkup = new System.Windows.Forms.DataGridView();
             this.AddTDL = new System.Windows.Forms.Button();
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -69,6 +69,7 @@
             this.AddTDL.TabIndex = 1;
             this.AddTDL.Text = "Add to TDL";
             this.AddTDL.UseVisualStyleBackColor = true;
+            this.AddTDL.Click += new System.EventHandler(this.AddTDL_Click);
             // 
             // Truss_Name
             // 
@@ -92,6 +93,7 @@
             // 
             this.Y_Location.HeaderText = "Y-Location";
             this.Y_Location.Name = "Y_Location";
+            this.Y_Location.ReadOnly = true;
             // 
             // X_Location
             // 
@@ -114,8 +116,8 @@
             // The_Script_Note
             // 
             this.The_Script_Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.The_Script_Note.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.The_Script_Note.DefaultCellStyle = dataGridViewCellStyle2;
             this.The_Script_Note.HeaderText = "The-Script-Note";
             this.The_Script_Note.Name = "The_Script_Note";
             this.The_Script_Note.Width = 107;

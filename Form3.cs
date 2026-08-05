@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Bearing_Enhancer_CAN
 {
@@ -53,20 +54,45 @@ namespace Bearing_Enhancer_CAN
         }
         private void DataGridViewCellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex == 6)
-            {
-                string scriptNote;
-                DataGridViewRow row = dataGridView_CADMarkup.Rows[e.RowIndex];
-                bool isChecked = Convert.ToBoolean(row.Cells["Get_Script_Note"].Value);
-                if(isChecked)
-                {
-                    row.Cells["The_Script_Note"].Value = "";
-                }
-                else
-                {
-                    row.Cells["The_Script_Note"].Value = "";
-                }
-            }
+            //if (e.RowIndex >= 0 && e.ColumnIndex == 6)
+            //{
+            //    string scriptNote;
+            //    DataGridViewRow row = dataGridView_CADMarkup.Rows[e.RowIndex];
+            //    bool isChecked = Convert.ToBoolean(row.Cells["Get_Script_Note"].Value);
+            //    if(isChecked)
+            //    {
+            //        row.Cells["The_Script_Note"].Value = "";
+            //    }
+            //    else
+            //    {
+            //        row.Cells["The_Script_Note"].Value = "";
+            //    }
+            //}
         }
+
+        private void AddTDL_Click(object sender, EventArgs e)
+        {
+
+        }
+        //void Add_Note_ToTruss(string path, (string TrussName, string Note) item)
+        //{
+        //    string projectPath = tbx_ProjectNumberPath.Text;
+        //    string trussesPath = $"{tbx_ProjectNumberPath.Text}\\Trusses";
+        //    string[] arrPath = projectPath.Split('\\');
+        //    string projectID = arrPath[arrPath.Length - 1];
+        //    string xmlFilePath = Path.Combine(trussesPath, $"{item.TrussName}.tdlTruss");
+        //    XmlDocument xmlDoc = new XmlDocument();
+        //    xmlDoc.Load(xmlFilePath);
+        //    XmlNode rootNode, noteNode;
+        //    rootNode = xmlDoc.DocumentElement;
+        //    noteNode = rootNode.SelectSingleNode("//Notes");
+        //    XmlElement newNote = xmlDoc.CreateElement("Note");
+        //    newNote.SetAttribute("OutputGroup", "5");
+        //    newNote.InnerText = item.Note;
+        //    noteNode.AppendChild(newNote);
+
+        //    // Lưu lại tài liệu XML
+        //    xmlDoc.Save(xmlFilePath);
+        //}
     }
 }

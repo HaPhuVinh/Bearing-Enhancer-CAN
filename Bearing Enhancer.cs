@@ -2102,7 +2102,7 @@ namespace Bearing_Enhancer_CAN
             return (Return_Cordinates, polyLine);
         }
 
-        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
+        List<string> Create_HatchScript(List<string[]> verblockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
         {
             double tolerance = 1e-3;
             List<string[]> tolalCordinates = new List<string[]>();
@@ -2113,16 +2113,19 @@ namespace Bearing_Enhancer_CAN
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             string hatchScript = $"";
+            List<string[]> blockcordinates = new List<string[]>();
             
 
-            for (int i = 0; i < blockcordinates.Count; i++)//Đổi từ ft sang inch
+            for (int i = 0; i < verblockcordinates.Count; i++)//Đổi từ ft sang inch
             {
-                for (int j = 0; j < blockcordinates[i].Length; j++)
+                for (int j = 0; j < verblockcordinates[i].Length; j++)
                 {
-                    blockcordinates[i][j] =
-                        (double.Parse(blockcordinates[i][j]) * 12.0).ToString();
+                    verblockcordinates[i][j] =
+                        (double.Parse(verblockcordinates[i][j]) * 12.0).ToString();
                 }
             }
+
+            blockcordinates.AddRange(verblockcordinates);
 
             for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
             {
@@ -2153,6 +2156,7 @@ namespace Bearing_Enhancer_CAN
                 {
                     endPoint = blockcordinates[i + 1];
                 }
+
                 currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(endPoint[0]))).ToString();
                 currentPoint[1] = (0.5 * (double.Parse(blockcordinates[i][1]) + double.Parse(endPoint[1]))).ToString();
                 currentPoint[0] = (0.5 * (double.Parse(blockcordinates[i][0]) + double.Parse(currentPoint[0]))).ToString();
@@ -2194,6 +2198,34 @@ namespace Bearing_Enhancer_CAN
             double.TryParse(arrKey[3], out double numberblock);
 
             hatchScripts.Add($"hatch 65280 {(numberblock==1?"3":"4")} 208 0.1 1");
+
+            double X_BlockRightEnd = double.Parse(verblockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
+            List<string[]> BlockRightEndPoints = verblockcordinates.Where(x => (Math.Abs(double.Parse(x[0]) - X_BlockRightEnd)) <= tolerance).ToList();
+
+            string[] blockLabelCordinate = BlockRightEndPoints.OrderBy(x => double.Parse(x[1])).LastOrDefault();
+
+            Dictionary<int, int> FontSizes = new Dictionary<int, int>()
+            {
+                { 10, 10 },
+                { 20, 12 },
+                { 40, 14 },
+                { 60, 15 },
+                { 80, 16 },
+                { 100, 17 }
+            };
+            //int.TryParse(Span, out int trussspan);
+            double span = ConvertStringToInches(Span)/12;
+            int fontsize = FontSizes.LastOrDefault(x => span >= x.Key).Value;
+            string sfontsize = $"fs{fontsize * 2}";
+            string labelName = BBlock_Label;
+            string startX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0]) + 1);
+            string startY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1]) + 1);
+            string endX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0]) + 12 + 1);
+            string endY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1]) + 1);
+
+            string blockLabelScript =
+                    $@"label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}\n{{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}\n\viewkind4\uc1\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760\tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640\tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520\cf1\highlight2\f0\{sfontsize} {labelName}\par\n}}\n"" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Above schedule n {startX} {startY} 0 {endX} {endY} 0";
+            hatchScripts.Add(blockLabelScript);
 
             return hatchScripts;
         }
@@ -2394,6 +2426,40 @@ namespace Bearing_Enhancer_CAN
 
             return -line.A / line.B;
         }
+        public static double ConvertStringToInches(string value)
+        {
+            value = value.Trim();
+
+            int feet = 0;
+            int inches = 0;
+            int sixteenth = 0;
+
+            switch (value.Length)
+            {
+                case 1:
+                case 2:
+                    feet = int.Parse(value);
+                    break;
+
+                case 3:
+                case 4:
+                    feet = int.Parse(value.Substring(0, value.Length - 2));
+                    sixteenth = int.Parse(value.Substring(value.Length - 2, 2));
+                    break;
+
+                case 5:
+                case 6:
+                    feet = int.Parse(value.Substring(0, value.Length - 4));
+                    inches = int.Parse(value.Substring(value.Length - 4, 2));
+                    sixteenth = int.Parse(value.Substring(value.Length - 2, 2));
+                    break;
+
+                default:
+                    throw new FormatException($"Invalid format int Create_HatchScript: {value}");
+            }
+
+            return feet * 12 + inches + sixteenth / 16.0;
+        }
         #endregion
     }
     public class Bearing_Enhancer_HorBlock : Bearing_Enhancer
@@ -2553,7 +2619,7 @@ namespace Bearing_Enhancer_CAN
             return drawScript;
         }
 
-        List<string> Create_HatchScript(List<string[]> blockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
+        List<string> Create_HatchScript(List<string[]> horblockcordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, string chosensolution)
         {
             double tolerance = 1e-3;
             List<string[]> tolalCordinates = new List<string[]>();
@@ -2564,15 +2630,18 @@ namespace Bearing_Enhancer_CAN
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             string hatchScript = $"";
+            List<string[]> blockcordinates = new List<string[]>();
 
-            for (int i = 0; i < blockcordinates.Count; i++)//Đổi từ ft sang inch
+            for (int i = 0; i < horblockcordinates.Count; i++)//Đổi từ ft sang inch
             {
-                for (int j = 0; j < blockcordinates[i].Length; j++)
+                for (int j = 0; j < horblockcordinates[i].Length; j++)
                 {
-                    blockcordinates[i][j] =
-                        (double.Parse(blockcordinates[i][j]) * 12.0).ToString();
+                    horblockcordinates[i][j] =
+                        (double.Parse(horblockcordinates[i][j]) * 12.0).ToString();
                 }
             }
+
+            blockcordinates.AddRange(horblockcordinates);
 
             for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
             {
@@ -2645,30 +2714,34 @@ namespace Bearing_Enhancer_CAN
 
             hatchScripts.Add($"hatch 65280 {(numberblock == 1 ? "3" : "4")} 208 0.1 1");
 
-            double X_BlockRightEnd = double.Parse(blockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
-            List<string[]> BlockRightEndPoints = blockcordinates.Where(x => (double.Parse(x[0]) - X_BlockRightEnd) <= tolerance).ToList();
+            double X_BlockRightEnd = double.Parse(horblockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
+            List<string[]> BlockRightEndPoints = horblockcordinates.Where(x => (Math.Abs(double.Parse(x[0]) - X_BlockRightEnd)) <= tolerance).ToList();
 
             string[] blockLabelCordinate = BlockRightEndPoints.OrderBy(x => double.Parse(x[1])).LastOrDefault();
 
-            string fontsize = "fs24";
-            string labelName = "BB2";
-            string startX = "250500";
-            string startY = "-120901";
-            string endX = "260500";
-            string endY = "-120901";
+            Dictionary<int,int> FontSizes = new Dictionary<int, int>()
+            {
+                { 10, 10 },
+                { 20, 12 },
+                { 40, 14 },
+                { 60, 15 },
+                { 80, 16 },
+                { 100, 17 }
+            };
+            //int.TryParse(Span, out int trussspan);
+            double span = ConvertStringToInches(Span)/12;
+            
+            int fontsize = FontSizes.LastOrDefault(x => span >= x.Key).Value;
+            string sfontsize = $"fs{fontsize*2}";
+            string labelName = BBlock_Label;
+            string startX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0])+1);
+            string startY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])+1);
+            string endX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0])+12+1);
+            string endY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])+1);
 
-            string blockLabelScript = $@"
-                    label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}
-                    {{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}
-                    \viewkind4\uc1\pard
-                    \tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880
-                    \tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760
-                    \tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640
-                    \tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520
-                    \cf1\highlight2\f0\{fontsize} {labelName}\par
-                    }}
-                    "" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Above schedule n {startX} {startY} 0 {endX} {endY} 0";
-
+            string blockLabelScript =
+                    $@"label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}\n{{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}\n\viewkind4\uc1\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760\tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640\tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520\cf1\highlight2\f0\{sfontsize} {labelName}\par\n}}\n"" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Above schedule n {startX} {startY} 0 {endX} {endY} 0";
+            hatchScripts.Add(blockLabelScript);
             return hatchScripts;
         }
 
@@ -3447,6 +3520,40 @@ namespace Bearing_Enhancer_CAN
                 return double.PositiveInfinity; // Đường thẳng đứng có hệ số góc vô cùng
 
             return -line.A / line.B;
+        }
+        public static double ConvertStringToInches(string value)
+        {
+            value = value.Trim();
+
+            int feet = 0;
+            int inches = 0;
+            int sixteenth = 0;
+
+            switch (value.Length)
+            {
+                case 1:
+                case 2:
+                    feet = int.Parse(value);
+                    break;
+
+                case 3:
+                case 4:
+                    feet = int.Parse(value.Substring(0, value.Length - 2));
+                    sixteenth = int.Parse(value.Substring(value.Length - 2, 2));
+                    break;
+
+                case 5:
+                case 6:
+                    feet = int.Parse(value.Substring(0, value.Length - 4));
+                    inches = int.Parse(value.Substring(value.Length - 4, 2));
+                    sixteenth = int.Parse(value.Substring(value.Length - 2, 2));
+                    break;
+
+                default:
+                    throw new FormatException($"Invalid format int Create_HatchScript: {value}");
+            }
+
+            return feet * 12 + inches + sixteenth / 16.0;
         }
         #endregion
     }
