@@ -62,7 +62,7 @@ namespace Bearing_Enhancer_CAN
             List<string> list_DurationFactor = new List<string>() {"0.90","1.00", "1.05","1.10", "1.15", "1.25", "1.33", "1.60" };
             list_DurationFactor = list_DurationFactor.Distinct().ToList();
             List<string> list_LocationType = new List<string> { "Interior", "Exterior" };
-            List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", ""};
+            List<string> list_YLocation = new List<string> { "BotChd", "TopChd", "Web", "BrgBlk", ""};
 
             No_Ply.DataSource = list_Ply;
             Lumber_Specie.DataSource = list_Specie;
@@ -86,7 +86,7 @@ namespace Bearing_Enhancer_CAN
             // Đăng ký sự kiện kiểm tra ô
             dataGridView_Table.CellValidating += dataGridView_CellValidating;
             //Đăng kí sự kiện Double_Click
-            this.dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
+            dataGridView_Table.CellDoubleClick += dataGridViewTable_CellDoubleClick;
             //Đăng kí sự kiện Double_RightClick
             dataGridView_Table.MouseDown += dataGridViewTable_MouseDown;
 
@@ -94,7 +94,7 @@ namespace Bearing_Enhancer_CAN
             dataGridView_Table.EditingControlShowing += dataGridView_Table_EditingControlShowing;
 
             //Đăng kí sự kiện Đóng Form
-            this.FormClosing += Form_BearingEnhacerCAN_FormClosing;
+            FormClosing += Form_BearingEnhacerCAN_FormClosing;
 
             //Kiểm tra cập nhật phiên bản
             try
@@ -213,6 +213,7 @@ namespace Bearing_Enhancer_CAN
 
                 List<Bearing_Enhancer> list_BE = new List<Bearing_Enhancer>();
                 Bearing_Enhancer BE = new Bearing_Enhancer();
+                BE.ProgressChanged += BE_ProgressChanged;
 
                 list_BE = BE.Get_Bearing_Info(outputTxtFile, comboBox_Language.Text, comboBox_Unit.Text, comboBox_SolutionPriority.Text);
 
@@ -286,7 +287,19 @@ namespace Bearing_Enhancer_CAN
                 MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+        private void BE_ProgressChanged(object sender, ProgressEventArgs e)
+        {
+            if (progressBar1.Maximum != e.Total)
+                progressBar1.Maximum = e.Total;
+
+            progressBar1.Value =
+                Math.Min(e.Current, progressBar1.Maximum);
+
+            lblStatus.Text =
+                $"Processing {e.TrussName} ({e.Current}/{e.Total})";
+
+            Application.DoEvents();
+        }
         private void DataGridViewTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)// Sự kiện Ô thay đổi
         {
             
@@ -1080,7 +1093,7 @@ namespace Bearing_Enhancer_CAN
             string projectPath = tbx_ProjectNumberPath.Text;
             string trussesPath = $"{tbx_ProjectNumberPath.Text}\\Trusses";
             string[] arrPath = projectPath.Split('\\');
-            string projectID = arrPath[arrPath.Length - 1];
+            //string projectID = arrPath[arrPath.Length - 1];
             string xmlFilePath = Path.Combine(trussesPath, $"{item.TrussName}.tdlTruss");
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(xmlFilePath);
@@ -1208,15 +1221,42 @@ namespace Bearing_Enhancer_CAN
 
         private void bnt_Draw_BearingBlock_Click(object sender, EventArgs e)
         {
+            int total = dataGridView_Table.Rows.Cast<DataGridViewRow>().Count(r =>!r.IsNewRow);
+
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = Math.Max(1, total);
+            progressBar1.Value = 0;
+
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = Math.Max(1, total);
+            progressBar1.Value = 0;
+            int current = 0;
+
             Form_CAD_Markup formCADMarkup = new Form_CAD_Markup();
+            formCADMarkup.ProjectPath = tbx_ProjectNumberPath.Text;
+
             foreach (DataGridViewRow row in dataGridView_Table.Rows) 
             {
+                
+                if (row.IsNewRow)
+                    continue;
+                current++;
+
                 string chosenSolution;
                 Bearing_Enhancer beItem;
                 string trussName = row.Cells["Truss_Name"].Value?.ToString();
                 bool valueCol19 = Convert.ToBoolean(row.Cells["Checked"].Value);
                 chosenSolution = row.Cells["Bearing_Solution"].Value?.ToString();
-                if(chosenSolution == null)
+
+
+                progressBar1.Value = current > total ? total : current;
+                lblStatus.Text =
+                $"Processing {trussName} ({current}/{total})";
+                Application.DoEvents();
+
+
+
+                if (chosenSolution == null)
                 {
                     continue;
                 }
@@ -1233,8 +1273,11 @@ namespace Bearing_Enhancer_CAN
                     continue;
                 }
 
+                
+
                 if (!string.IsNullOrEmpty(trussName) && valueCol19 && chosenSolution.Contains("Block"))
                 {
+                    
 
                     beItem.TrussName = row.Cells["Truss_Name"].Value?.ToString();
                     beItem.Ply = row.Cells["No_Ply"].Value?.ToString();
@@ -1272,12 +1315,16 @@ namespace Bearing_Enhancer_CAN
                             break;
                         }
                     }
-
+                    
+                    
                     beItem.BBlock_Markup_Script = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.Lumber_Coordinates_Left, beItem.Lumber_Coordinates_Right, beItem.List_LumberPieces, beItem.VertialWeb_Candidate);
                     formCADMarkup.listBearingEnhancers.Add(beItem);
-
+                    
                 }
+                
+                
             }
+            progressBar1.Value = progressBar1.Maximum;
             formCADMarkup.ShowDialog();
         }
 

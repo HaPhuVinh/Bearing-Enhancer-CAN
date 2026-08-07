@@ -67,6 +67,8 @@
             this.bnt_Draw_BearingBlock = new System.Windows.Forms.Button();
             this.comboBox_SolutionPriority = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -78,7 +80,7 @@
             this.button_Check.BackColor = System.Drawing.Color.White;
             this.button_Check.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Check.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button_Check.Location = new System.Drawing.Point(453, 56);
+            this.button_Check.Location = new System.Drawing.Point(453, 40);
             this.button_Check.Margin = new System.Windows.Forms.Padding(2);
             this.button_Check.Name = "button_Check";
             this.button_Check.Size = new System.Drawing.Size(136, 49);
@@ -375,9 +377,9 @@
             // 
             this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_export_data.ForeColor = System.Drawing.Color.Black;
-            this.btn_export_data.Location = new System.Drawing.Point(874, 12);
+            this.btn_export_data.Location = new System.Drawing.Point(833, 40);
             this.btn_export_data.Name = "btn_export_data";
-            this.btn_export_data.Size = new System.Drawing.Size(119, 48);
+            this.btn_export_data.Size = new System.Drawing.Size(119, 49);
             this.btn_export_data.TabIndex = 7;
             this.btn_export_data.Text = "Export Data";
             this.btn_export_data.UseVisualStyleBackColor = true;
@@ -387,7 +389,7 @@
             // 
             this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
-            this.btn_Add_Note.Location = new System.Drawing.Point(731, 12);
+            this.btn_Add_Note.Location = new System.Drawing.Point(670, 40);
             this.btn_Add_Note.Name = "btn_Add_Note";
             this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
             this.btn_Add_Note.TabIndex = 8;
@@ -421,9 +423,9 @@
             // 
             this.bnt_Draw_BearingBlock.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.bnt_Draw_BearingBlock.ForeColor = System.Drawing.Color.Black;
-            this.bnt_Draw_BearingBlock.Location = new System.Drawing.Point(1009, 14);
+            this.bnt_Draw_BearingBlock.Location = new System.Drawing.Point(997, 40);
             this.bnt_Draw_BearingBlock.Name = "bnt_Draw_BearingBlock";
-            this.bnt_Draw_BearingBlock.Size = new System.Drawing.Size(119, 46);
+            this.bnt_Draw_BearingBlock.Size = new System.Drawing.Size(119, 49);
             this.bnt_Draw_BearingBlock.TabIndex = 11;
             this.bnt_Draw_BearingBlock.Text = "Draw Bearing Block";
             this.bnt_Draw_BearingBlock.UseVisualStyleBackColor = true;
@@ -453,6 +455,24 @@
             this.label1.TabIndex = 6;
             this.label1.Text = "Solution Priority";
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(670, 14);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(446, 17);
+            this.progressBar1.TabIndex = 13;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.ForeColor = System.Drawing.Color.Crimson;
+            this.lblStatus.Location = new System.Drawing.Point(858, -2);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(42, 16);
+            this.lblStatus.TabIndex = 14;
+            this.lblStatus.Text = "status";
+            // 
             // bearingEnhancerBindingSource
             // 
             this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
@@ -463,6 +483,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1796, 948);
+            this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.comboBox_SolutionPriority);
             this.Controls.Add(this.bnt_Draw_BearingBlock);
             this.Controls.Add(this.richTextBox1);
@@ -532,6 +554,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
         private System.Windows.Forms.ComboBox comboBox_SolutionPriority;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 

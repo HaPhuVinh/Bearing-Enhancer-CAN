@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>TBE_icon.ico</ApplicationIcon>
+    <ApplicationIcon>TBE6.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="itext.barcodes, Version=9.1.0.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
@@ -230,6 +230,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TBE6.ico" />
     <Content Include="TBE_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

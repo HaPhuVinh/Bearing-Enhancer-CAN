@@ -21,8 +21,16 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Bearing_Enhancer_CAN
 {
+    public class ProgressEventArgs : EventArgs
+    {
+        public int Current { get; set; }
+        public int Total { get; set; }
+        public string TrussName { get; set; }
+    }
+
     public class Bearing_Enhancer
     {
+        public event EventHandler<ProgressEventArgs> ProgressChanged;
         public string TrussName { get; set; }
         public string Ply { get; set; }
         public string Span { get; set; }
@@ -88,6 +96,9 @@ namespace Bearing_Enhancer_CAN
                 int indexB = orderDicTrussName.ContainsKey(Path.GetFileNameWithoutExtension(b)) ? orderDicTrussName[Path.GetFileNameWithoutExtension(b)] : int.MaxValue;
                 return indexA.CompareTo(indexB);
             }); //Order by Comp Review list
+
+            int current = 0;
+            int total = mainListTrussName.Count;
 
             XmlDocument xmlDoc = new XmlDocument();
             XmlNode rootNode, elementNode;
@@ -156,7 +167,7 @@ namespace Bearing_Enhancer_CAN
                                         TP.Value.YLocation = "";
                                         break;
                                     case "BrgBlock":
-                                        TP.Value.YLocation = "";
+                                        TP.Value.YLocation = "BrgBlk";
                                         break;
                                     case "TieBeam":
                                         TP.Value.YLocation = "";
@@ -370,6 +381,8 @@ namespace Bearing_Enhancer_CAN
                         }
                     }
                 }
+                current++;
+                OnProgressChanged(current, total, fileName);
             }
 
             return bearingEnhancerItems;
@@ -455,7 +468,7 @@ namespace Bearing_Enhancer_CAN
             List<VerticalWebCandidate> List_VerWeb_Candate = new List<VerticalWebCandidate>();
             List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)> webPieces = new List<(int No_, string Name, string key, string[] Cordinates_LeftEnd, string[] Cordinates_RightEnd)>();
             webPieces = lumberpieces?.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains("WB")).ToList();
-            if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd"|| topplate.YLocation == "Web")
+            if (topplate.YLocation == "BottomChord" || topplate.YLocation == "BotChd"|| topplate.YLocation == "Web" || topplate.YLocation == "BrgBlock")
             {
                 List<string[]> Left_Chord_Coordinates = new List<string[]>();
                 List<string[]> Right_Chord_Coordinates = new List<string[]>();
@@ -612,9 +625,21 @@ namespace Bearing_Enhancer_CAN
             
             return List_VerWeb_Candate;
         }
+
         #endregion
 
         #region Support Methods:
+        protected virtual void OnProgressChanged(int current, int total, string trussName)
+        {
+            ProgressChanged?.Invoke(
+                this,
+                new ProgressEventArgs
+                {
+                    Current = current,
+                    Total = total,
+                    TrussName = trussName
+                });
+        }
         List<string> Check_Horizontal_Block(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language)
         {
             List<double> durationFactors = new List<double>();
@@ -1611,7 +1636,7 @@ namespace Bearing_Enhancer_CAN
             foreach (string I in A)
             {
                 i++;
-                if (y == "BotChd" || y == "BottomChord" || y== "Web")
+                if (y == "BotChd" || y == "BottomChord" || y== "Web" || y == "BrgBlk")
                 {
                     if (!I.Contains("BC"))
                     {
@@ -2004,7 +2029,7 @@ namespace Bearing_Enhancer_CAN
         public override string Generate_Draw_Script(string unit, string language, string chosenSolution, Top_Plate_Info topPlateInfo, string[] leftCordinates, string[] rightCordinates, List<(int No_, string Name, string Key, string[] Lcordinates, string[] Rcordinates)> listlumberpieces, VerticalWebCandidate verticalweb)
         {
             string drawScript = "";
-            if (verticalweb.IDName == null)
+            if (!verticalweb.IDName.Contains("WB"))
             {
                 return drawScript;
                 //return "The program did not find any appropriate vertical webs.\nPlease review and manually markup bearing block in Truss Studio!";
@@ -2206,6 +2231,7 @@ namespace Bearing_Enhancer_CAN
 
             Dictionary<int, int> FontSizes = new Dictionary<int, int>()
             {
+                { 0, 8 },
                 { 10, 10 },
                 { 20, 12 },
                 { 40, 14 },
@@ -2717,10 +2743,11 @@ namespace Bearing_Enhancer_CAN
             double X_BlockRightEnd = double.Parse(horblockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
             List<string[]> BlockRightEndPoints = horblockcordinates.Where(x => (Math.Abs(double.Parse(x[0]) - X_BlockRightEnd)) <= tolerance).ToList();
 
-            string[] blockLabelCordinate = BlockRightEndPoints.OrderBy(x => double.Parse(x[1])).LastOrDefault();
+            string[] blockLabelCordinate = BlockRightEndPoints.OrderBy(x => double.Parse(x[1])).FirstOrDefault();
 
             Dictionary<int,int> FontSizes = new Dictionary<int, int>()
             {
+                { 0, 8 },
                 { 10, 10 },
                 { 20, 12 },
                 { 40, 14 },
@@ -2735,12 +2762,12 @@ namespace Bearing_Enhancer_CAN
             string sfontsize = $"fs{fontsize*2}";
             string labelName = BBlock_Label;
             string startX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0])+1);
-            string startY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])+1);
+            string startY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])-3);
             string endX = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[0])+12+1);
-            string endY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])+1);
+            string endY = Convert_InchToFitInchSix(double.Parse(blockLabelCordinate[1])-3);
 
             string blockLabelScript =
-                    $@"label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}\n{{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}\n\viewkind4\uc1\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760\tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640\tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520\cf1\highlight2\f0\{sfontsize} {labelName}\par\n}}\n"" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Above schedule n {startX} {startY} 0 {endX} {endY} 0";
+                    $@"label ""{{\rtf1\ansi\ansicpg1252\deff0\deflang1033{{\fonttbl{{\f0\fnil\fprq3\fcharset0 Calibri;}}}}\n{{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;}}\n\viewkind4\uc1\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\tx4320\tx4680\tx5040\tx5400\tx5760\tx6120\tx6480\tx6840\tx7200\tx7560\tx7920\tx8280\tx8640\tx9000\tx9360\tx9720\tx10080\tx10440\tx10800\tx11160\tx11520\cf1\highlight2\f0\{sfontsize} {labelName}\par\n}}\n"" {startX} {startY} 0 {endX} {endY} 0 None None None 0 LeftInside Below schedule n {startX} {startY} 0 {endX} {endY} 0";
             hatchScripts.Add(blockLabelScript);
             return hatchScripts;
         }

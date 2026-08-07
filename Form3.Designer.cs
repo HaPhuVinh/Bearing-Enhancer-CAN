@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView_CADMarkup = new System.Windows.Forms.DataGridView();
             this.AddTDL = new System.Windows.Forms.Button();
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Joint_ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Bearing_Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Y_Location = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Bearing_Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Y_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.X_Location = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Chosen_Solution = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Get_Script_Note = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -63,9 +63,9 @@
             // AddTDL
             // 
             this.AddTDL.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AddTDL.Location = new System.Drawing.Point(1267, 23);
+            this.AddTDL.Location = new System.Drawing.Point(1255, 23);
             this.AddTDL.Name = "AddTDL";
-            this.AddTDL.Size = new System.Drawing.Size(133, 47);
+            this.AddTDL.Size = new System.Drawing.Size(145, 47);
             this.AddTDL.TabIndex = 1;
             this.AddTDL.Text = "Add to TDL";
             this.AddTDL.UseVisualStyleBackColor = true;
@@ -73,9 +73,11 @@
             // 
             // Truss_Name
             // 
+            this.Truss_Name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.Truss_Name.HeaderText = "Truss-Name";
             this.Truss_Name.Name = "Truss_Name";
             this.Truss_Name.ReadOnly = true;
+            this.Truss_Name.Width = 89;
             // 
             // Joint_ID
             // 
@@ -88,12 +90,16 @@
             this.Bearing_Type.HeaderText = "Bearing-Type";
             this.Bearing_Type.Name = "Bearing_Type";
             this.Bearing_Type.ReadOnly = true;
+            this.Bearing_Type.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Bearing_Type.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // Y_Location
             // 
             this.Y_Location.HeaderText = "Y-Location";
             this.Y_Location.Name = "Y_Location";
             this.Y_Location.ReadOnly = true;
+            this.Y_Location.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Y_Location.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // X_Location
             // 
@@ -115,9 +121,8 @@
             // 
             // The_Script_Note
             // 
-            this.The_Script_Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.The_Script_Note.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.The_Script_Note.DefaultCellStyle = dataGridViewCellStyle1;
             this.The_Script_Note.HeaderText = "The-Script-Note";
             this.The_Script_Note.Name = "The_Script_Note";
             this.The_Script_Note.Width = 107;
@@ -144,8 +149,8 @@
         private System.Windows.Forms.Button AddTDL;
         private System.Windows.Forms.DataGridViewTextBoxColumn Truss_Name;
         private System.Windows.Forms.DataGridViewTextBoxColumn Joint_ID;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Type;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Y_Location;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Bearing_Type;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Y_Location;
         private System.Windows.Forms.DataGridViewTextBoxColumn X_Location;
         private System.Windows.Forms.DataGridViewTextBoxColumn Chosen_Solution;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Get_Script_Note;
