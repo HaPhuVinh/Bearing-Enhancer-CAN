@@ -388,7 +388,7 @@ namespace Bearing_Enhancer_CAN
             return bearingEnhancerItems;
         }
 
-        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language, bool bVertical = false, string contactlength = "00", string solutionpriority = "Bearing Block")
+        public List<string> Check_Bearing_Solution(string ply, string lumSize, string lumSpecie, Top_Plate_Info topPlate, string unit, string language, bool bVertical = false, string contactlength = "00", string solutionpriority = "")
         {
             List<string> list_Bearing_Solution = new List<string>();
 

@@ -36,6 +36,7 @@ namespace Bearing_Enhancer_CAN
 
         public List<Bearing_Enhancer> list_Original_Bearing;
         public List<LumberInventory> list_Lumber_Inventory;
+        public List<string> list_LumSize = new List<string> { "2x4", "2x6", "2x8", "2x10", "2x12" };
         public Form_BearingEnhacerCAN()
         {
             InitializeComponent();
@@ -236,6 +237,7 @@ namespace Bearing_Enhancer_CAN
                 }
                 else
                 {
+                    dataGridView_Table.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
                     List<double> DurationFactors = new List<double>() { 0.90, 1.00, 1.05, 1.10, 1.15, 1.25, 1.33, 1.60 };
                     List<double> durationFactors = new List<double>();
 
@@ -273,6 +275,10 @@ namespace Bearing_Enhancer_CAN
                     DurationFactors.Sort();
                     List<string> list_DurationFactor = DurationFactors.Select(x => x.ToString("F2")).ToList();
                     DOL_Column.DataSource = list_DurationFactor;
+
+                    //dataGridView_Table.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
+                    dataGridView_Table.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                    //dataGridView_Table.ScrollBars = ScrollBars.Both;
                 }
 
                 list_Original_Bearing = list_BE;
@@ -338,10 +344,11 @@ namespace Bearing_Enhancer_CAN
                         list_Original_Bearing.ElementAtOrDefault(e.RowIndex).VertialWeb_Candidate = verWeb;
                         
                         List<VerticalWebCandidate> ListVerticalWebCandidate = BE.Check_VerticalWeb_Candiadate(BE.TopPlateInfo, BE.List_LumberPieces, list_Lumber_Inventory, (BE.Lumber_Coordinates_Left, BE.Lumber_Coordinates_Right));
-                        
-                        if(ListVerticalWebCandidate != null && ListVerticalWebCandidate.Count > 0)
-                        {
+                        if (ListVerticalWebCandidate != null && ListVerticalWebCandidate.Count > 0)
                             verWeb = ListVerticalWebCandidate.OrderBy(v => v.Contact_Length).Last();
+
+                        if (list_LumSize.Contains(verWeb.Ver_Web_Size))
+                        {
                             list_Original_Bearing.ElementAtOrDefault(e.RowIndex).VertialWeb_Candidate = verWeb;
                             //BE.TrussName = dataGridView_Table.Rows[e.RowIndex].Cells["Truss_Name"].Value?.ToString();
                             //BE.Ply = dataGridView_Table.Rows[e.RowIndex].Cells["No_Ply"].Value?.ToString();
@@ -558,11 +565,14 @@ namespace Bearing_Enhancer_CAN
                         //string polyWorkLine = beItem.Generate_Draw_Script(comboBox_Unit.Text, comboBox_Language.Text, chosenSolution, beItem.TopPlateInfo, beItem.LumCoordinates_Left, beItem.LumCoordinates_Right, beItem.List_LumberPieces);
 
                     }
-
+                    //dataGridView_Table.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
+                    dataGridView_Table.Columns["The_Note"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
                 else
                 {
                     row.Cells["The_Note"].Value = "";
+                    //dataGridView_Table.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
+                    dataGridView_Table.Columns["The_Note"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
 
             }

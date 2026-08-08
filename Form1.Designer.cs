@@ -34,6 +34,20 @@
             this.lbl_ProjectNumberPath = new System.Windows.Forms.Label();
             this.tbx_ProjectNumberPath = new System.Windows.Forms.TextBox();
             this.dataGridView_Table = new System.Windows.Forms.DataGridView();
+            this.comboBox_Language = new System.Windows.Forms.ComboBox();
+            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
+            this.label_Language = new System.Windows.Forms.Label();
+            this.label_Unit = new System.Windows.Forms.Label();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.btn_export_data = new System.Windows.Forms.Button();
+            this.btn_Add_Note = new System.Windows.Forms.Button();
+            this.btn_Browse = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.bnt_Draw_BearingBlock = new System.Windows.Forms.Button();
+            this.comboBox_SolutionPriority = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.Truss_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.No_Ply = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Lumber_Specie = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -55,20 +69,6 @@
             this.Bearing_Solution = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Checked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.The_Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.comboBox_Language = new System.Windows.Forms.ComboBox();
-            this.comboBox_Unit = new System.Windows.Forms.ComboBox();
-            this.label_Language = new System.Windows.Forms.Label();
-            this.label_Unit = new System.Windows.Forms.Label();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.btn_export_data = new System.Windows.Forms.Button();
-            this.btn_Add_Note = new System.Windows.Forms.Button();
-            this.btn_Browse = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.bnt_Draw_BearingBlock = new System.Windows.Forms.Button();
-            this.comboBox_SolutionPriority = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.bearingEnhancerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -145,6 +145,150 @@
             this.dataGridView_Table.RowTemplate.Height = 24;
             this.dataGridView_Table.Size = new System.Drawing.Size(2070, 809);
             this.dataGridView_Table.TabIndex = 3;
+            // 
+            // comboBox_Language
+            // 
+            this.comboBox_Language.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Language.FormattingEnabled = true;
+            this.comboBox_Language.Location = new System.Drawing.Point(207, 39);
+            this.comboBox_Language.Name = "comboBox_Language";
+            this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Language.TabIndex = 5;
+            // 
+            // comboBox_Unit
+            // 
+            this.comboBox_Unit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_Unit.FormattingEnabled = true;
+            this.comboBox_Unit.Location = new System.Drawing.Point(207, 66);
+            this.comboBox_Unit.Name = "comboBox_Unit";
+            this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
+            this.comboBox_Unit.TabIndex = 5;
+            // 
+            // label_Language
+            // 
+            this.label_Language.AutoSize = true;
+            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Language.Location = new System.Drawing.Point(125, 40);
+            this.label_Language.Name = "label_Language";
+            this.label_Language.Size = new System.Drawing.Size(72, 17);
+            this.label_Language.TabIndex = 6;
+            this.label_Language.Text = "Language";
+            // 
+            // label_Unit
+            // 
+            this.label_Unit.AutoSize = true;
+            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Unit.Location = new System.Drawing.Point(164, 68);
+            this.label_Unit.Name = "label_Unit";
+            this.label_Unit.Size = new System.Drawing.Size(33, 17);
+            this.label_Unit.TabIndex = 6;
+            this.label_Unit.Text = "Unit";
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // btn_export_data
+            // 
+            this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
+            this.btn_export_data.Location = new System.Drawing.Point(833, 40);
+            this.btn_export_data.Name = "btn_export_data";
+            this.btn_export_data.Size = new System.Drawing.Size(119, 49);
+            this.btn_export_data.TabIndex = 7;
+            this.btn_export_data.Text = "Export Data";
+            this.btn_export_data.UseVisualStyleBackColor = true;
+            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
+            // 
+            // btn_Add_Note
+            // 
+            this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
+            this.btn_Add_Note.Location = new System.Drawing.Point(670, 40);
+            this.btn_Add_Note.Name = "btn_Add_Note";
+            this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
+            this.btn_Add_Note.TabIndex = 8;
+            this.btn_Add_Note.Text = "Add Note to TDL";
+            this.btn_Add_Note.UseVisualStyleBackColor = true;
+            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
+            // 
+            // btn_Browse
+            // 
+            this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Browse.ForeColor = System.Drawing.Color.Black;
+            this.btn_Browse.Location = new System.Drawing.Point(596, 8);
+            this.btn_Browse.Name = "btn_Browse";
+            this.btn_Browse.Size = new System.Drawing.Size(68, 24);
+            this.btn_Browse.TabIndex = 9;
+            this.btn_Browse.Text = "Browse";
+            this.btn_Browse.UseVisualStyleBackColor = true;
+            this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(1144, 14);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(640, 109);
+            this.richTextBox1.TabIndex = 10;
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            // 
+            // bnt_Draw_BearingBlock
+            // 
+            this.bnt_Draw_BearingBlock.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bnt_Draw_BearingBlock.ForeColor = System.Drawing.Color.Black;
+            this.bnt_Draw_BearingBlock.Location = new System.Drawing.Point(997, 40);
+            this.bnt_Draw_BearingBlock.Name = "bnt_Draw_BearingBlock";
+            this.bnt_Draw_BearingBlock.Size = new System.Drawing.Size(119, 49);
+            this.bnt_Draw_BearingBlock.TabIndex = 11;
+            this.bnt_Draw_BearingBlock.Text = "Draw Bearing Block";
+            this.bnt_Draw_BearingBlock.UseVisualStyleBackColor = true;
+            this.bnt_Draw_BearingBlock.Click += new System.EventHandler(this.bnt_Draw_BearingBlock_Click);
+            // 
+            // comboBox_SolutionPriority
+            // 
+            this.comboBox_SolutionPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_SolutionPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox_SolutionPriority.FormattingEnabled = true;
+            this.comboBox_SolutionPriority.Items.AddRange(new object[] {
+            "TBE",
+            "Bearing Block",
+            "Crush Plate"});
+            this.comboBox_SolutionPriority.Location = new System.Drawing.Point(207, 94);
+            this.comboBox_SolutionPriority.Name = "comboBox_SolutionPriority";
+            this.comboBox_SolutionPriority.Size = new System.Drawing.Size(191, 23);
+            this.comboBox_SolutionPriority.TabIndex = 12;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(90, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(107, 17);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Solution Priority";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(670, 14);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(446, 17);
+            this.progressBar1.TabIndex = 13;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.ForeColor = System.Drawing.Color.Crimson;
+            this.lblStatus.Location = new System.Drawing.Point(858, -2);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(42, 16);
+            this.lblStatus.TabIndex = 14;
+            this.lblStatus.Text = "status";
             // 
             // Truss_Name
             // 
@@ -329,150 +473,6 @@
             this.The_Note.Name = "The_Note";
             this.The_Note.Width = 1300;
             // 
-            // comboBox_Language
-            // 
-            this.comboBox_Language.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Language.FormattingEnabled = true;
-            this.comboBox_Language.Location = new System.Drawing.Point(207, 39);
-            this.comboBox_Language.Name = "comboBox_Language";
-            this.comboBox_Language.Size = new System.Drawing.Size(192, 23);
-            this.comboBox_Language.TabIndex = 5;
-            // 
-            // comboBox_Unit
-            // 
-            this.comboBox_Unit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_Unit.FormattingEnabled = true;
-            this.comboBox_Unit.Location = new System.Drawing.Point(207, 66);
-            this.comboBox_Unit.Name = "comboBox_Unit";
-            this.comboBox_Unit.Size = new System.Drawing.Size(192, 23);
-            this.comboBox_Unit.TabIndex = 5;
-            // 
-            // label_Language
-            // 
-            this.label_Language.AutoSize = true;
-            this.label_Language.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Language.Location = new System.Drawing.Point(125, 40);
-            this.label_Language.Name = "label_Language";
-            this.label_Language.Size = new System.Drawing.Size(72, 17);
-            this.label_Language.TabIndex = 6;
-            this.label_Language.Text = "Language";
-            // 
-            // label_Unit
-            // 
-            this.label_Unit.AutoSize = true;
-            this.label_Unit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Unit.Location = new System.Drawing.Point(164, 68);
-            this.label_Unit.Name = "label_Unit";
-            this.label_Unit.Size = new System.Drawing.Size(33, 17);
-            this.label_Unit.TabIndex = 6;
-            this.label_Unit.Text = "Unit";
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
-            // 
-            // btn_export_data
-            // 
-            this.btn_export_data.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export_data.ForeColor = System.Drawing.Color.Black;
-            this.btn_export_data.Location = new System.Drawing.Point(833, 40);
-            this.btn_export_data.Name = "btn_export_data";
-            this.btn_export_data.Size = new System.Drawing.Size(119, 49);
-            this.btn_export_data.TabIndex = 7;
-            this.btn_export_data.Text = "Export Data";
-            this.btn_export_data.UseVisualStyleBackColor = true;
-            this.btn_export_data.Click += new System.EventHandler(this.btn_export_data_Click);
-            // 
-            // btn_Add_Note
-            // 
-            this.btn_Add_Note.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Add_Note.ForeColor = System.Drawing.Color.Black;
-            this.btn_Add_Note.Location = new System.Drawing.Point(670, 40);
-            this.btn_Add_Note.Name = "btn_Add_Note";
-            this.btn_Add_Note.Size = new System.Drawing.Size(120, 49);
-            this.btn_Add_Note.TabIndex = 8;
-            this.btn_Add_Note.Text = "Add Note to TDL";
-            this.btn_Add_Note.UseVisualStyleBackColor = true;
-            this.btn_Add_Note.Click += new System.EventHandler(this.btn_Add_Note_Click);
-            // 
-            // btn_Browse
-            // 
-            this.btn_Browse.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Browse.ForeColor = System.Drawing.Color.Black;
-            this.btn_Browse.Location = new System.Drawing.Point(596, 8);
-            this.btn_Browse.Name = "btn_Browse";
-            this.btn_Browse.Size = new System.Drawing.Size(68, 24);
-            this.btn_Browse.TabIndex = 9;
-            this.btn_Browse.Text = "Browse";
-            this.btn_Browse.UseVisualStyleBackColor = true;
-            this.btn_Browse.Click += new System.EventHandler(this.btn_Browse_Click);
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(1144, 14);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(640, 109);
-            this.richTextBox1.TabIndex = 10;
-            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
-            // 
-            // bnt_Draw_BearingBlock
-            // 
-            this.bnt_Draw_BearingBlock.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.bnt_Draw_BearingBlock.ForeColor = System.Drawing.Color.Black;
-            this.bnt_Draw_BearingBlock.Location = new System.Drawing.Point(997, 40);
-            this.bnt_Draw_BearingBlock.Name = "bnt_Draw_BearingBlock";
-            this.bnt_Draw_BearingBlock.Size = new System.Drawing.Size(119, 49);
-            this.bnt_Draw_BearingBlock.TabIndex = 11;
-            this.bnt_Draw_BearingBlock.Text = "Draw Bearing Block";
-            this.bnt_Draw_BearingBlock.UseVisualStyleBackColor = true;
-            this.bnt_Draw_BearingBlock.Click += new System.EventHandler(this.bnt_Draw_BearingBlock_Click);
-            // 
-            // comboBox_SolutionPriority
-            // 
-            this.comboBox_SolutionPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_SolutionPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox_SolutionPriority.FormattingEnabled = true;
-            this.comboBox_SolutionPriority.Items.AddRange(new object[] {
-            "TBE",
-            "Bearing Block",
-            "Crush Plate"});
-            this.comboBox_SolutionPriority.Location = new System.Drawing.Point(207, 94);
-            this.comboBox_SolutionPriority.Name = "comboBox_SolutionPriority";
-            this.comboBox_SolutionPriority.Size = new System.Drawing.Size(191, 23);
-            this.comboBox_SolutionPriority.TabIndex = 12;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(90, 95);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 17);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Solution Priority";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(670, 14);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(446, 17);
-            this.progressBar1.TabIndex = 13;
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.ForeColor = System.Drawing.Color.Crimson;
-            this.lblStatus.Location = new System.Drawing.Point(858, -2);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(42, 16);
-            this.lblStatus.TabIndex = 14;
-            this.lblStatus.Text = "status";
-            // 
             // bearingEnhancerBindingSource
             // 
             this.bearingEnhancerBindingSource.DataSource = typeof(Bearing_Enhancer_CAN.Bearing_Enhancer);
@@ -482,7 +482,7 @@
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1796, 948);
+            this.ClientSize = new System.Drawing.Size(1804, 922);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.comboBox_SolutionPriority);
@@ -531,6 +531,10 @@
         private System.Windows.Forms.Button btn_Browse;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button bnt_Draw_BearingBlock;
+        private System.Windows.Forms.ComboBox comboBox_SolutionPriority;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.DataGridViewTextBoxColumn Truss_Name;
         private System.Windows.Forms.DataGridViewComboBoxColumn No_Ply;
         private System.Windows.Forms.DataGridViewComboBoxColumn Lumber_Specie;
@@ -552,10 +556,6 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn Bearing_Solution;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Checked;
         private System.Windows.Forms.DataGridViewTextBoxColumn The_Note;
-        private System.Windows.Forms.ComboBox comboBox_SolutionPriority;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label lblStatus;
     }
 }
 
