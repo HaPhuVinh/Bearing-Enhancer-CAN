@@ -144,7 +144,7 @@ namespace Bearing_Enhancer_CAN
                                 if (I.Contains("span:"))
                                 {
                                     S = I.Split(':');
-                                    bE.Span = S[1].Trim();
+                                    bE.Span = S[1].Trim().TrimEnd('.');
                                 }
                             }
 
@@ -521,7 +521,7 @@ namespace Bearing_Enhancer_CAN
                             {
                                 if (chordSlope > 0 && Left_Chord_Coordinates.Count > 2)
                                 {
-                                    if (double.Parse(Left_Chord_Coordinates[1][0]) <= topplate.XLoc_LeftSide)
+                                    if (double.Parse(Left_Chord_Coordinates[0][0]) <= topplate.XLoc_LeftSide)
                                     {
                                         verWebCandidate.Bottom_Lines.Add(chord_Bot_Line);
                                     }
@@ -2455,7 +2455,7 @@ namespace Bearing_Enhancer_CAN
         public static double ConvertStringToInches(string value)
         {
             value = value.Trim();
-
+            value = value.Replace("-", "");
             int feet = 0;
             int inches = 0;
             int sixteenth = 0;
@@ -3551,7 +3551,7 @@ namespace Bearing_Enhancer_CAN
         public static double ConvertStringToInches(string value)
         {
             value = value.Trim();
-
+            value = value.Replace("-", "");
             int feet = 0;
             int inches = 0;
             int sixteenth = 0;

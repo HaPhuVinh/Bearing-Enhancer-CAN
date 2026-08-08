@@ -106,25 +106,21 @@ namespace Bearing_Enhancer_CAN
                         line2 = line2.Trim();
                         arrLine2 = line2.Split();
                         bool isLine = false;
-                        if (arrLine2.Length == 7)
-                        {
-                            isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF", "USER" }.Any(s => arrLine2[6].Contains(s));
-                        }
+
+                        isLine = new[] { "DFL", "DFLN", "SP", "SYP", "SPF", "HF", "USER" }.Any(s => line2.Contains(s)) && Regex.IsMatch(line2, @"\d+(?:-\d+){1,2}\*\*");
                         
-                        if (arrLine2.Length == 7 && isLine)
+                        if (isLine)
                         {
-                            if (arrLine2[5].Contains(@"**"))
-                            {
-                                Top_Plate_Info tPI = new Top_Plate_Info();
-                                tPI.JointID = arrLine2[0];
-                                tPI.XLocation = arrLine2[1];
-                                tPI.Reaction = double.Parse(arrLine2[2]);
-                                tPI.BearingWidth = arrLine2[4];
-                                tPI.RequireWidth = arrLine2[5].Trim('*');
-                                tPI.Material = arrLine2[6];
-                                tPI.DOL = kD;
-                                dictTopPlate.Add(i, tPI);
-                            }
+                            Top_Plate_Info tPI = new Top_Plate_Info();
+                            tPI.JointID = arrLine2[0];
+                            tPI.XLocation = arrLine2[1];
+                            tPI.Reaction = double.Parse(arrLine2[2]);
+                            tPI.BearingWidth = arrLine2[4];
+                            tPI.RequireWidth = arrLine2[5].Trim('*');
+                            tPI.Material = arrLine2[6];
+                            tPI.DOL = kD;
+                            dictTopPlate.Add(i, tPI);
+
                             i = i + 1;
                         }
                         if (line.Contains(langText.UnfactoredReactionSummary))
