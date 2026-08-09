@@ -2091,14 +2091,18 @@ namespace Bearing_Enhancer_CAN
 
                     Right_Points_Bottle.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[0]));
                     Right_Points_Bottle.Add(Intersection_Point(verLine_Right, verticalweb.Bottom_Lines[1]));
-
                     blockCoordinates.Add(Right_Points_Bottle.OrderBy(p => double.Parse(p[1])).Last());
-                    blockCoordinates.Add(Intersection_Point(verticalweb.Bottom_Lines[0], verticalweb.Bottom_Lines[1]));
 
                     Left_Points_Bottle.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[0]));
                     Left_Points_Bottle.Add(Intersection_Point(verLine_Left, verticalweb.Bottom_Lines[1]));
-
                     blockCoordinates.Add(Left_Points_Bottle.OrderBy(p => double.Parse(p[1])).Last());
+
+
+                    string[] bottomPoint = Intersection_Point(verticalweb.Bottom_Lines[0], verticalweb.Bottom_Lines[1]);
+                    if (double.Parse(bottomPoint[0]) < double.Parse(blockCoordinates[0][0]) && double.Parse(blockCoordinates[1][0]) < double.Parse(bottomPoint[0]))
+                    {
+                        blockCoordinates.Insert(1, bottomPoint);
+                    }
 
                     string[] botPoint = blockCoordinates.OrderBy(p => double.Parse(p[1])).FirstOrDefault();
                     botLine = PerpendicularLineThroughPoint(botPoint, verLine_Left);
@@ -2138,7 +2142,6 @@ namespace Bearing_Enhancer_CAN
             (double A, double B, double C) perpToCurrentLine;
             List<string> hatchScripts = new List<string>();
             string hatchScript = $"";
-            List<string[]> blockcordinates = new List<string[]>();
             
 
             for (int i = 0; i < verblockcordinates.Count; i++)//Đổi từ ft sang inch
@@ -2150,7 +2153,7 @@ namespace Bearing_Enhancer_CAN
                 }
             }
 
-            blockcordinates.AddRange(verblockcordinates);
+            List<string[]> blockcordinates = verblockcordinates.Select(x => x.ToArray()).ToList();
 
             for (int j = 0; j < listlumberpieces.Count; j++)//Lấy tất cả các cordinate của các lumber
             {
@@ -2174,8 +2177,7 @@ namespace Bearing_Enhancer_CAN
                 endPoint = new string[3];
                 if (i == blockcordinates.Count - 1)
                 {
-                    endPoint = blockcordinates[i];
-                    blockcordinates[i] = blockcordinates[0];
+                    endPoint = blockcordinates[0];
                 }
                 else
                 {
@@ -2222,7 +2224,7 @@ namespace Bearing_Enhancer_CAN
             string[] arrKey = chosensolution.Split('-');
             double.TryParse(arrKey[3], out double numberblock);
 
-            hatchScripts.Add($"hatch 65280 {(numberblock==1?"3":"4")} 208 0.1 1");
+            hatchScripts.Add($"hatch 65280 {(numberblock == 1?"3":"4")} 208 0.1 1");
 
             double X_BlockRightEnd = double.Parse(verblockcordinates.OrderBy(x => double.Parse(x[0])).LastOrDefault()[0]);
             List<string[]> BlockRightEndPoints = verblockcordinates.Where(x => (Math.Abs(double.Parse(x[0]) - X_BlockRightEnd)) <= tolerance).ToList();
