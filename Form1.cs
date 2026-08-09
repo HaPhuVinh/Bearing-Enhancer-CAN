@@ -98,61 +98,61 @@ namespace Bearing_Enhancer_CAN
             FormClosing += Form_BearingEnhacerCAN_FormClosing;
 
             //Kiểm tra cập nhật phiên bản
-            try
-            {
-                string currentVersion = Application.ProductVersion;
-                using (var client = new System.Net.WebClient())
-                {
-                    string latestVersion = client.DownloadString(@"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
-                    if (new Version(currentVersion) < new Version(latestVersion))
-                    {
-                        var result = MessageBox.Show(
-                        $"A new version ({latestVersion}) is available. Do you want to update now?",
-                        "Update Available",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
+            //try
+            //{
+            //    string currentVersion = Application.ProductVersion;
+            //    using (var client = new System.Net.WebClient())
+            //    {
+            //        string latestVersion = client.DownloadString(@"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
+            //        if (new Version(currentVersion) < new Version(latestVersion))
+            //        {
+            //            var result = MessageBox.Show(
+            //            $"A new version ({latestVersion}) is available. Do you want to update now?",
+            //            "Update Available",
+            //            MessageBoxButtons.YesNo,
+            //            MessageBoxIcon.Question);
 
-                        if (result == DialogResult.Yes)
-                        {
-                            string updateUrl = @"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
-                            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                            string temDir = @"C:\Temp"; // Thư mục tạm để lưu file zip
-                            if (!Directory.Exists(temDir))
-                            {
-                                Directory.CreateDirectory(temDir);
-                            }
-                            string tempFile = Path.Combine(temDir, "Bearing Enhancer CAN.zip");
+            //            if (result == DialogResult.Yes)
+            //            {
+            //                string updateUrl = @"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
+            //                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //                string temDir = @"C:\Temp"; // Thư mục tạm để lưu file zip
+            //                if (!Directory.Exists(temDir))
+            //                {
+            //                    Directory.CreateDirectory(temDir);
+            //                }
+            //                string tempFile = Path.Combine(temDir, "Bearing Enhancer CAN.zip");
 
-                            // Tải file zip về thư mục tạm
-                            using (var client1 = new System.Net.WebClient())
-                            {
-                                client1.DownloadFile(updateUrl, tempFile);
-                            }
+            //                // Tải file zip về thư mục tạm
+            //                using (var client1 = new System.Net.WebClient())
+            //                {
+            //                    client1.DownloadFile(updateUrl, tempFile);
+            //                }
 
-                            // Gọi FormUpdater.exe
-                            string updaterPath = Path.Combine(appDirectory, @"Form Updater\FormUpdater.exe");
-                            string mainExePath = Application.ExecutablePath;
-                            string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
-                            string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
+            //                // Gọi FormUpdater.exe
+            //                string updaterPath = Path.Combine(appDirectory, @"Form Updater\FormUpdater.exe");
+            //                string mainExePath = Application.ExecutablePath;
+            //                string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
+            //                string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
 
-                            var startInfo = new System.Diagnostics.ProcessStartInfo
-                            {
-                                FileName = updaterPath,
-                                Arguments = arguments,
-                                UseShellExecute = true,
-                                //Verb = "runas" // yêu cầu quyền admin
-                            };
+            //                var startInfo = new System.Diagnostics.ProcessStartInfo
+            //                {
+            //                    FileName = updaterPath,
+            //                    Arguments = arguments,
+            //                    UseShellExecute = true,
+            //                    //Verb = "runas" // yêu cầu quyền admin
+            //                };
 
-                            Process.Start(startInfo);
-                            Application.Exit(); // thoát app chính để cập nhật
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //                Process.Start(startInfo);
+            //                Application.Exit(); // thoát app chính để cập nhật
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         
