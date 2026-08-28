@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,9 +16,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using Excel = Microsoft.Office.Interop.Excel;
+using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace Bearing_Enhancer_CAN
 {
+    
     public partial class Form_BearingEnhacerCAN : Form
     {
         ComboBox currentComboBox = null;
@@ -43,7 +47,7 @@ namespace Bearing_Enhancer_CAN
             this.Load += Form_BearingEnhacerCAN_Load;
         }
         
-        private void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
+        private async void Form_BearingEnhacerCAN_Load(object sender, EventArgs e)
         {
             this.Text = $"Bearing Enhancer CAN {Application.ProductVersion}";
 
@@ -98,64 +102,295 @@ namespace Bearing_Enhancer_CAN
             FormClosing += Form_BearingEnhacerCAN_FormClosing;
 
             //Kiểm tra cập nhật phiên bản
-            //try
-            //{
-            //    string currentVersion = Application.ProductVersion;
-            //    using (var client = new System.Net.WebClient())
-            //    {
-            //        string latestVersion = client.DownloadString(@"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Latest_Version.txt").Trim();
-            //        if (new Version(currentVersion) < new Version(latestVersion))
-            //        {
-            //            var result = MessageBox.Show(
-            //            $"A new version ({latestVersion}) is available. Do you want to update now?",
-            //            "Update Available",
-            //            MessageBoxButtons.YesNo,
-            //            MessageBoxIcon.Question);
+            await CheckForUpdatesAsync();
 
-            //            if (result == DialogResult.Yes)
-            //            {
-            //                string updateUrl = @"S:\Division2\@ICS Engineering\04. Spreadsheet & Tool\Bearing Calculator CAN\Bearing Enhancer CAN_New\Latest Version\Bearing Enhancer CAN.zip";
-            //                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            //                string temDir = @"C:\Temp"; // Thư mục tạm để lưu file zip
-            //                if (!Directory.Exists(temDir))
-            //                {
-            //                    Directory.CreateDirectory(temDir);
-            //                }
-            //                string tempFile = Path.Combine(temDir, "Bearing Enhancer CAN.zip");
+        }
+        private async Task EnsureUpdaterAsync(UpdateInfo updateInfo)
+        {
+            string appDirectory =
+                AppDomain.CurrentDomain.BaseDirectory;
 
-            //                // Tải file zip về thư mục tạm
-            //                using (var client1 = new System.Net.WebClient())
-            //                {
-            //                    client1.DownloadFile(updateUrl, tempFile);
-            //                }
+            string releaseFolder =
+                appDirectory.TrimEnd('\\');
 
-            //                // Gọi FormUpdater.exe
-            //                string updaterPath = Path.Combine(appDirectory, @"Form Updater\FormUpdater.exe");
-            //                string mainExePath = Application.ExecutablePath;
-            //                string CleanPath(string path) => path.Replace("\r", "").Replace("\n", "").Trim().TrimEnd('\\');
-            //                string arguments = $"\"{CleanPath(tempFile)}\" \"{CleanPath(appDirectory)}\" \"{CleanPath(mainExePath)}\"";
+            string rootFolder =
+                Directory.GetParent(releaseFolder)
+                .FullName;
 
-            //                var startInfo = new System.Diagnostics.ProcessStartInfo
-            //                {
-            //                    FileName = updaterPath,
-            //                    Arguments = arguments,
-            //                    UseShellExecute = true,
-            //                    //Verb = "runas" // yêu cầu quyền admin
-            //                };
+            string updaterFolder =
+                Path.Combine(
+                    rootFolder,
+                    "FormUpdater");
 
-            //                Process.Start(startInfo);
-            //                Application.Exit(); // thoát app chính để cập nhật
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("An error occurred during processing:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
+            Directory.CreateDirectory(updaterFolder);
+
+            string updaterExe =
+                Path.Combine(
+                    updaterFolder,
+                    "FormUpdater.exe");
+
+            bool needUpdate = false;
+
+            if (!File.Exists(updaterExe))
+            {
+                needUpdate = true;
+            }
+            else
+            {
+                try
+                {
+                    string localVersion =
+                        FileVersionInfo
+                        .GetVersionInfo(updaterExe)
+                        .ProductVersion;
+
+                    Version local;
+                    Version server;
+
+                    if (!Version.TryParse(
+                            localVersion,
+                            out local))
+                    {
+                        needUpdate = true;
+                    }
+                    else if (!Version.TryParse(
+                        updateInfo.UpdaterVersion,
+                        out server))
+                    {
+                        needUpdate = true;
+                    }
+                    else if (local < server)
+                    {
+                        needUpdate = true;
+                    }
+                }
+                catch
+                {
+                    needUpdate = true;
+                }
+            }
+
+            if (!needUpdate)
+                return;
+
+            string tempZip =
+                Path.Combine(
+                    Path.GetTempPath(),
+                    "FormUpdater.zip");
+
+            using (HttpClient client = new HttpClient())
+            {
+                byte[] bytes =
+                    await client.GetByteArrayAsync(
+                        updateInfo.UpdaterUrl);
+
+                File.WriteAllBytes(
+                    tempZip,
+                    bytes);
+            }
+
+            if (Directory.Exists(updaterFolder))
+            {
+                Directory.Delete(
+                    updaterFolder,
+                    true);
+            }
+
+            Directory.CreateDirectory(updaterFolder);
+
+            System.IO.Compression.ZipFile
+                .ExtractToDirectory(
+                    tempZip,
+                    updaterFolder);
+
+            string nestedFolder =
+                Path.Combine(
+                    updaterFolder,
+                    "FormUpdater");
+
+            if (Directory.Exists(nestedFolder))
+            {
+                foreach (string file in Directory.GetFiles(
+                    nestedFolder,
+                    "*.*",
+                    SearchOption.AllDirectories))
+                {
+                    string targetFile =
+                        Path.Combine(
+                            updaterFolder,
+                            Path.GetFileName(file));
+
+                    File.Copy(
+                        file,
+                        targetFile,
+                        true);
+                }
+
+                Directory.Delete(
+                    nestedFolder,
+                    true);
+            }
+
+            updaterExe =
+                Path.Combine(
+                    updaterFolder,
+                    "FormUpdater.exe");
+
+            if (!File.Exists(updaterExe))
+            {
+                throw new Exception(
+                    "FormUpdater.exe was not found after extraction.");
+            }
+
+            try
+            {
+                File.Delete(tempZip);
+            }
+            catch
+            {
+            }
+        }
+        private async Task CheckForUpdatesAsync()
+        {
+            try
+            {
+                string currentVersion =
+                    Application.ProductVersion;
+
+                using (HttpClient client = new HttpClient())
+                {
+                    string jsonUrl =
+                        "https://raw.githubusercontent.com/HaPhuVinh/BearingEnhancer-Releases/main/version.json";
+
+                    string json =
+                        await client.GetStringAsync(jsonUrl);
+
+                    UpdateInfo updateInfo =
+                        JsonConvert.DeserializeObject<UpdateInfo>(json);
+
+                    if (updateInfo == null)
+                        return;
+
+                    // Đảm bảo FormUpdater luôn tồn tại
+                    await EnsureUpdaterAsync(updateInfo);
+
+                    Version current =
+                        new Version(currentVersion);
+
+                    Version latest =
+                        new Version(updateInfo.AppVersion);
+
+                    if (current >= latest)
+                        return;
+
+                    DialogResult result =
+                        MessageBox.Show(
+                            $"A new version ({updateInfo.AppVersion}) is available.\n\nDo you want to update now?",
+                            "Update Available",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                    if (result != DialogResult.Yes)
+                        return;
+
+                    string tempFolder =
+                        Path.Combine(
+                            Path.GetTempPath(),
+                            "BearingEnhancer");
+
+                    Directory.CreateDirectory(tempFolder);
+
+                    string zipFile =
+                        Path.Combine(
+                            tempFolder,
+                            $"BearingEnhancer_{updateInfo.AppVersion}.zip");
+
+                    using (HttpClient downloadClient = new HttpClient())
+                    {
+                        using (var response =
+                            await downloadClient.GetAsync(updateInfo.AppUrl))
+                        {
+                            response.EnsureSuccessStatusCode();
+
+                            using (var stream =
+                                await response.Content.ReadAsStreamAsync())
+                            using (var fileStream =
+                                new FileStream(
+                                    zipFile,
+                                    FileMode.Create,
+                                    FileAccess.Write,
+                                    FileShare.None))
+                            {
+                                await stream.CopyToAsync(fileStream);
+                            }
+                        }
+                    }
+
+                    string appDirectory =
+                        AppDomain.CurrentDomain.BaseDirectory;
+
+                    string rootFolder =
+                    Directory.GetParent(appDirectory.TrimEnd('\\')).FullName;
+
+                    string updaterPath =
+                        Path.Combine(
+                            rootFolder,
+                            "FormUpdater",
+                            "FormUpdater.exe");
+
+                    if (!File.Exists(updaterPath))
+                    {
+                        MessageBox.Show(
+                            $"Cannot find updater:\n{updaterPath}");
+
+                        return;
+                    }
+
+                    string mainExePath =
+                        Application.ExecutablePath;
+
+                    string updateRequestFile =
+                        Path.Combine(
+                            Path.GetDirectoryName(updaterPath),
+                            "update.json");
+
+                    UpdateRequest request =
+                        new UpdateRequest
+                        {
+                            ZipFile = zipFile,
+                            AppDir = appDirectory,
+                            MainExe = mainExePath,
+                            NewVersion = updateInfo.AppVersion
+                        };
+
+                    File.WriteAllText(
+                        updateRequestFile,
+                        JsonConvert.SerializeObject(
+                            request,
+                            Newtonsoft.Json.Formatting.Indented));
+
+                    
+                    Process.Start(
+                        new ProcessStartInfo
+                        {
+                            FileName = updaterPath,
+                            UseShellExecute = true
+                        });
+
+                    Application.Exit();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Update Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
-        
+
         private void button1_Click(object sender, EventArgs e)// Button Check
         {
             list_Lumber_Inventory?.Clear();
@@ -1342,6 +1577,26 @@ namespace Bearing_Enhancer_CAN
         {
 
         }
+    }
+    public class UpdateInfo
+    {
+        public string AppVersion { get; set; }
+
+        public string AppUrl { get; set; }
+
+        public string UpdaterVersion { get; set; }
+
+        public string UpdaterUrl { get; set; }
+    }
+    public class UpdateRequest
+    {
+        public string ZipFile { get; set; }
+
+        public string AppDir { get; set; }
+
+        public string MainExe { get; set; }
+
+        public string NewVersion { get; set; }
     }
 
 }
