@@ -49,20 +49,12 @@ namespace FormUpdater
                         File.ReadAllText(updateRequestFile));
 
                 zipFile = request.ZipFile;
-                appDir = request.AppDir;
                 mainExe = request.MainExe;
 
-                string releaseFolder =
-                    appDir.TrimEnd('\\');
-
                 string rootFolder =
-                    Directory.GetParent(releaseFolder)
+                    Directory.GetParent(
+                        AppDomain.CurrentDomain.BaseDirectory)
                     .FullName;
-
-                string previousFolder =
-                    Path.Combine(
-                        rootFolder,
-                        "Release_Previous");
 
                 lblStatus.Text = "Updating...";
                 progressBar1.Style = ProgressBarStyle.Marquee;
@@ -73,7 +65,7 @@ namespace FormUpdater
 
                     WaitForMainAppToClose();
 
-                    Thread.Sleep(3000);
+                    Thread.Sleep(2000);
 
                     string extractFolder =
                         Path.Combine(
@@ -117,90 +109,25 @@ namespace FormUpdater
                             "Executable file not found in update package.");
                     }
 
-                    WriteLog($"Source = {extractedReleaseFolder}");
-                    WriteLog($"Target = {releaseFolder}");
+                    string newReleaseFolder =
+                        Path.Combine(
+                            rootFolder,
+                            $"Release_{request.NewVersion}");
 
-                    // Xóa backup cũ
-                    if (Directory.Exists(previousFolder))
+                    WriteLog(
+                        $"New Release Folder = {newReleaseFolder}");
+
+                    if (Directory.Exists(newReleaseFolder))
                     {
-                        try
-                        {
-                            Directory.Delete(
-                                previousFolder,
-                                true);
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteLog(ex.ToString());
-                        }
-                    }
-
-                    bool releaseRenamed = false;
-
-                    try
-                    {
-                        // Backup hiện tại
-                        if (Directory.Exists(releaseFolder))
-                        {
-                            Directory.Move(
-                                releaseFolder,
-                                previousFolder);
-
-                            releaseRenamed = true;
-
-                            WriteLog(
-                                "Release renamed to Release_Previous");
-                        }
-
-                        // Copy release mới
-                        DirectoryCopy(
-                            extractedReleaseFolder,
-                            releaseFolder,
+                        Directory.Delete(
+                            newReleaseFolder,
                             true);
-
-                        WriteLog(
-                            "New release copied successfully");
                     }
-                    catch (Exception ex)
-                    {
-                        WriteLog(
-                            "Update failed during file deployment");
 
-                        WriteLog(
-                            ex.ToString());
-
-                        // Rollback
-                        try
-                        {
-                            if (Directory.Exists(releaseFolder))
-                            {
-                                Directory.Delete(
-                                    releaseFolder,
-                                    true);
-                            }
-
-                            if (releaseRenamed &&
-                                Directory.Exists(previousFolder))
-                            {
-                                Directory.Move(
-                                    previousFolder,
-                                    releaseFolder);
-                            }
-
-                            WriteLog(
-                                "Rollback completed");
-                        }
-                        catch (Exception rollbackEx)
-                        {
-                            WriteLog(
-                                "Rollback failed");
-
-                            WriteLog(
-                                rollbackEx.ToString());
-                        }
-
-                        throw;
-                    }
+                    DirectoryCopy(
+                        extractedReleaseFolder,
+                        newReleaseFolder,
+                        true);
 
                     try
                     {
@@ -224,14 +151,15 @@ namespace FormUpdater
                 });
 
                 lblStatus.Text =
-                    "Starting updated version...";
+                    "Starting launcher...";
 
                 progressBar1.Style =
                     ProgressBarStyle.Continuous;
 
                 string exeToStart =
                     Path.Combine(
-                        releaseFolder,
+                        rootFolder,
+                        $"Release_{request.NewVersion}",
                         Path.GetFileName(mainExe));
 
                 if (!File.Exists(exeToStart))
@@ -242,14 +170,25 @@ namespace FormUpdater
 
                 try
                 {
-                    Process.Start(exeToStart);
+                    string launcherPath =
+                        Path.Combine(
+                            rootFolder,
+                            "Launcher.exe");
+
+                    if (!File.Exists(launcherPath))
+                    {
+                        throw new Exception(
+                            $"Launcher not found:\r\n{launcherPath}");
+                    }
+
+                    Process.Start(launcherPath);
                 }
                 catch (Exception ex)
                 {
                     WriteLog(ex.ToString());
 
                     MessageBox.Show(
-                        "Unable to start updated version.\r\n" +
+                        "Unable to start Launcher.\r\n" +
                         "Rolling back to previous version.",
                         "Rollback",
                         MessageBoxButtons.OK,
@@ -257,29 +196,15 @@ namespace FormUpdater
 
                     try
                     {
-                        if (Directory.Exists(releaseFolder))
-                        {
-                            Directory.Delete(
-                                releaseFolder,
-                                true);
-                        }
-
-                        if (Directory.Exists(previousFolder))
-                        {
-                            Directory.Move(
-                                previousFolder,
-                                releaseFolder);
-                        }
-
-                        Process.Start(
+                        string oldExe =
                             Path.Combine(
-                                releaseFolder,
-                                Path.GetFileName(mainExe)));
+                                appDir.TrimEnd('\\'),
+                                Path.GetFileName(mainExe));
+
+                        Process.Start(oldExe);
                     }
-                    catch (Exception rollbackEx)
+                    catch
                     {
-                        WriteLog(
-                            rollbackEx.ToString());
                     }
 
                     Application.Exit();
@@ -307,7 +232,6 @@ namespace FormUpdater
                 WriteLog(ex.ToString());
             }
         }
-
         private void WaitForMainAppToClose()
         {
             string processName =

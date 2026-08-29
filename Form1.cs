@@ -403,7 +403,6 @@ namespace Bearing_Enhancer_CAN
                         new UpdateRequest
                         {
                             ZipFile = zipFile,
-                            AppDir = releaseFolder,
                             MainExe = mainExePath,
                             NewVersion = updateInfo.AppVersion
                         };
@@ -1650,11 +1649,10 @@ namespace Bearing_Enhancer_CAN
 
         public string UpdaterSha256 { get; set; }
     }
+    
     public class UpdateRequest
     {
         public string ZipFile { get; set; }
-
-        public string AppDir { get; set; }
 
         public string MainExe { get; set; }
 
