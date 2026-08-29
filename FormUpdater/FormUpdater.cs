@@ -30,7 +30,7 @@ namespace FormUpdater
         private async void FormUpdater_Load(object sender, EventArgs e)
         {
             string updateRequestFile = null;
-            
+
             try
             {
                 updateRequestFile =
@@ -40,13 +40,8 @@ namespace FormUpdater
 
                 if (!File.Exists(updateRequestFile))
                 {
-                    MessageBox.Show(
-                        "update.json not found.",
-                        "Update Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-
-                    return;
+                    throw new Exception(
+                        "update.json not found.");
                 }
 
                 UpdateRequest request =
@@ -61,9 +56,13 @@ namespace FormUpdater
                     appDir.TrimEnd('\\');
 
                 string rootFolder =
-                    Directory
-                        .GetParent(releaseFolder)
-                        .FullName;
+                    Directory.GetParent(releaseFolder)
+                    .FullName;
+
+                string previousFolder =
+                    Path.Combine(
+                        rootFolder,
+                        "Release_Previous");
 
                 lblStatus.Text = "Updating...";
                 progressBar1.Style = ProgressBarStyle.Marquee;
@@ -105,12 +104,6 @@ namespace FormUpdater
                             "Release folder not found in update package.");
                     }
 
-                    WriteLog(
-                        $"Extract Folder: {extractFolder}");
-
-                    WriteLog(
-                        $"Extracted Release Folder: {extractedReleaseFolder}");
-
                     string extractedExe =
                         Directory.GetFiles(
                             extractedReleaseFolder,
@@ -118,40 +111,96 @@ namespace FormUpdater
                             SearchOption.TopDirectoryOnly)
                         .FirstOrDefault();
 
-                    WriteLog(
-                        $"Found EXE: {extractedExe}");
-
                     if (string.IsNullOrEmpty(extractedExe))
                     {
                         throw new Exception(
                             "Executable file not found in update package.");
                     }
 
-                    string newReleaseFolder =
-                        Path.Combine(
-                            rootFolder,
-                            $"Release_{request.NewVersion}");
+                    WriteLog($"Source = {extractedReleaseFolder}");
+                    WriteLog($"Target = {releaseFolder}");
 
-                    WriteLog(
-                        $"Source: {extractedReleaseFolder}");
-
-                    WriteLog(
-                        $"Target: {newReleaseFolder}");
-
-                    WriteLog(
-                        $"New release folder: {newReleaseFolder}");
-
-                    if (Directory.Exists(newReleaseFolder))
+                    // Xóa backup cũ
+                    if (Directory.Exists(previousFolder))
                     {
-                        Directory.Delete(
-                            newReleaseFolder,
-                            true);
+                        try
+                        {
+                            Directory.Delete(
+                                previousFolder,
+                                true);
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLog(ex.ToString());
+                        }
                     }
 
-                    DirectoryCopy(
-                        extractedReleaseFolder,
-                        newReleaseFolder,
-                        true);
+                    bool releaseRenamed = false;
+
+                    try
+                    {
+                        // Backup hiện tại
+                        if (Directory.Exists(releaseFolder))
+                        {
+                            Directory.Move(
+                                releaseFolder,
+                                previousFolder);
+
+                            releaseRenamed = true;
+
+                            WriteLog(
+                                "Release renamed to Release_Previous");
+                        }
+
+                        // Copy release mới
+                        DirectoryCopy(
+                            extractedReleaseFolder,
+                            releaseFolder,
+                            true);
+
+                        WriteLog(
+                            "New release copied successfully");
+                    }
+                    catch (Exception ex)
+                    {
+                        WriteLog(
+                            "Update failed during file deployment");
+
+                        WriteLog(
+                            ex.ToString());
+
+                        // Rollback
+                        try
+                        {
+                            if (Directory.Exists(releaseFolder))
+                            {
+                                Directory.Delete(
+                                    releaseFolder,
+                                    true);
+                            }
+
+                            if (releaseRenamed &&
+                                Directory.Exists(previousFolder))
+                            {
+                                Directory.Move(
+                                    previousFolder,
+                                    releaseFolder);
+                            }
+
+                            WriteLog(
+                                "Rollback completed");
+                        }
+                        catch (Exception rollbackEx)
+                        {
+                            WriteLog(
+                                "Rollback failed");
+
+                            WriteLog(
+                                rollbackEx.ToString());
+                        }
+
+                        throw;
+                    }
 
                     try
                     {
@@ -175,51 +224,65 @@ namespace FormUpdater
                 });
 
                 lblStatus.Text =
-                    "Update completed. Restarting...";
+                    "Starting updated version...";
 
                 progressBar1.Style =
                     ProgressBarStyle.Continuous;
 
-                rootFolder =
-                    Directory
-                        .GetParent(
-                            releaseFolder)
-                        .FullName;
-
                 string exeToStart =
                     Path.Combine(
-                        rootFolder,
-                        $"Release_{request.NewVersion}",
+                        releaseFolder,
                         Path.GetFileName(mainExe));
 
                 if (!File.Exists(exeToStart))
                 {
                     throw new Exception(
-                        $"Cannot find updated application:\n{exeToStart}");
+                        $"Cannot find updated executable:\n{exeToStart}");
                 }
 
                 try
                 {
-                    Process p = Process.Start(exeToStart);
-
-                    if (p == null)
-                    {
-                        throw new Exception(
-                            "Failed to start updated application.");
-                    }
+                    Process.Start(exeToStart);
                 }
                 catch (Exception ex)
                 {
                     WriteLog(ex.ToString());
 
                     MessageBox.Show(
-                        "Unable to start new version.\r\n" +
-                        "Launching previous version.");
+                        "Unable to start updated version.\r\n" +
+                        "Rolling back to previous version.",
+                        "Rollback",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
 
-                    Process.Start(mainExe);
+                    try
+                    {
+                        if (Directory.Exists(releaseFolder))
+                        {
+                            Directory.Delete(
+                                releaseFolder,
+                                true);
+                        }
+
+                        if (Directory.Exists(previousFolder))
+                        {
+                            Directory.Move(
+                                previousFolder,
+                                releaseFolder);
+                        }
+
+                        Process.Start(
+                            Path.Combine(
+                                releaseFolder,
+                                Path.GetFileName(mainExe)));
+                    }
+                    catch (Exception rollbackEx)
+                    {
+                        WriteLog(
+                            rollbackEx.ToString());
+                    }
 
                     Application.Exit();
-
                     return;
                 }
 
@@ -245,7 +308,6 @@ namespace FormUpdater
             }
         }
 
-
         private void WaitForMainAppToClose()
         {
             string processName =
@@ -266,7 +328,7 @@ namespace FormUpdater
 
         }
 
-        private static void DirectoryCopy(string sourceDir,string destDir,bool copySubDirs)
+        private static void DirectoryCopy(string sourceDir, string destDir, bool copySubDirs)
         {
             DirectoryInfo dir =
                 new DirectoryInfo(sourceDir);

@@ -105,6 +105,8 @@ namespace Bearing_Enhancer_CAN
             await CheckForUpdatesAsync();
 
         }
+
+        
         private async Task EnsureUpdaterAsync(UpdateInfo updateInfo)
         {
             string appDirectory =
@@ -189,6 +191,20 @@ namespace Bearing_Enhancer_CAN
                     bytes);
             }
 
+            //
+            // SHA256 VALIDATION
+            //
+            string actualHash =
+                GetFileSha256(tempZip);
+
+            if (!actualHash.Equals(
+                    updateInfo.UpdaterSha256,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception(
+                    "Downloaded updater package failed SHA256 validation.");
+            }
+
             if (Directory.Exists(updaterFolder))
             {
                 Directory.Delete(
@@ -203,6 +219,14 @@ namespace Bearing_Enhancer_CAN
                     tempZip,
                     updaterFolder);
 
+            //
+            // Handle Windows ZIP structure:
+            //
+            // FormUpdater.zip
+            // └── FormUpdater
+            //     ├── FormUpdater.exe
+            //     └── ...
+            //
             string nestedFolder =
                 Path.Combine(
                     updaterFolder,
@@ -250,6 +274,7 @@ namespace Bearing_Enhancer_CAN
             {
             }
         }
+
         private async Task CheckForUpdatesAsync()
         {
             try
@@ -271,7 +296,7 @@ namespace Bearing_Enhancer_CAN
                     if (updateInfo == null)
                         return;
 
-                    // Đảm bảo FormUpdater luôn tồn tại
+                    // Ensure latest updater exists
                     await EnsureUpdaterAsync(updateInfo);
 
                     Version current =
@@ -285,7 +310,8 @@ namespace Bearing_Enhancer_CAN
 
                     DialogResult result =
                         MessageBox.Show(
-                            $"A new version ({updateInfo.AppVersion}) is available.\n\nDo you want to update now?",
+                            $"A new version ({updateInfo.AppVersion}) is available.\r\n\r\n" +
+                            "Do you want to update now?",
                             "Update Available",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question);
@@ -305,15 +331,18 @@ namespace Bearing_Enhancer_CAN
                             tempFolder,
                             $"BearingEnhancer_{updateInfo.AppVersion}.zip");
 
-                    using (HttpClient downloadClient = new HttpClient())
+                    using (HttpClient downloadClient =
+                        new HttpClient())
                     {
                         using (var response =
-                            await downloadClient.GetAsync(updateInfo.AppUrl))
+                            await downloadClient.GetAsync(
+                                updateInfo.AppUrl))
                         {
                             response.EnsureSuccessStatusCode();
 
                             using (var stream =
-                                await response.Content.ReadAsStreamAsync())
+                                await response.Content
+                                    .ReadAsStreamAsync())
                             using (var fileStream =
                                 new FileStream(
                                     zipFile,
@@ -321,16 +350,34 @@ namespace Bearing_Enhancer_CAN
                                     FileAccess.Write,
                                     FileShare.None))
                             {
-                                await stream.CopyToAsync(fileStream);
+                                await stream.CopyToAsync(
+                                    fileStream);
                             }
                         }
+                    }
+
+                    // SHA256 validation
+                    string actualHash =
+                        GetFileSha256(zipFile);
+
+                    if (!actualHash.Equals(
+                            updateInfo.AppSha256,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new Exception(
+                            "Downloaded application package failed SHA256 validation.");
                     }
 
                     string appDirectory =
                         AppDomain.CurrentDomain.BaseDirectory;
 
+                    string releaseFolder =
+                        appDirectory.TrimEnd('\\');
+
                     string rootFolder =
-                    Directory.GetParent(appDirectory.TrimEnd('\\')).FullName;
+                        Directory
+                            .GetParent(releaseFolder)
+                            .FullName;
 
                     string updaterPath =
                         Path.Combine(
@@ -340,10 +387,8 @@ namespace Bearing_Enhancer_CAN
 
                     if (!File.Exists(updaterPath))
                     {
-                        MessageBox.Show(
-                            $"Cannot find updater:\n{updaterPath}");
-
-                        return;
+                        throw new Exception(
+                            $"Updater not found:\r\n{updaterPath}");
                     }
 
                     string mainExePath =
@@ -358,7 +403,7 @@ namespace Bearing_Enhancer_CAN
                         new UpdateRequest
                         {
                             ZipFile = zipFile,
-                            AppDir = appDirectory,
+                            AppDir = releaseFolder,
                             MainExe = mainExePath,
                             NewVersion = updateInfo.AppVersion
                         };
@@ -369,7 +414,6 @@ namespace Bearing_Enhancer_CAN
                             request,
                             Newtonsoft.Json.Formatting.Indented));
 
-                    
                     Process.Start(
                         new ProcessStartInfo
                         {
@@ -383,13 +427,27 @@ namespace Bearing_Enhancer_CAN
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    ex.ToString(),
+                    ex.Message,
                     "Update Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
+        private static string GetFileSha256(string filePath)
+        {
+            using (var sha =
+                System.Security.Cryptography.SHA256.Create())
+            using (var stream =
+                File.OpenRead(filePath))
+            {
+                return BitConverter
+                    .ToString(
+                        sha.ComputeHash(stream))
+                    .Replace("-", "")
+                    .ToUpperInvariant();
+            }
+        }
 
         private void button1_Click(object sender, EventArgs e)// Button Check
         {
@@ -1584,9 +1642,13 @@ namespace Bearing_Enhancer_CAN
 
         public string AppUrl { get; set; }
 
+        public string AppSha256 { get; set; }
+
         public string UpdaterVersion { get; set; }
 
         public string UpdaterUrl { get; set; }
+
+        public string UpdaterSha256 { get; set; }
     }
     public class UpdateRequest
     {
