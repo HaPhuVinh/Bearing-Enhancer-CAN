@@ -204,7 +204,12 @@ namespace FormUpdater
 
                     WriteLog("STEP D - Before Start Launcher");
 
-                    Process.Start(launcherPath);
+                    Process.Start(
+                        new ProcessStartInfo
+                        {
+                            FileName = launcherPath,
+                            UseShellExecute = true
+                        });
 
                     WriteLog("STEP D - After Start Launcher");
                 }
