@@ -51,10 +51,18 @@ namespace FormUpdater
                 zipFile = request.ZipFile;
                 mainExe = request.MainExe;
 
+                DirectoryInfo updaterFolder =
+                    new DirectoryInfo(
+                        AppDomain.CurrentDomain.BaseDirectory);
+
                 string rootFolder =
-                    Directory.GetParent(
-                        AppDomain.CurrentDomain.BaseDirectory)
-                    .FullName;
+                    updaterFolder.Parent.FullName;
+
+                WriteLog(
+                    $"BaseDirectory = {AppDomain.CurrentDomain.BaseDirectory}");
+
+                WriteLog(
+                    $"RootFolder = {rootFolder}");
 
                 lblStatus.Text = "Updating...";
                 progressBar1.Style = ProgressBarStyle.Marquee;
@@ -79,11 +87,13 @@ namespace FormUpdater
                             true);
                     }
 
-                    WriteLog("Extracting update package");
+                    WriteLog("STEP A - Before Extract");
 
                     ZipFile.ExtractToDirectory(
                         zipFile,
                         extractFolder);
+
+                    WriteLog("STEP A - After Extract");
 
                     string extractedReleaseFolder =
                         Path.Combine(
@@ -96,12 +106,16 @@ namespace FormUpdater
                             "Release folder not found in update package.");
                     }
 
+                    WriteLog("STEP B - Before Find EXE");
+
                     string extractedExe =
                         Directory.GetFiles(
                             extractedReleaseFolder,
                             "*.exe",
                             SearchOption.TopDirectoryOnly)
                         .FirstOrDefault();
+
+                    WriteLog("STEP B - After Find EXE");
 
                     if (string.IsNullOrEmpty(extractedExe))
                     {
@@ -124,10 +138,14 @@ namespace FormUpdater
                             true);
                     }
 
+                    WriteLog("STEP C - Before DirectoryCopy");
+
                     DirectoryCopy(
                         extractedReleaseFolder,
                         newReleaseFolder,
                         true);
+
+                    WriteLog("STEP C - After DirectoryCopy");
 
                     try
                     {
@@ -173,7 +191,10 @@ namespace FormUpdater
                     string launcherPath =
                         Path.Combine(
                             rootFolder,
-                            "Launcher.exe");
+                            "Bearing Enhancer Launcher.exe");
+
+                    WriteLog(
+                        $"Launcher Path = {launcherPath}");
 
                     if (!File.Exists(launcherPath))
                     {
@@ -181,31 +202,21 @@ namespace FormUpdater
                             $"Launcher not found:\r\n{launcherPath}");
                     }
 
+                    WriteLog("STEP D - Before Start Launcher");
+
                     Process.Start(launcherPath);
+
+                    WriteLog("STEP D - After Start Launcher");
                 }
                 catch (Exception ex)
                 {
                     WriteLog(ex.ToString());
 
                     MessageBox.Show(
-                        "Unable to start Launcher.\r\n" +
-                        "Rolling back to previous version.",
-                        "Rollback",
+                        "Unable to start Launcher.",
+                        "Update Error",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-
-                    try
-                    {
-                        string oldExe =
-                            Path.Combine(
-                                appDir.TrimEnd('\\'),
-                                Path.GetFileName(mainExe));
-
-                        Process.Start(oldExe);
-                    }
-                    catch
-                    {
-                    }
+                        MessageBoxIcon.Error);
 
                     Application.Exit();
                     return;
@@ -293,7 +304,7 @@ namespace FormUpdater
             {
                 string logFile =
                     Path.Combine(
-                        appDir,
+                        AppDomain.CurrentDomain.BaseDirectory,
                         "Update.log");
 
                 File.AppendAllText(
