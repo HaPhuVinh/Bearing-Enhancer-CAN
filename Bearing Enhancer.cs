@@ -186,7 +186,24 @@ namespace Bearing_Enhancer_CAN
                             string[] sXLocRight = xmlBearingList[TP.Key].Attributes["R"].Value.Trim().Split();
                             TP.Value.XLoc_LeftSide = double.Parse(sXLocLeft[0]);
                             TP.Value.XLoc_RightSide = double.Parse(sXLocRight[0]);
-                            TP.Value.XLocation_Physical = (TP.Value.XLoc_LeftSide + TP.Value.XLoc_RightSide)/2;
+                            TP.Value.XLocation_Physical = (TP.Value.XLoc_LeftSide + TP.Value.XLoc_RightSide) / 2;
+                            double XLoc_BrgAnalog = Convert_To_Inch(TP.Value.XLocation);
+
+                            for (int i = 0; i < xmlBearingList.Count; i++)//For bearing in no particular order 
+                            {
+                                string[] sXLeft_Temp = xmlBearingList[i].Attributes["L"].Value.Trim().Split();
+                                string[] sXRight_Temp = xmlBearingList[i].Attributes["R"].Value.Trim().Split();
+
+                                double XLeftSide_Temp = double.Parse(sXLeft_Temp[0]);
+                                double XRightSide_Temp = double.Parse(sXRight_Temp[0]);
+                                double XCenter_Temp = (XLeftSide_Temp + XRightSide_Temp) / 2;
+                                if(Math.Abs(XLoc_BrgAnalog-XCenter_Temp) < Math.Abs(XLoc_BrgAnalog - TP.Value.XLocation_Physical))
+                                {
+                                    TP.Value.XLoc_LeftSide = XLeftSide_Temp;
+                                    TP.Value.XLoc_RightSide = XRightSide_Temp;
+                                    TP.Value.XLocation_Physical = XCenter_Temp;
+                                }
+                            }
 
                             //Check Wet Service Condition and Green Lumber condition
                             elementNode = rootNode.SelectSingleNode("//Settings");
@@ -2817,7 +2834,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
 
-                if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) check raised heels
+                if (bTopChordAboveBottomChord) // Math.Abs(refLineBot.A * refLineTop.B - refLineBot.B * refLineTop.A) <= 0.01)) For raised heels
                 {
                     baseLineTop = refLineBot;
                     Cordinates.AddRange(leftcordinates);
@@ -2915,7 +2932,7 @@ namespace Bearing_Enhancer_CAN
                     }
                 }
                 
-                else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && (bTopChordOnBottomChord || !bTopChordAboveBottomChord))// && bTopChordOnBottomChord)//check for girder heels
+                else if (double.Parse(refPoint[0]) >= double.Parse(basePoint[0]) && (bTopChordOnBottomChord || !bTopChordAboveBottomChord))// && bTopChordOnBottomChord)//For girder heels
                 {
                     (double A, double B, double C) perp_BaseLine_AtRefPoint = PerpendicularLineThroughPoint(refPoint, baseLineBot);
                     double girderHeelLength = DistancePointToLine(basePoint, perp_BaseLine_AtRefPoint);

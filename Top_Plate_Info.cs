@@ -120,13 +120,13 @@ namespace Bearing_Enhancer_CAN
                             tPI.Material = arrLine2[6];
                             tPI.DOL = kD;
                             dictTopPlate.Add(i, tPI);
-
-                            i = i + 1;
+                            
                         }
                         if (line.Contains(langText.UnfactoredReactionSummary))
                         {
                             break;
                         }
+                        i = i + 1;
                     }
                     if (line.Contains(langText.UnfactoredReactionSummary))
                     {
