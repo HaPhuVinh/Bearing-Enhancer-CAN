@@ -1779,22 +1779,48 @@ namespace Bearing_Enhancer_CAN
         double Convert_To_Inch(string xxx)
         {
             string s = xxx.Trim();
+            
             string[] ss = s.Split('-');
-            double q;
-            if (ss.Length > 2)
+
+            double q = 0;
+            if (double.TryParse(ss[0], out double result))
             {
-                q = double.Parse(ss[0]) * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
-            }
-            else if (ss.Length > 1)
-            {
-                q = double.Parse(ss[0]) + double.Parse(ss[1]) / 16;
+                
+                if (ss.Length > 2)
+                {
+                    q = result * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
+                }
+                else if (ss.Length > 1)
+                {
+                    q = result + double.Parse(ss[1]) / 16;
+                }
+                else
+                {
+                    q = result / 16;
+                }
+                return q;
             }
             else
             {
-                q = double.Parse(ss[0]) / 16;
+                if (ss.Length > 3)
+                {
+                    q = result * 12 + double.Parse(ss[1])*12 + double.Parse(ss[2]) + double.Parse(ss[3]) / 16;
+                }
+                else if (ss.Length > 2)
+                {
+                    q = result * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
+                }
+                else if (ss.Length > 1)
+                {
+                    q = result + double.Parse(ss[1]) / 16;
+                }
+                else
+                {
+                    q = result / 16;
+                }
+                return -q;
             }
-
-            return q;
+            
         }
         string Convert_InchToFitInchSix(double totalInches)
         {
@@ -2815,11 +2841,17 @@ namespace Bearing_Enhancer_CAN
                 (double A, double B, double C) baseLineTop;//line at the top of the block
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count-1], rightcordinates[0]);//the top line of the bottom chord
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[0][topchordcordinates[0].Count-1], topchordcordinates[1][0]);//the top line of the top chord
-                
-                double slopeRefLineTop = GetSlope(refLineTop);//calculate top chord slope
-                string[] refPoint = Intersection_Point(refLineBot,refLineTop);
 
-                foreach (var point in topchordcordinates[0])//check for the type of the heel
+                (double A, double B, double C) bottomLineofTopChord = TwoPoint_LineEquation(topchordcordinates[0][0], topchordcordinates[1][topchordcordinates[1].Count-1]);
+                List<string[]> TopChordRefPoints = new List<string[]>();
+                TopChordRefPoints.Add(Intersection_Point(vertical_Line_LeftEnd, bottomLineofTopChord));
+                TopChordRefPoints.Add(Intersection_Point(vertical_Line_LeftEnd, refLineTop));
+
+                double slopeRefLineTop = GetSlope(refLineTop);//calculate top chord slope
+                string[] refPoint = Intersection_Point(refLineBot,refLineTop);//
+
+
+                foreach (var point in TopChordRefPoints)//check for the type of the heel
                 {
                     if (IsPointOnLine(point, refLineBot))
                     {
@@ -3065,10 +3097,15 @@ namespace Bearing_Enhancer_CAN
                 (double A, double B, double C) refLineBot = TwoPoint_LineEquation(leftcordinates[leftcordinates.Count - 1], rightcordinates[0]);
                 (double A, double B, double C) refLineTop = TwoPoint_LineEquation(topchordcordinates[2][topchordcordinates[2].Count - 1], topchordcordinates[3][0]);
 
+                (double A, double B, double C) bottomLineofTopChord = TwoPoint_LineEquation(topchordcordinates[2][0], topchordcordinates[3][topchordcordinates[3].Count - 1]);
+                List<string[]> TopChordRefPoints = new List<string[]>();
+                TopChordRefPoints.Add(Intersection_Point(vertical_Line_RightEnd, bottomLineofTopChord));
+                TopChordRefPoints.Add(Intersection_Point(vertical_Line_RightEnd, refLineTop));
+
                 double slopeRefLineTop = GetSlope(refLineTop);
                 string[] refPoint = Intersection_Point(refLineBot, refLineTop);
 
-                foreach (var point in topchordcordinates[3])//check for the type of the heel
+                foreach (var point in TopChordRefPoints)//check for the type of the heel
                 {
                     if (IsPointOnLine(point, refLineBot))
                     {
