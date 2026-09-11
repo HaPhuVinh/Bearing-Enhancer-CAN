@@ -1776,51 +1776,49 @@ namespace Bearing_Enhancer_CAN
 
             return listPieces;
         }
-        double Convert_To_Inch(string xxx)
+        private double Convert_To_Inch(string value)
         {
-            string s = xxx.Trim();
-            
-            string[] ss = s.Split('-');
+            if (string.IsNullOrWhiteSpace(value))
+                return 0;
 
-            double q = 0;
-            if (double.TryParse(ss[0], out double result))
+            value = value.Trim();
+
+            bool isNegative = value.StartsWith("-");
+
+            if (isNegative)
+                value = value.Substring(1);
+
+            string[] parts = value.Split('-');
+
+            double[] nums = new double[parts.Length];
+
+            for (int i = 0; i < parts.Length; i++)
             {
-                
-                if (ss.Length > 2)
-                {
-                    q = result * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
-                }
-                else if (ss.Length > 1)
-                {
-                    q = result + double.Parse(ss[1]) / 16;
-                }
-                else
-                {
-                    q = result / 16;
-                }
-                return q;
+                if (!double.TryParse(parts[i], out nums[i]))
+                    return 0;
             }
-            else
+
+            double inch = 0;
+
+            switch (parts.Length)
             {
-                if (ss.Length > 3)
-                {
-                    q = result * 12 + double.Parse(ss[1])*12 + double.Parse(ss[2]) + double.Parse(ss[3]) / 16;
-                }
-                else if (ss.Length > 2)
-                {
-                    q = result * 12 + double.Parse(ss[1]) + double.Parse(ss[2]) / 16;
-                }
-                else if (ss.Length > 1)
-                {
-                    q = result + double.Parse(ss[1]) / 16;
-                }
-                else
-                {
-                    q = result / 16;
-                }
-                return -q;
+                case 3:
+                    inch = nums[0] * 12 + nums[1] + nums[2] / 16;
+                    break;
+
+                case 2:
+                    inch = nums[0] + nums[1] / 16;
+                    break;
+
+                case 1:
+                    inch = nums[0] / 16;
+                    break;
+
+                default:
+                    return 0;
             }
-            
+
+            return isNegative ? -inch : inch;
         }
         string Convert_InchToFitInchSix(double totalInches)
         {
