@@ -247,6 +247,7 @@ namespace Bearing_Enhancer_CAN
                                     {
                                         bE.TopPlateInfo.Location_Type = "Exterior";
                                     }
+                                    keyLumber = piece;
                                 }
                                 else if (index < listPieces.Count-1)//&& listPieces.Count > 1
                                 {
